@@ -1,5 +1,6 @@
 import mongoose, { ObjectId, Schema } from 'mongoose';
 import validator from 'validator'
+import * as bcrypt from 'bcrypt';
 
 export interface UserDocument extends Document {
     _id: ObjectId | string;
@@ -14,6 +15,7 @@ export interface UserDocument extends Document {
     passwordResetToken?: string;
     passwordResetExpires?: Date;
     active: boolean;
+    correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
 }
 
 const userSchema: Schema<UserDocument> = new Schema({
@@ -63,6 +65,13 @@ const userSchema: Schema<UserDocument> = new Schema({
         select: false,
     },
 });
+
+userSchema.methods.correctPassword = async function (
+    candidatePassword: string,
+    userPassword: string
+): Promise<boolean> {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model<UserDocument>('User', userSchema);
 
