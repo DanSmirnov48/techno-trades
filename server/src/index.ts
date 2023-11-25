@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from 'cors';
 import userRoutes from "./routes/userRoutes";
+import productRoutes from "./routes/productRoutes";
 
 config()
 connectDB()
@@ -27,6 +28,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("Healthy");
 });
 
+app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 
 const PORT = process.env.PORT || 8000;
