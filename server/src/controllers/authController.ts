@@ -1,7 +1,13 @@
+import { promisify } from 'util';
 import jwt from 'jsonwebtoken'
 import User, { UserDocument } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
+
+// Custom interface to extend the Request interface
+interface CustomRequest extends Request {
+    user?: UserDocument;
+}
 
 const signToken = (id: string) => {
     return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -71,3 +77,59 @@ export const logout = (req: Request, res: Response) => {
     res.end()
 };
 
+export const protect = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    // 1) Getting token and check of it's there
+    let token;
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt;
+    }
+
+    if (!token) {
+        return next(
+            new Error('You are not logged in! Please log in to get access.')
+        );
+    }
+    console.log(token)
+
+    // 2) Verification token
+    const decoded = await promisify<string, string>(jwt.verify)(token, process.env.JWT_SECRET!);
+    console.log('Decoded token:', decoded);
+    console.log('token:', token);
+
+    // 3) Check if user still exists
+    // @ts-ignore
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+        return next(
+            new Error('The user belonging to this token does no longer exist.')
+        );
+    }
+
+    // // GRANT ACCESS TO PROTECTED ROUTE
+    req.user = currentUser;
+    next();
+});
+
+export const restrictTo = (...roles: Array<UserDocument['role']>) => {
+    return (req: CustomRequest, res: Response, next: NextFunction) => {
+        // Ensure req.user and req.user.role are defined
+        if (!req.user || !req.user.role) {
+            return next(
+                new Error('User information is missing. You do not have permission to perform this action.')
+            );
+        }
+
+        // roles ['admin']. role='user'
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new Error('You do not have permission to perform this action')
+            );
+        }
+        next();
+    };
+};
