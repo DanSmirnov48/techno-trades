@@ -1,12 +1,16 @@
-import { Button } from "./components/ui/button"
+import { Route, Routes } from "react-router-dom";
+import RootLayout from "./_root/RootLayout";
+import { Home } from "./_root/pages";
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <h1 className="text-red-400 font-jost text-3xl">This is a setup</h1>
-      <Button>Click me</Button>
-    </div>
-  )
+    <main className="flex">
+      <Routes>
+        {/* Public Routes */}
+        <Route element={<RootLayout />}>
+          <Route index element={<Home />} />
+        </Route>
+      </Routes>
+    </main>
+  );
 }
-
-export default App
