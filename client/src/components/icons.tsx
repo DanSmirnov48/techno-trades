@@ -41,8 +41,12 @@ import {
   Truck,
   Heart,
   XSquare,
-  Bell
+  Bell,
+
+  EyeOff,
+
 } from "lucide-react";
+
 
 export type Icon = LucideIcon;
 
@@ -60,6 +64,7 @@ export const Icons = {
   sort: ChevronsUpDown,
   org: Building2,
   view: Eye,
+  hide: EyeOff,
   edit: Edit,
   delete: Trash2,
   system: Laptop,

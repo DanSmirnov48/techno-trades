@@ -7,10 +7,16 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 
 export async function createUserAccount(user: INewUser) {
   try {
-    const { data } = await axios.post(`/api/users/signup`, user)
-    return data
-  } catch (error) {
-    console.log(error);
+    const account = await axios.post(`/api/users/signup`, user)
+    return account
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
   }
 }
 

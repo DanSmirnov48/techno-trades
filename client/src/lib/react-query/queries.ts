@@ -9,9 +9,8 @@ import { createUserAccount, signInAccount, signOutAccount } from "../backend-api
 export const useCreateUserAccount = () => {
     return useMutation({
         mutationFn: (user: INewUser) => createUserAccount(user),
-        onSuccess: (data) => {
-            console.log("success", data);
-        },
+        onSuccess: (data) => {},
+        onError:(data) => {},
     });
 };
 

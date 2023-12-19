@@ -16,8 +16,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader, Loader2 } from "lucide-react";
 import { Icons } from "@/components/icons";
+import { useCreateUserAccount } from "@/lib/react-query/queries";
+import { cn } from "@/lib/utils";
+import { IUser } from "@/types";
+
+interface AuthResponse {
+  data?: any;
+  error?: any;
+  status?: any;
+}
 
 const SignupForm = () => {
+
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
@@ -29,175 +42,189 @@ const SignupForm = () => {
     },
   });
 
+  const { mutateAsync: createAccount, isPending: loadingUser } = useCreateUserAccount();
+
   const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
     try {
-      console.log(user);
+      const account: AuthResponse = await createAccount(user);
+      
+      if (account.data && account.data.status === "success") {
+        const user = account.data.data.user as IUser
+        toast({
+          title: "Success",
+          className: cn(
+            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
+          ),
+          description: `Welcome, ${user.firstName}. Happy shopping!`,
+          duration: 5000,
+        });
+        navigate("/");
+      }
     } catch (error) {
-      console.log({ error });
+      toast({
+        title: "Unknown Error",
+        variant: "destructive",
+        className: cn(
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
+        ),
+        description: `Unknown Error at SignIn: ${error}`,
+        duration: 5000,
+      });
     }
   };
 
+  // flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg dark:bg-gray-800 lg:max-w-4xl
   return (
-    <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg dark:bg-gray-800 lg:max-w-4xl">
-      <div
-        className="hidden lg:block lg:w-1/2"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1504610926078-a1611febcad3?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-          backgroundSize: "cover",
-          backgroundPosition: "revert",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+    <div className="w-full px-6 py-8 md:px-8 lg:w-1/2 rounded-xl shadow-lg">
+      <div className="flex justify-center mx-auto">
+        <img className="w-auto h-7 sm:h-8" src="" alt="" />
+      </div>
 
-      <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
-        <div className="flex justify-center mx-auto">
-          <img className="w-auto h-7 sm:h-8" src="" alt="" />
+      <h2 className="text-xl text-center text-gray-600 dark:text-gray-200">
+        Create a new account
+      </h2>
+      <p className="mt-3 text-sm text-center text-gray-600 dark:text-gray-200">
+        To use our shop, Please enter your details
+      </p>
+
+      <Link
+        to={""}
+        className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+      >
+        <Icons.google className="w-6 h-6" />
+        <span className="w-5/6 px-4 py-3 font-bold text-center">
+          Sign up with Google
+        </span>
+      </Link>
+
+      <div className="flex items-center justify-between mt-6">
+        <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
+
+        <div className="text-xs text-center text-gray-500 uppercase dark:text-gray-400">
+          or register with email
         </div>
 
-        <h2 className="text-xl text-center text-gray-600 dark:text-gray-200">
-          Create a new account
-        </h2>
-        <p className="mt-3 text-sm text-center text-gray-600 dark:text-gray-200">
-          To use our shop, Please enter your details
-        </p>
+        <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
+      </div>
 
-        <Link
-          to={""}
-          className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-        >
-          <Icons.google className="w-6 h-6" />
-          <span className="w-5/6 px-4 py-3 font-bold text-center">
-            Sign up with Google
-          </span>
-        </Link>
-
-        <div className="flex items-center justify-between mt-6">
-          <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
-
-          <div className="text-xs text-center text-gray-500 uppercase dark:text-gray-400">
-            or register with email
-          </div>
-
-          <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
-        </div>
-
-        <Form {...form}>
-          <div className="sm:w-420 flex-center flex-col">
-            <form
-              onSubmit={form.handleSubmit(handleSignup)}
-              className="flex flex-col gap-5 w-full mt-4"
-            >
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="shad-form_label">First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="John"
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="shad-form_label">Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Doe"
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="shad-form_label">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="johndoe@email.com"
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="shad-form_label">Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="passwordConfirm"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="shad-form_label">Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm Password"
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="">
-                Sign Up
-              </Button>
-            </form>
-          </div>
-        </Form>
-
-        <div className="flex items-center justify-between mt-5 mb-10">
-          <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
-          <Link
-            to={"/sign-in"}
-            className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
+      <Form {...form}>
+        <div className="sm:w-420 flex-center flex-col">
+          <form
+            onSubmit={form.handleSubmit(handleSignup)}
+            className="flex flex-col gap-5 w-full mt-4"
           >
-            or sign in
-          </Link>
-          <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="shad-form_label">First Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="John"
+                      className=""
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="shad-form_label">Last Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Doe"
+                      className=""
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="shad-form_label">Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="johndoe@email.com"
+                      className=""
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="shad-form_label">Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      className=""
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="passwordConfirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="shad-form_label">Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Confirm Password"
+                      className=""
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="mt-6">
+              <Button type="submit" disabled={loadingUser} className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+                {loadingUser ? <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> : <>Sign Up</>}
+              </Button>
+            </div>
+          </form>
         </div>
+      </Form>
+
+      <div className="flex items-center justify-between mt-5 mb-10">
+        <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+        <Link
+          to={"/sign-in"}
+          className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
+        >
+          or sign in
+        </Link>
+        <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
       </div>
     </div>
   );
