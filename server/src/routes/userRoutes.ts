@@ -16,6 +16,7 @@ import {
   restrictTo,
   signup,
   updatePassword,
+  validateJWT,
 } from "../controllers/authController";
 
 const router = express.Router();
@@ -24,6 +25,7 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", logIn);
 router.get('/logout', logout);
+router.get("/validate", validateJWT);
 
 // Password RESET and UPDATE for UNAUTHORIZED users
 router.post("/forgot-password", forgotPassword);

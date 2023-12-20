@@ -22,6 +22,7 @@ import { IUser } from "@/types";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useUserContext } from "@/context/AuthContext";
 
 interface AuthResponse {
   data?: any;
@@ -32,6 +33,7 @@ interface AuthResponse {
 const SigninForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { checkAuthUser } = useUserContext();
 
   const [type, setType] = useState<'password' | 'text'>('password');
 
@@ -67,7 +69,8 @@ const SigninForm = () => {
           duration: 5000,
         });
       }
-      if (session.data && session.data.status === "success") {
+      const isUser = await checkAuthUser();
+      if (session.data && session.data.status === "success" && isUser) {
         const user = session.data.data.user as IUser
         toast({
           title: "Success",

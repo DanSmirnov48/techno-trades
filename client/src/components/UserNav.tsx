@@ -23,13 +23,27 @@ import {
   Settings,
   SunMedium,
 } from "lucide-react";
+import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
+import { useSignOutAccount } from "@/lib/react-query/queries";
 import { Link, useNavigate } from "react-router-dom";
 import { Icons } from "./icons";
 
 export function UserNav() {
-
+  const { mutate: signOut } = useSignOutAccount();
+  const { user, setUser, isAuthenticated, setIsAuthenticated, isAdmin } =
+    useUserContext();
   const { setTheme } = useTheme();
   const navigate = useNavigate();
+
+  const handleSignOut = async (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    signOut();
+    setIsAuthenticated(false);
+    setUser(INITIAL_USER);
+    navigate("/");
+  };
 
   return (
     <DropdownMenu>
@@ -50,7 +64,7 @@ export function UserNav() {
             <p className="text-xs leading-none text-muted-foreground">
               Signed in as
             </p>
-            <p className="text-sm font-medium leading-none">email@email.com</p>
+            <p className="text-sm font-medium leading-none">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -62,17 +76,23 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to={`/dashboard/account/`}>
+            <Link to={`/dashboard/account/${user._id}`}>
               <Icons.user className="mr-2 h-4 w-4" />
               My Account
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to={`/dashboard/my-orders/`}>
+            <Link to={`/dashboard/my-orders/${user._id}`}>
               <Icons.orders className="mr-2 h-4 w-4" />
               My Orders
             </Link>
           </DropdownMenuItem>
+          {isAdmin && <DropdownMenuItem asChild>
+            <Link to="/dashboard/all-products">
+              <Settings className="mr-2 h-4 w-4" />
+              Manage Products
+            </Link>
+          </DropdownMenuItem>}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
@@ -98,7 +118,7 @@ export function UserNav() {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={(e) => console.log(e)}>
+        <DropdownMenuItem onClick={(e) => handleSignOut(e)}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

@@ -1,5 +1,5 @@
 import { INewUser } from "@/types";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 
 // ============================================================
 // USER
@@ -34,20 +34,24 @@ export async function signInAccount(user: { email: string; password: string }) {
     }
   }
 }
+
+export async function validateUserByJwt(jwt: string){
+  try {
+    const response = await axios.get('/api/users/validate', {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 export async function signOutAccount() {
   try {
     const res = await axios.get('/api/users/logout')
-    console.log(res)
     return res
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getCurrentUser() {
-  try {
-    const { data } = await axios.get('/api/users/me')
-    return data
   } catch (error) {
     console.log(error);
   }
