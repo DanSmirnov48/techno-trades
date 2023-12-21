@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "nodemon",
+    "client": "npm run dev --prefix client",
     "server": "nodemon server/src/index",
-    "dev": "ts-node-dev --respawn --transpile-only server/src/index.ts"
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [
     "node",
@@ -22,6 +23,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "compression": "^1.7.4",
+    "concurrently": "^8.2.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -32,7 +34,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.1",
     "nodemailer": "^6.9.7",
-    "uploadthing": "^6.0.3",
+    "uploadthing": "^5.7.4",
     "validator": "^13.11.0"
   },
   "devDependencies": {

@@ -8,7 +8,11 @@ export interface UserDocument extends Document {
     firstName: string;
     lastName: string;
     email: string;
-    photo?: string;
+    photo: {
+        key: { type: String },
+        name: { type: String },
+        url: { type: String },
+    },
     role: 'user' | 'admin';
     password: string;
     passwordConfirm: string;
@@ -35,7 +39,11 @@ const userSchema: Schema<UserDocument> = new Schema({
         lowercase: true,
         validate: [validator.isEmail, 'Invalid email address'],
     },
-    photo: String,
+    photo: {
+        key: { type: String },
+        name: { type: String },
+        url: { type: String },
+    },
     role: {
         type: String,
         enum: ['user', 'admin'],

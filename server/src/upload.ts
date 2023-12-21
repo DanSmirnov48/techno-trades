@@ -1,4 +1,12 @@
-import { createUploadthing, type FileRouter } from "uploadthing/server";
+import { config } from "dotenv";
+import asyncHandler from "../src/middlewares/asyncHandler";
+import { createUploadthing, type FileRouter, UTApi } from "uploadthing/server";
+
+config()
+
+export const utapi = new UTApi({
+  apiKey: process.env.UPLOADTHING_SECRET as string
+});
 
 const f = createUploadthing();
 
