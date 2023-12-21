@@ -25,7 +25,11 @@ export const INITIAL_USER = {
   firstName: "",
   lastName: "",
   email: "",
-  photo: "",
+  photo: {
+    key: "",
+    name: "",
+    url: "",
+  },
   role: "",
 };
 
@@ -75,8 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: data.user.email,
             photo: data.user.photo,
             role: data.user.role,
-          });
-
+          })
           user.role === 'admin' && setIsAdmin(true);
           setIsAuthenticated(true);
           return true;

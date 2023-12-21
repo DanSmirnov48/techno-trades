@@ -1,5 +1,11 @@
 import { Icons } from "@/components/icons"
 
+export type UserImage = {
+    key: string;
+    name: string;
+    url: string;
+};
+
 export type Image = {
     _id?: string;
     fileKey: string;
@@ -12,7 +18,7 @@ export type IUser = {
     firstName: string;
     lastName: string;
     email: string;
-    photo: Image;
+    photo: UserImage;
     role: string;
 };
 

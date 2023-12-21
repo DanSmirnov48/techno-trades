@@ -1,4 +1,4 @@
-import { Image } from "@/types";
+import { Image, UserImage } from "@/types";
 import * as z from "zod";
 
 // ============================================================
@@ -26,7 +26,7 @@ export const ProfileUpdateValidation = z.object({
     firstName: z.string().min(2, { message: "Must be at least 2 characters." }),
     lastname: z.string().min(2, { message: "Must be at least 2 characters." }),
     email: z.string().email(),
-    photo: z.custom<Image>(),
+    photo: z.custom<UserImage>(),
 });
 
 export const UpdatePasswordValidation = z.object({

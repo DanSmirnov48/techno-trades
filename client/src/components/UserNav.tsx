@@ -49,12 +49,13 @@ export function UserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-9 w-9">
+          <Avatar className="h-10 w-10">
             <AvatarImage
-              src="https://ui.shadcn.com/avatars/01.png"
-              alt="@shadcn"
+              src={user.photo && user.photo.url}
+              alt={user.email}
+              className="object-cover"
             />
-            <AvatarFallback>SC</AvatarFallback>
+            <AvatarFallback>{user.firstName.slice(0,1)}{user.lastName.slice(0,1)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

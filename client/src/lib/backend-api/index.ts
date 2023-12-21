@@ -1,4 +1,4 @@
-import { INewUser } from "@/types";
+import { INewUser, UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
@@ -56,3 +56,34 @@ export async function signOutAccount() {
     console.log(error);
   }
 }
+
+export async function updateMyAccount(user: { firstName: string; lastName: string; photo?: UserImage }) {
+  try {
+    const session = await axios.patch(`/api/users/update-me`, user);
+    return session;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    const res = await axios.get(`/api/users/${userId}`);
+    return res;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
