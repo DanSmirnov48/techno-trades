@@ -35,7 +35,7 @@ export async function signInAccount(user: { email: string; password: string }) {
   }
 }
 
-export async function validateUserByJwt(jwt: string){
+export async function validateUserByJwt(jwt: string) {
   try {
     const response = await axios.get('/api/users/validate', {
       headers: {
@@ -50,8 +50,8 @@ export async function validateUserByJwt(jwt: string){
 }
 export async function signOutAccount() {
   try {
-    const res = await axios.get('/api/users/logout')
-    return res
+    const response = await axios.get('/api/users/logout')
+    return response
   } catch (error) {
     console.log(error);
   }
@@ -59,8 +59,39 @@ export async function signOutAccount() {
 
 export async function updateMyAccount(user: { firstName: string; lastName: string; photo?: UserImage }) {
   try {
-    const session = await axios.patch(`/api/users/update-me`, user);
-    return session;
+    const response = await axios.patch(`/api/users/update-me`, user);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function updateMyPassword(user: { password: string; passwordConfirm: string; passwordCurrent: string }) {
+  try {
+    const response = await axios.patch(`/api/users/update-my-password`, user);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function deactivateMyAccount() {
+  try {
+    const response = await axios.delete(`/api/users/deactivate-me`);
+    console.log(response)
+    return response;
   } catch (error: any) {
     if (error.response) {
       return { error: error.response.data, status: error.response.status };
@@ -74,8 +105,8 @@ export async function updateMyAccount(user: { firstName: string; lastName: strin
 
 export async function getUserById(userId: string) {
   try {
-    const res = await axios.get(`/api/users/${userId}`);
-    return res;
+    const response = await axios.get(`/api/users/${userId}`);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return { error: error.response.data, status: error.response.status };
@@ -87,3 +118,18 @@ export async function getUserById(userId: string) {
   }
 }
 
+// ============================================================
+// MEDIA
+// ============================================================
+
+export async function deleteMediaFilesByKey(fileKeys: string[]) {
+  try {
+    const response = await axios.delete('/api/media/deleteFiles', {
+      data: { fileKeys },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}

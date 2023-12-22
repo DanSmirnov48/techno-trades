@@ -1,7 +1,23 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { ProfileUpdateValidation } from "@/lib/validation";
+import { useUserContext } from "@/context/AuthContext";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useCallback, useState } from "react";
+import { useDropzone } from "@uploadthing/react/hooks";
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { FileWithPath } from "@uploadthing/react";
+import { useUploadThing } from "@/uploadthing";
+import { cn, convertFileToUrl } from "@/lib/utils";
+import { useUpdateMyAccount } from "@/lib/react-query/queries";
+import { Progress } from "@/components/ui/progress"
+import { Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { deleteMediaFilesByKey } from "@/lib/backend-api";
 import {
   Form,
   FormControl,
@@ -13,26 +29,8 @@ import {
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { ProfileUpdateValidation } from "@/lib/validation";
-import { useUserContext } from "@/context/AuthContext";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-import { useCallback, useEffect, useState } from "react";
-import { Image } from "@/types";
-import { useDropzone } from "@uploadthing/react/hooks";
-import { generateClientDropzoneAccept } from "uploadthing/client";
-import { FileWithPath } from "@uploadthing/react";
-import { useUploadThing } from "@/uploadthing";
-import { cn, convertFileToUrl } from "@/lib/utils";
-import { useUpdateMyAccount } from "@/lib/react-query/queries";
-import { Progress } from "@/components/ui/progress"
-import { Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const UpdateProfile = () => {
   const { toast } = useToast();
@@ -87,10 +85,14 @@ const UpdateProfile = () => {
       })
 
       if (file.length > 0) {
+        // delete the existent user photo from UploadThing ONLY, then upload new one
+        await deleteMediaFilesByKey([user.photo.key])
+        //Upload new photo and save the response
         const UploadFileResponse = await startUpload(file)
+        //extrach the file values from the uplaod resposne
         const { key, name, url } = UploadFileResponse![0]
         console.log(key, name, url)
-
+        //create a new userDetails object with the user photo
         userDetails = ({
           firstName: value.firstName,
           lastName: value.lastname,
@@ -99,7 +101,6 @@ const UpdateProfile = () => {
       }
 
       console.log(userDetails)
-
       const res = await updateMyAccount(userDetails)
       if (res && res.status === 200) {
         checkAuthUser()

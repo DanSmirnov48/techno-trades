@@ -33,4 +33,9 @@ export const UpdatePasswordValidation = z.object({
     currentPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
     newPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
     newPasswordConfirm: z.string().min(8, { message: "Password must be at least 8 characters." })
+}).refine((data) => {
+    return data.newPassword === data.newPasswordConfirm;
+}, {
+    message: "Password do not match",
+    path: ["newPasswordConfirm"]
 });

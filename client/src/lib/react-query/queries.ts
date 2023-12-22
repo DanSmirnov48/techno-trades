@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewUser, IUser, UserImage } from "@/types";
-import { createUserAccount, getUserById, signInAccount, signOutAccount, updateMyAccount, validateUserByJwt } from "../backend-api";
+import { createUserAccount, deactivateMyAccount, getUserById, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, validateUserByJwt } from "../backend-api";
 
 // ============================================================
 // AUTH QUERIES
@@ -51,6 +51,17 @@ export const useUpdateMyAccount = () => {
             });
         },
     });
+};
+
+export const useUpdateMyPassword = () => {
+    return useMutation({
+        mutationFn: (user: { password: string; passwordConfirm: string; passwordCurrent: string }) =>
+            updateMyPassword(user),
+    });
+};
+
+export const useDeactivateMyAccount = () => {
+    return useMutation({ mutationFn: () => deactivateMyAccount() });
 };
 
 export const useGetUserById = (userId: string) => {
