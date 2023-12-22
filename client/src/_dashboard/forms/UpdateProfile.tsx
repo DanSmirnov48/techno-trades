@@ -81,12 +81,12 @@ const UpdateProfile = () => {
       let userDetails = ({
         firstName: value.firstName,
         lastName: value.lastname,
-        photo: user.photo
+        photo: user.photo ? user.photo : undefined
       })
 
       if (file.length > 0) {
         // delete the existent user photo from UploadThing ONLY, then upload new one
-        await deleteMediaFilesByKey([user.photo.key])
+        (user.photo && user.photo.url) && await deleteMediaFilesByKey([user.photo.key])
         //Upload new photo and save the response
         const UploadFileResponse = await startUpload(file)
         //extrach the file values from the uplaod resposne
@@ -124,6 +124,7 @@ const UpdateProfile = () => {
         });
       }
     } catch (error) {
+      console.log(error)
       toast({
         title: "Unknown Error",
         variant: "destructive",

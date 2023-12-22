@@ -19,6 +19,7 @@ import { Icons } from "@/components/icons";
 import { useCreateUserAccount } from "@/lib/react-query/queries";
 import { cn } from "@/lib/utils";
 import { IUser } from "@/types";
+import { useUserContext } from "@/context/AuthContext";
 
 interface AuthResponse {
   data?: any;
@@ -30,6 +31,7 @@ const SignupForm = () => {
 
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { checkAuthUser } = useUserContext();
 
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -48,7 +50,8 @@ const SignupForm = () => {
     try {
       const account: AuthResponse = await createAccount(user);
       
-      if (account.data && account.data.status === "success") {
+      const isUser = await checkAuthUser();
+      if (account.data && account.data.status === "success" && isUser) {
         const user = account.data.data.user as IUser
         toast({
           title: "Success",
