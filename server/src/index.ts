@@ -10,6 +10,7 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
+import mediaRoutes from "./routes/mediaRoutes";
 import rateLimit from 'express-rate-limit'
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
@@ -58,12 +59,9 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
-
-app.use(
-  "/api/uploadthing",
-  createUploadthingExpressHandler({
-    router: uploadRouter,
-  }),
+app.use('/api/media', mediaRoutes)
+app.use("/api/uploadthing",
+  createUploadthingExpressHandler({ router: uploadRouter }),
 );
 
 const PORT = process.env.PORT || 8080;
