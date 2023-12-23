@@ -5,7 +5,7 @@ import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "./components/ui/toaster";
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
-import { Dashboard, Account } from "./_dashboard/pages";
+import { Dashboard, Account, Tables, ProductCreateForm } from "./_dashboard/pages";
 
 export default function App() {
   return (
@@ -26,6 +26,10 @@ export default function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/account/:id" element={<Account />} />
+
+            {/* User Dashboard Routes FOR ADMINS*/}
+            <Route path="/dashboard/data-tables" element={<Tables />} />
+            <Route path="/dashboard/product" element={<ProductCreateForm />} />
           </Route>
 
       </Routes>

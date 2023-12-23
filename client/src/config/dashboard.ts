@@ -13,5 +13,19 @@ export const dashboardConfig: DashboardConfig = {
       icon: "user",
       items: [],
     },
+    {
+      title: "Data Table",
+      for: "admin",
+      href: "/dashboard/data-tables",
+      icon: "table",
+      items: [],
+    },
+    {
+      title: "Create Product",
+      for: "admin",
+      href: "/dashboard/product",
+      icon: "add",
+      items: [],
+    },
   ],
 }

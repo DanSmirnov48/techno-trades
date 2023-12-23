@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             photo: data.user.photo,
             role: data.user.role,
           })
-          user.role === 'admin' && setIsAdmin(true);
+          data.user.role === 'admin' && setIsAdmin(true);
           setIsAuthenticated(true);
           return true;
         }

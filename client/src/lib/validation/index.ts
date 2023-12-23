@@ -1,4 +1,4 @@
-import { Image, UserImage } from "@/types";
+import { ProductImage, UserImage } from "@/types";
 import * as z from "zod";
 
 // ============================================================
@@ -39,3 +39,30 @@ export const UpdatePasswordValidation = z.object({
     message: "Password do not match",
     path: ["newPasswordConfirm"]
 });
+
+// ============================================================
+// PRODUCTS & PRODUCTS TABLE
+// ============================================================
+export const ProductValidation = z.object({
+    name: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 1000 characters." }),
+    image: z.custom<ProductImage[]>(),
+    brand: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 1000 characters." }),
+    category: z.enum(["smartphones", "cameras", "computers", "televisions", "consoles", "audio", "mouse", "keyboard"]),
+    description: z.string().max(5000, { message: "Maximum 5000 characters for the description" }),
+    price: z.coerce.number().min(0, { message: "Price must be a non-negative number" }),
+    countInStock: z.coerce.number().min(0, { message: "Stock must be a non-negative number" }),
+});
+
+export const productTableSchema = z.object({
+    _id: z.string(),
+    name: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 1000 characters." }),
+    brand: z.string(),
+    // slug: z.string(),
+    image: z.custom<ProductImage[]>(),
+    category: z.enum(["smartphones", "cameras", "computers", "televisions", "consoles", "audio", "mouse", "keyboard"]),
+    description: z.string().max(5000, { message: "Maximum 5000 characters for the description" }),
+    price: z.coerce.number().min(0, { message: "Price must be a non-negative number" }),
+    countInStock: z.coerce.number().min(0, { message: "Stock must be a non-negative number" }),
+})
+
+export type ProductType = z.infer<typeof productTableSchema>

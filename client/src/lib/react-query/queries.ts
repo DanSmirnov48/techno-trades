@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
-import { INewUser, IUser, UserImage } from "@/types";
-import { createUserAccount, deactivateMyAccount, getUserById, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, validateUserByJwt } from "../backend-api";
+import { INewProduct, INewUser, IUser, UserImage } from "@/types";
+import { createProduct, createUserAccount, deactivateMyAccount, getProducts, getUserById, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, validateUserByJwt } from "../backend-api";
 
 // ============================================================
 // AUTH QUERIES
@@ -69,5 +69,27 @@ export const useGetUserById = (userId: string) => {
         queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
         queryFn: () => getUserById(userId),
         enabled: !!userId,
+    });
+};
+
+// ============================================================
+// PRODUCT QUERIES
+// ============================================================
+export const useGetProducts = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_PRODUCTS],
+        queryFn: () => getProducts(),
+    });
+};
+
+export const useCreateProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (product: INewProduct) => createProduct(product),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCTS],
+            });
+        },
     });
 };

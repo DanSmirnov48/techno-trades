@@ -1,4 +1,4 @@
-import { INewUser, UserImage } from "@/types";
+import { INewProduct, INewUser, UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
@@ -131,5 +131,28 @@ export async function deleteMediaFilesByKey(fileKeys: string[]) {
     return response;
   } catch (error) {
     console.error(error);
+  }
+}
+
+
+// ============================================================
+// PRODUCTS
+// ============================================================
+
+export async function getProducts() {
+  try {
+    const response = await axios.get(`/api/products`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function createProduct(product: INewProduct) {
+  try {
+    const { data } = await axios.post(`/api/products`, product)
+    return data
+  } catch (error) {
+    console.log(error);
   }
 }

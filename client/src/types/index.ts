@@ -1,16 +1,10 @@
 import { Icons } from "@/components/icons"
 
+//-------------USER TYPES----------------------------------
 export type UserImage = {
     key: string;
     name: string;
     url: string;
-};
-
-export type Image = {
-    _id?: string;
-    fileKey: string;
-    fileName: string;
-    fileUrl: string;
 };
 
 export type IUser = {
@@ -30,6 +24,73 @@ export type INewUser = {
     passwordConfirm: string;
 };
 
+//-------------PRODUCT TYPES----------------------------------
+
+export type Review = {
+    name: string;
+    rating: number;
+    title: string;
+    comment: string;
+    user: string;
+    createdAt: string;
+};
+
+export type ProductImage = {
+    // _id?: string;
+    key: string;
+    name: string;
+    url: string;
+};
+
+export type ProductCategory =
+    | "smartphones"
+    | "cameras"
+    | "computers"
+    | "televisions"
+    | "consoles"
+    | "audio"
+    | "mouse"
+    | "keyboard";
+
+export type Product = {
+    _id?: string;
+    name: string;
+    slug: string;
+    image: ProductImage[];
+    brand: string;
+    category: ProductCategory;
+    description: string;
+    rating?: number;
+    numReviews?: number;
+    price: number;
+    countInStock: number;
+    reviews?: Review[];
+    createdAt?: string;
+    updatedAt?: string;
+};
+
+export type INewProduct = {
+    userId: string;
+    name: string;
+    image: ProductImage[];
+    brand: string;
+    category: ProductCategory;
+    description: string;
+    price: number;
+    countInStock: number;
+};
+
+export type IUpdateProduct = {
+    _id?: string;
+    userId: string;
+    name: string;
+    image: ProductImage[];
+    brand: string;
+    category: ProductCategory;
+    description: string;
+    price: number;
+    countInStock: number;
+};
 
 //-------------NAV TYPES----------------------------------
 export interface NavItem {
