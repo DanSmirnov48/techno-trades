@@ -1,8 +1,6 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { ProfileUpdateValidation } from "@/lib/validation";
 import { useUserContext } from "@/context/AuthContext";
 import { Input } from "@/components/ui/input";
@@ -12,7 +10,7 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { FileWithPath } from "@uploadthing/react";
 import { useUploadThing } from "@/uploadthing";
-import { cn, convertFileToUrl } from "@/lib/utils";
+import { convertFileToUrl } from "@/lib/utils";
 import { useUpdateMyAccount } from "@/lib/react-query/queries";
 import { Progress } from "@/components/ui/progress"
 import { Loader2 } from "lucide-react";
@@ -31,17 +29,16 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const UpdateProfile = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
   const { user, checkAuthUser } = useUserContext();
 
   const [file, setFile] = useState<FileWithPath[]>([]);
   const [fileUrl, setFileUrl] = useState<string>(user.photo && user.photo.url);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const { mutateAsync: updateMyAccount } = useUpdateMyAccount()
+  const { mutateAsync: updateMyAccount, isPending: isLoadingUpdate } = useUpdateMyAccount()
 
   const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
     const newFile = [...acceptedFiles];
@@ -86,7 +83,14 @@ const UpdateProfile = () => {
 
       if (file.length > 0) {
         // delete the existent user photo from UploadThing ONLY, then upload new one
-        (user.photo && user.photo.url) && await deleteMediaFilesByKey([user.photo.key])
+        (user.photo && user.photo.url) && toast.promise(() => deleteMediaFilesByKey([user.photo.key]),
+          {
+            loading: 'Removing your old file...',
+            success: () => { return 'Removed old file'},
+            error: () => {return 'Error deleting files.'},
+          }
+        );
+        // (user.photo && user.photo.url) && await deleteMediaFilesByKey([user.photo.key])
         //Upload new photo and save the response
         const UploadFileResponse = await startUpload(file)
         //extrach the file values from the uplaod resposne
@@ -104,36 +108,14 @@ const UpdateProfile = () => {
       const res = await updateMyAccount(userDetails)
       if (res && res.status === 200) {
         checkAuthUser()
-        toast({
-          title: "Success",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
-          ),
-          description: `Your Profile was successfully updated`,
-          duration: 5000,
-        });
+        toast.success('Your Profile was successfully updated')
       } else {
-        toast({
-          title: "Unknown Error",
-          variant: "destructive",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-          ),
-          description: `Unknown Error at Profile Update`,
-          duration: 5000,
-        });
+        toast.error('Unknown Error at Profile Update')
       }
     } catch (error) {
-      console.log(error)
-      toast({
-        title: "Unknown Error",
-        variant: "destructive",
-        className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-        ),
-        description: `Unknown Error at SignIn: ${error}`,
-        duration: 5000,
-      });
+      toast.error('Unknown Error', {
+        description: `${error}`,
+      })
     }
   };
 
@@ -164,7 +146,7 @@ const UpdateProfile = () => {
                             alt={user.email}
                             className="object-cover"
                           />
-                          <AvatarFallback className="text-3xl font-semibold">{user.firstName.slice(0,1)}{user.lastName.slice(0,1)}</AvatarFallback>
+                          <AvatarFallback className="text-3xl font-semibold">{user.firstName.slice(0, 1)}{user.lastName.slice(0, 1)}</AvatarFallback>
                         </Avatar>
                         <p className="small-regular md:bbase-semibold">Change profile photo</p>
                       </div>
@@ -218,8 +200,20 @@ const UpdateProfile = () => {
             />
 
             {isUploading && <Progress value={uploadProgress} />}
-            <Button type="submit" disabled={isUploading}>
-              {isUploading ? <><Loader2 className="animate-spin h-5 w-5 mr-3" />Uploading...</> : <>Update Profile</>}
+            <Button type="submit" disabled={isUploading || isLoadingUpdate}>
+              {isUploading ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-3" />
+                  Uploading...
+                </>
+              ) : isLoadingUpdate ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-3" />
+                  Uploading...
+                </>
+              ) : (
+                <>Update Product</>
+              )}
             </Button>
 
           </form>

@@ -13,16 +13,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-
 import { SigninValidation } from "@/lib/validation";
 import { Icons, } from "@/components/icons";
 import { useSignInAccount } from "@/lib/react-query/queries";
 import { IUser } from "@/types";
 import { Loader2, Eye, EyeOff } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 interface AuthResponse {
   data?: any;
@@ -31,7 +29,7 @@ interface AuthResponse {
 }
 
 const SigninForm = () => {
-  const { toast } = useToast();
+
   const navigate = useNavigate();
   const { checkAuthUser } = useUserContext();
 
@@ -59,39 +57,18 @@ const SigninForm = () => {
     try {
       const session: AuthResponse = await signInAccount(user);
       if (session.error && session.error.error === "Incorrect email or password") {
-        toast({
-          title: "Login Error",
-          variant: "destructive",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-          ),
-          description: `It seems you have entered wrong details. Plase try Again!`,
-          duration: 5000,
-        });
+        toast.error('Incorrect email or password')
       }
       const isUser = await checkAuthUser();
       if (session.data && session.data.status === "success" && isUser) {
         const user = session.data.data.user as IUser
-        toast({
-          title: "Success",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
-          ),
-          description: `Nice to see you back ${user.firstName}`,
-          duration: 5000,
-        });
+        toast.success(`Nice to see you back ${user.firstName}`)
         navigate("/");
       }
     } catch (error) {
-      toast({
-        title: "Unknown Error",
-        variant: "destructive",
-        className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-        ),
-        description: `Unknown Error at SignIn: ${error}`,
-        duration: 5000,
-      });
+      toast.error('Unknown Error', {
+        description: `Unknown Error at Sign In: ${error}`,
+      })
     }
   };
 

@@ -1,11 +1,9 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import {
@@ -18,19 +16,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 
 import { UpdatePasswordValidation } from "@/lib/validation";
 import { useUpdateMyPassword } from "@/lib/react-query/queries";
-import { useUserContext } from "@/context/AuthContext";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const ResetPassword = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
   // const { user, checkAuthUser } = useUserContext();
-  const { mutateAsync: updateMyPassword } = useUpdateMyPassword()
+  const { mutateAsync: updateMyPassword, isPending } = useUpdateMyPassword()
 
   const form = useForm<z.infer<typeof UpdatePasswordValidation>>({
     resolver: zodResolver(UpdatePasswordValidation),
@@ -50,26 +45,12 @@ const ResetPassword = () => {
     let res = await updateMyPassword(user)
     console.log(res)
     if(res && res.status === 401 && res.error.error === 'Wrong Password'){
-      toast({
-        title: "Incorrect Password Provided",
-        variant: "destructive",
-        className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-        ),
-        duration: 3000,
-      });
+      toast.error('Incorrect Password Provided')
       return
     }
     if(res && res.status === 200 && res.statusText === 'OK'){
       console.log(res.data.data.user._id)
-      toast({
-        title: "Success",
-        className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
-        ),
-        description: `Your Profile was successfully updated`,
-        duration: 5000,
-      });
+      toast.success('Your Profile was successfully updated')
       form.reset()
     }
   };
@@ -138,7 +119,16 @@ const ResetPassword = () => {
               )}
             />
 
-            <Button type="submit">Reset Password</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-3" />
+                  Updating...
+                </>
+              ) : (
+                <>Reset Password</>
+              )}
+            </Button>
           </form>
         </Form>
       </CardContent>

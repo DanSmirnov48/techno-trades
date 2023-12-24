@@ -13,13 +13,13 @@ import { Input } from "@/components/ui/input";
 import { SignupValidation } from "@/lib/validation";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { Loader, Loader2 } from "lucide-react";
 import { Icons } from "@/components/icons";
 import { useCreateUserAccount } from "@/lib/react-query/queries";
 import { cn } from "@/lib/utils";
 import { IUser } from "@/types";
 import { useUserContext } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 interface AuthResponse {
   data?: any;
@@ -29,7 +29,6 @@ interface AuthResponse {
 
 const SignupForm = () => {
 
-  const { toast } = useToast();
   const navigate = useNavigate();
   const { checkAuthUser } = useUserContext();
 
@@ -53,26 +52,13 @@ const SignupForm = () => {
       const isUser = await checkAuthUser();
       if (account.data && account.data.status === "success" && isUser) {
         const user = account.data.data.user as IUser
-        toast({
-          title: "Success",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
-          ),
-          description: `Welcome, ${user.firstName}. Happy shopping!`,
-          duration: 5000,
-        });
+        toast.success(`Welcome, ${user.firstName}. Happy shopping!`)
         navigate("/");
       }
     } catch (error) {
-      toast({
-        title: "Unknown Error",
-        variant: "destructive",
-        className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-        ),
-        description: `Unknown Error at SignIn: ${error}`,
-        duration: 5000,
-      });
+      toast.error('Unknown Error', {
+        description: `${error}`,
+      })
     }
   };
 

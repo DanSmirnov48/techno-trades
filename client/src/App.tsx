@@ -3,7 +3,8 @@ import RootLayout from "./_root/RootLayout";
 import { Home } from "./_root/pages";
 import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
-import { Toaster } from "./components/ui/toaster";
+// import { Toaster } from "./components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
 import { Dashboard, Account, Tables, ProductCreateForm } from "./_dashboard/pages";
 
@@ -22,18 +23,17 @@ export default function App() {
           <Route index element={<Home />} />
         </Route>
 
-          {/* User Dashboard Routes */}
-          <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/account/:id" element={<Account />} />
+        {/* User Dashboard Routes */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/account/:id" element={<Account />} />
 
-            {/* User Dashboard Routes FOR ADMINS*/}
-            <Route path="/dashboard/data-tables" element={<Tables />} />
-            <Route path="/dashboard/product" element={<ProductCreateForm />} />
-          </Route>
-
+          {/* User Dashboard Routes FOR ADMINS*/}
+          <Route path="/dashboard/data-tables" element={<Tables />} />
+          <Route path="/dashboard/product" element={<ProductCreateForm />} />
+        </Route>
       </Routes>
-      <Toaster />
+      <Toaster expand={false} position="top-right" richColors closeButton className=""/>
     </main>
   );
 }

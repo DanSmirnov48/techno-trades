@@ -1,4 +1,4 @@
-import { INewProduct, INewUser, UserImage } from "@/types";
+import { INewProduct, INewUser, IUpdateProduct, UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
@@ -122,17 +122,33 @@ export async function getUserById(userId: string) {
 // MEDIA
 // ============================================================
 
-export async function deleteMediaFilesByKey(fileKeys: string[]) {
-  try {
-    const response = await axios.delete('/api/media/deleteFiles', {
-      data: { fileKeys },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+// export async function deleteMediaFilesByKey(fileKeys: string[]) {
+//   try {
+//     const response = await axios.delete('/api/media/deleteFiles', {
+//       data: { fileKeys },
+//     });
+//     console.log(response);
+//     return response;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+export function deleteMediaFilesByKey(fileKeys: string[]): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await axios.delete('/api/media/deleteFiles', {
+        data: { fileKeys },
+      });
+      console.log(response);
+      resolve(response);
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
 }
+
 
 
 // ============================================================
@@ -151,6 +167,25 @@ export async function getProducts() {
 export async function createProduct(product: INewProduct) {
   try {
     const { data } = await axios.post(`/api/products`, product)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateProduct(product: IUpdateProduct) {
+  try {
+    const  data  = await axios.put(`/api/products/${product._id}`, product)
+    console.log(data)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function deleteProduct(id: any) {
+  try {
+    const { data } = await axios.delete(`/api/products/${id}`)
     return data
   } catch (error) {
     console.log(error);

@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ProductValidation } from "@/lib/validation";
 import { ProductImage } from "@/types";
@@ -28,21 +28,19 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { FileWithPath } from "@uploadthing/react";
 import { useUploadThing } from "@/uploadthing";
-import { cn, convertFileToUrl } from "@/lib/utils";
+import { convertFileToUrl } from "@/lib/utils";
 import { Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useCreateProduct } from "@/lib/react-query/queries";
-import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
-import { ToastAction } from "@/components/ui/toast";
+import { toast } from "sonner";
 
 const ProductCreateForm = () => {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useUserContext();
 
@@ -107,37 +105,16 @@ const ProductCreateForm = () => {
       console.log(newProduct)
 
       if (newProduct && newProduct.message === 'Created Product') {
-        toast({
-          title: "Success",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-semibold bg-green-300 border-none"
-          ),
-          description: "Product created successfully",
-          action: <ToastAction
-            className={cn(
-              buttonVariants({
-                size: "sm",
-                className: " bg-dark-1 rounded-md text-white p-5 border-none"
-              })
-            )}
-            altText="View Product"
-            onClick={() => navigate(`/products/${newProduct.data.slug}`)}
-          >
-            View Product
-          </ToastAction>,
+        toast.success('Product created successfully', {
+          action: {
+            label: 'View Product',
+            onClick: () => navigate(`/products/${newProduct.data.slug}`)
+          },
           duration: 5000,
-        });
+        })
       } else {
-        toast({
-          title: "An Error occured while creating product! Please try again.",
-          variant: "destructive",
-          className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-xl font-bold"
-          ),
-          duration: 5000,
-        });
+        toast.error('An Error occured while creating product! Please try again.')
       }
-
     }
   };
 
