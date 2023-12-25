@@ -45,6 +45,15 @@ import {
 
   EyeOff,
 
+  Smartphone,
+  Camera,
+  Computer,
+  Tv2,
+  Gamepad2,
+  Speaker,
+  Mouse,
+  Keyboard,
+
 } from "lucide-react";
 
 
@@ -95,6 +104,17 @@ export const Icons = {
   heart: Heart,
   close: XSquare,
   bell: Bell,
+
+  //product Catergories
+  smartphone: Smartphone,
+  camera: Camera,
+  computer: Computer,
+  tv: Tv2,
+  consoles: Gamepad2,
+  speakers: Speaker,
+  mouse: Mouse,
+  keyboard: Keyboard,
+
   logo: (props: LucideProps) => (
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' {...props}>
       <path

@@ -89,7 +89,7 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
           {isAdmin && <DropdownMenuItem asChild>
-            <Link to="/dashboard/all-products">
+            <Link to="/dashboard/data-tables">
               <Settings className="mr-2 h-4 w-4" />
               Manage Products
             </Link>

@@ -112,6 +112,9 @@ const ProductCreateForm = () => {
           },
           duration: 5000,
         })
+        form.reset()
+        setFiles([]);
+        setFileUrls([]);
       } else {
         toast.error('An Error occured while creating product! Please try again.')
       }
