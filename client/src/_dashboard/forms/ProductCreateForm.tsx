@@ -131,10 +131,10 @@ const ProductCreateForm = () => {
 
   function FileUploader() {
     return (
-      <>
+      <div className="flex justify-center items-center flex-col border rounded-xl">
         <div
           {...getRootProps()}
-          className="flex justify-center items-center flex-col border rounded-xl cursor-pointer max-h-[300px]"
+          className="cursor-pointer max-h-[300px] w-full"
         >
           <input {...getInputProps()} className="cursor-pointer" />
           <div className="flex justify-center items-center flex-col p-7 h-80 lg:h-[200px]">
@@ -151,19 +151,21 @@ const ProductCreateForm = () => {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
-          {fileUrls.map((fileUrl, index) => (
-            <div key={index} className="relative">
-              <img
-                src={fileUrl}
-                alt={`image-${index}`}
-                className="h-48 lg:h-[200px] w-full rounded-lg object-scale-down border-4 border-dashed p-5"
-              />
-              <X className="absolute top-2 right-2 cursor-pointer" onClick={() => handleRemoveFile(index)} />
-            </div>
-          ))}
-        </div>
-      </>
+        {fileUrls.length !== 0 &&
+          <div className="w-full p-4 grid grid-cols-3 lg:grid-cols-4 gap-4 border-t">
+            {fileUrls.map((fileUrl, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={fileUrl}
+                  alt={`image-${index}`}
+                  className="h-48 lg:h-[200px] w-full rounded-lg object-scale-down border-4 border-dashed p-5"
+                />
+                <X className="absolute top-2 right-2 cursor-pointer" onClick={() => handleRemoveFile(index)} />
+              </div>
+            ))}
+          </div>
+        }
+      </div>
     )
   }
 
