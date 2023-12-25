@@ -4,7 +4,7 @@ import { categories } from "./filters"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { ProductType } from "@/lib/validation"
 import { Badge } from "@/components/ui/badge"
-import { DataTableColumnHeader } from "./data-table-column-header"
+import { DataTableColumnHeader } from "../shared/data-table-column-header"
 
 export const columns: ColumnDef<ProductType>[] = [
   {
