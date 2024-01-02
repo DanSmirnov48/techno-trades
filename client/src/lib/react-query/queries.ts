@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
-import { INewProduct, INewUser, IUser, UserImage } from "@/types";
-import { createProduct, createUserAccount, deactivateMyAccount, getProducts, getUserById, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, validateUserByJwt } from "../backend-api";
+import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
+import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 
 // ============================================================
 // AUTH QUERIES
@@ -82,11 +82,63 @@ export const useGetProducts = () => {
     });
 };
 
+export const useGetProductById = (productId?: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_PRODUCT_BY_ID, productId],
+        queryFn: () => getProuctById(productId),
+        enabled: !!productId,
+    });
+};
+
+export const useGetProductBySlug = (slug?: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_PRODUCT_BY_SLUG, slug],
+        queryFn: () => getProuctBySlug(slug),
+        enabled: !!slug,
+    });
+};
+
 export const useCreateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (product: INewProduct) => createProduct(product),
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCTS],
+            });
+        },
+    });
+};
+
+export const useUpdateProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (product: IUpdateProduct) => updateProduct(product),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCTS],
+            });
+        },
+    });
+};
+
+export const useDeleteProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: any) => deleteProduct(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCTS],
+            });
+        },
+    });
+};
+
+export const useSetProductDiscount = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (product: { id: string; discountedPrice?: number; isDiscounted: boolean }) => setProductDiscount(product),
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_PRODUCTS],
             });

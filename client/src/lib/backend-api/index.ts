@@ -1,4 +1,4 @@
-import { INewProduct, INewUser, IUpdateProduct, UserImage } from "@/types";
+import { INewProduct, INewUser, IUpdateProduct, Product, UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
@@ -164,6 +164,32 @@ export async function getProducts() {
   }
 }
 
+export async function getProuctById(productId?: string) {
+  try {
+    if (productId) {
+      const { data } = await axios.get(`/api/products/${productId}/admin`);
+      return data as Product;
+    } else {
+      console.log("no id prodcut Id provided")
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getProuctBySlug(slug?: string) {
+  try {
+    if (slug) {
+      const response = await axios.get(`/api/products/${slug}`);
+      return response.data.data as Product
+    } else {
+      console.log("no prodcut slug provided")
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function createProduct(product: INewProduct) {
   try {
     const { data } = await axios.post(`/api/products`, product)
@@ -186,6 +212,16 @@ export async function updateProduct(product: IUpdateProduct) {
 export async function deleteProduct(id: any) {
   try {
     const { data } = await axios.delete(`/api/products/${id}`)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function setProductDiscount(product: { id: string; discountedPrice?: number; isDiscounted: boolean }) {
+  try {
+    const  data  = await axios.patch(`/api/products/${product.id}/update-discount`, product)
+    console.log(data)
     return data
   } catch (error) {
     console.log(error);
