@@ -12,7 +12,7 @@ import { ObjectId } from "mongoose";
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
         const products = await ProductModel.find();
-        return res.status(200).json({ products });
+        return res.status(200).json({ size: products.length, products });
     } catch (error) {
         console.log(error);
         return res.sendStatus(400);
@@ -28,6 +28,19 @@ export const getProductById = asyncHandler(
             res.status(404);
             throw new Error("Product not found");
         }
+    }
+);
+
+export const getProductBySlug = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { slug } = req.params;
+        const product = await ProductModel.findOne({ slug });
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product by slug not found' });
+        }
+
+        return res.status(200).json({ data: product });
     }
 );
 
@@ -80,7 +93,7 @@ export const updateProduct = asyncHandler(
                 res.status(500).json({ error: "Product update failed" });
             }
             res
-                .status(201)
+                .status(200)
                 .json({ message: "Product Updated", data: updatedProduct })
                 .end();
         } catch (error) {
@@ -102,3 +115,48 @@ export const deleteProduct = asyncHandler(
         }
     }
 );
+
+export const setProductDiscount = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { isDiscounted, discountedPrice } = req.body;
+
+        try {
+            const product = await ProductModel.findById(req.params.id);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            // Update discount-related fields
+            if (isDiscounted !== undefined) {
+                product.isDiscounted = isDiscounted;
+
+                // If ending the discount, reset the discount-related fields
+                if (!isDiscounted) {
+                    product.discountedPrice = undefined;
+                }
+            }
+
+            // Optionally update discountedPrice if provided
+            if (discountedPrice !== undefined) {
+                // Check if discounted price is less than or equal to normal price
+                if (isDiscounted && discountedPrice > product.price) {
+                    return res.status(400).json({ message: 'Discounted price cannot exceed normal price' });
+                }
+                product.discountedPrice = discountedPrice;
+            }
+
+            // Save the updated product
+            const updatedProduct = await product.save();
+
+            res
+                .status(200)
+                .json({ message: "Product Updated", data: updatedProduct })
+                .end();
+        } catch (error) {
+            console.log("Error while trying to update product", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+);
+

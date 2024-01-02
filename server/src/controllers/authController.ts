@@ -27,7 +27,7 @@ const createSendToken = (user: UserDocument, statusCode: number, req: Request, r
 
     res.cookie('jwt', token, {
         expires: expirationDate,
-        httpOnly: true,
+        httpOnly: false,
         secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     });
 
@@ -66,9 +66,8 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
     const user = await User.findOne({ email }).select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-        return next(new Error('Incorrect email or password'));
+        return res.status(401).json({ error: 'Incorrect email or password' });
     }
-    console.log(user)
     // // 3) If everything ok, send token to client
     createSendToken(user, 200, req, res);
 });
@@ -135,6 +134,28 @@ export const restrictTo = (...roles: Array<UserDocument['role']>) => {
         next();
     };
 };
+
+export const validateJWT = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    // Verify and decode the JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+
+    // Retrieve user from the database using the decoded user ID
+    const user = await User.findById(decoded.id)
+
+    if (!user) {
+        return res.status(401).json({ error: 'Invalid token - user not found' });
+    }
+
+    res.status(200).json({ user });
+    res.locals.user = user;
+    // next();
+});
 
 export const forgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // 1) Get user based on POSTed email
@@ -207,19 +228,18 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
     // 1) Get user from collection
     const user = await User.findById(req.user?._id).select('+password');
 
-    console.log({user})
+    if (user) {
+        // 2) Check if POSTed current password is correct 
+        if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+            return res.status(401).json({ error: "Wrong Password" });
+        }
 
-    // 2) Check if POSTed current password is correct 
-    //@ts-ignore
-    if (!(await user?.correctPassword(req.body.passwordCurrent, user.password))) {
-        return next(new Error('Your current password is wrong.'));
+        // 3) If so, update password
+        user.password = req.body.password;
+        user.passwordConfirm = req.body.passwordConfirm;
+        await user.save();
+        // User.findByIdAndUpdate will NOT work as intended!
     }
-
-    // 3) If so, update password
-    user!.password = req.body.password;
-    user!.passwordConfirm = req.body.passwordConfirm;
-    await user?.save();
-    // User.findByIdAndUpdate will NOT work as intended!
 
     // 4) Log user in, send JWT
     createSendToken(user!, 200, req, res);

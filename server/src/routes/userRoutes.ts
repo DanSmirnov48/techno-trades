@@ -22,25 +22,25 @@ import {
 const router = express.Router();
 
 // User AUTHENTICATION
-router.post("/signup", signup);
-router.post("/login", logIn);
-router.get('/logout', logout);
-router.get("/validate", validateJWT);
+router.route("/signup").post(signup);                                 //✔️
+router.route("/login").post(logIn);                                   //✔️
+router.route('/logout').get(logout);                                  //✔️
+router.route("/validate").get(validateJWT);                           //✔️
 
 // Password RESET and UPDATE for UNAUTHORIZED users
-router.post("/forgot-password", forgotPassword);
-router.patch("/reset-password/:token", resetPassword);
+router.route("/forgot-password").post(forgotPassword);                //❌
+router.route("/reset-password/:token").patch(resetPassword);          //❌
 
 // Profile UPDATE for AUTHORIZED users
-router.patch("/update-my-password", protect, updatePassword);
-router.patch("/update-me", protect, updateMe);
-router.delete("/deactivate-me", protect, deleteMe);
+router.route("/update-my-password").patch(protect, updatePassword);   //✔️
+router.route("/update-me").patch(protect, updateMe);                  //✔️
+router.route("/deactivate-me").delete(protect, deleteMe);             //✔️
 
 // Get CURRENT AUTHORIZED user
-router.get("/me", protect, getMe, getCurentUser);
+router.route("/me").get(protect, getMe, getCurentUser);               //❌ 
 
-router.route("/").get(getAllUsers);
+router.route("/").get(getAllUsers);                                   //✔️
 
-router.route("/:id").get(getUserById);
+router.route("/:id").get(getUserById);                                //✔️
 
 export default router;

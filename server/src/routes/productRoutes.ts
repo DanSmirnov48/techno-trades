@@ -5,6 +5,8 @@ import {
     createProduct,
     deleteProduct,
     updateProduct,
+    getProductBySlug,
+    setProductDiscount,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -14,9 +16,15 @@ router.route("/")
     .get(getProducts)
     .post(protect, restrictTo("admin"), createProduct);
 
+router.route('/:slug')
+    .get(getProductBySlug);
+
 router.route("/:id")
     .get(getProductById)
     .put(protect, restrictTo("admin"), updateProduct)
     .delete(protect, restrictTo("admin"), deleteProduct);
+
+router.route("/:id/update-discount")
+    .patch(protect, restrictTo("admin", "user"), setProductDiscount)
 
 export default router;
