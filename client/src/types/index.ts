@@ -36,7 +36,7 @@ export type Review = {
 };
 
 export type ProductImage = {
-    // _id?: string;
+    _id?: string;
     key: string;
     name: string;
     url: string;
@@ -64,6 +64,8 @@ export type Product = {
     numReviews?: number;
     price: number;
     countInStock: number;
+    isDiscounted: boolean;
+    discountedPrice?: number;
     reviews?: Review[];
     createdAt?: string;
     updatedAt?: string;

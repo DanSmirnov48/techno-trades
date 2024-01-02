@@ -9,6 +9,6 @@ export default function ProductsTable() {
       <h1>loading</h1>
     </>
   ) : (
-    <DataTable columns={columns} data={data.data.products} />
+    <DataTable columns={columns} data={data?.data.products} />
   );
 }

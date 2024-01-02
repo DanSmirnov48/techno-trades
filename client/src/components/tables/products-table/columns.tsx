@@ -3,8 +3,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { categories } from "./filters"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { ProductType } from "@/lib/validation"
-import { Badge } from "@/components/ui/badge"
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
+import { X } from "lucide-react"
+import { calculateDiscountPercentage } from "@/lib/utils"
 
 export const columns: ColumnDef<ProductType>[] = [
   {
@@ -61,7 +62,7 @@ export const columns: ColumnDef<ProductType>[] = [
 
       return (
         <div className="flex space-x-2">
-          {lowStock && <Badge variant="destructive">Low Stock</Badge>}
+          {lowStock && <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-800 ring-1 ring-inset ring-red-600/20">Low Stock</span>}
           <span className="max-w-[280px] truncate font-medium">
             {row.getValue("name")}
           </span>
@@ -72,6 +73,33 @@ export const columns: ColumnDef<ProductType>[] = [
   {
     accessorKey: "brand",
     header: "Brand",
+  },
+  {
+    accessorKey: "discountedPrice",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Discount" />
+    ),
+    cell: ({ row }) => {
+      const discountedPrice = row.getValue("discountedPrice") as number || undefined;
+      const normalPrice = parseFloat(row.getValue("price"))
+      const discount = calculateDiscountPercentage({ normalPrice, discountedPrice })
+
+      // const formatted = discountedPrice && new Intl.NumberFormat("en-US", {
+      //   style: "currency",
+      //   currency: "GBP",
+      // }).format(discountedPrice)
+
+      return (
+        <div className="flex space-x-2 ml-2">
+          {discountedPrice == undefined && <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-700 ring-1 ring-inset ring-yellow-700/10"><X /></span>}
+          {discountedPrice && <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-800 ring-1 ring-inset ring-green-600/20">{discount}</span>}
+          {/* {discountedPrice && <span className="flex items-center">{formatted}</span>} */}
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
   },
   {
     accessorKey: "price",
@@ -102,6 +130,6 @@ export const columns: ColumnDef<ProductType>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row}/>
+    cell: ({ row }) => <DataTableRowActions row={row} />
   },
 ]

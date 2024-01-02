@@ -24,6 +24,7 @@ import DeleteDialog from "./dialogs/delete-dialog";
 import ViewDialog from "./dialogs/view-dialog";
 import EditDialog from "./dialogs/edit-dialog";
 import MediaDialog from "./dialogs/media-dialog";
+import SetDiscount from "./dialogs/set-discount";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -47,6 +48,12 @@ export function DataTableRowActions<TData>({
   const handleEditClick = () => {
     setDialogContent(
       <EditDialog product={product} setOpen={setOpen} />
+    );
+  };
+
+  const handleDiscountClick = () => {
+    setDialogContent(
+      <SetDiscount product={product} setOpen={setOpen} />
     );
   };
 
@@ -86,6 +93,13 @@ export function DataTableRowActions<TData>({
             <DropdownMenuItem>
               <Icons.edit className='mr-2 h-4 w-4' />
               Edit Product
+            </DropdownMenuItem>
+          </DialogTrigger>
+
+          <DialogTrigger asChild onClick={handleDiscountClick}>
+            <DropdownMenuItem>
+              <Icons.discount className='mr-2 h-4 w-4' />
+              Set Discount
             </DropdownMenuItem>
           </DialogTrigger>
 
