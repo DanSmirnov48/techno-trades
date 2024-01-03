@@ -61,7 +61,7 @@ export const columns: ColumnDef<ProductType>[] = [
       const lowStock = Number(row.getValue("countInStock")) < 10
 
       return (
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-2">
           {lowStock && <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-800 ring-1 ring-inset ring-red-600/20">Low Stock</span>}
           <span className="max-w-[280px] truncate font-medium">
             {row.getValue("name")}
