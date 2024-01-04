@@ -1,10 +1,80 @@
 import { create } from 'zustand';
 
+interface SortCategory {
+    value: string;
+    label: string;
+}
+
+interface ShowPerPageOption {
+    value: string;
+    label: string;
+}
+
+export const sortCategories: SortCategory[] = [
+    {
+        value: "relevance",
+        label: "Sort By: Relevance",
+    },
+    {
+        value: "brandAsc",
+        label: "Sort By: Brand - A to Z",
+    },
+    {
+        value: "brandDesc",
+        label: "Sort By: Brand - Z to A",
+    },
+    {
+        value: "priceAsc",
+        label: "Sort By: Price - low to high",
+    },
+    {
+        value: "priceDesc",
+        label: "Sort By: Price - hight to low",
+    },
+    {
+        value: "customerRating",
+        label: "Sort By: Customer Rating",
+    },
+];
+
+export const showPerPage: ShowPerPageOption[] = [
+    {
+        value: "10",
+        label: "Show: 10",
+    },
+    {
+        value: "30",
+        label: "Show: 30",
+    },
+    {
+        value: "all",
+        label: "Show: All",
+    },
+];
+
+interface SortingState {
+    isChecked: boolean;
+    selectedSort: string;
+    selectedShowPerPage: string;
+    setSort: (value: string) => void;
+    toggleCheckbox: () => void;
+    setShowPerPage: (value: string) => void;
+}
+
 interface FilteringState {
     selectedBrands: string[];
     toggleBrand: (brand: string) => void;
     setBrands: (brands: string[]) => void;
 }
+
+export const useSorting = create<SortingState>((set) => ({
+    isChecked: false,
+    selectedSort: sortCategories[0].value,
+    selectedShowPerPage: showPerPage[0].value,
+    toggleCheckbox: () => set((state) => ({ isChecked: !state.isChecked })),
+    setSort: (value) => set(() => ({ selectedSort: value })),
+    setShowPerPage: (value) => set(() => ({ selectedShowPerPage: value })),
+}));
 
 export const useFiltering = create<FilteringState>((set) => ({
     selectedBrands: [],

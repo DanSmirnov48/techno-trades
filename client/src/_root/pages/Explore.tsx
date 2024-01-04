@@ -1,9 +1,10 @@
-import { ProductFilter, GridProductList, ListProductList } from "@/components/root";
-import { useFiltering } from "@/hooks/store";
+import { ProductFilters, ProductSorting, GridProductList, ListProductList } from "@/components/root";
+import { useSorting, useFiltering } from "@/hooks/store";
 import { useGetProducts } from "@/lib/react-query/queries";
 
 const Explore = () => {
   const { data, isPending: isProductLoading } = useGetProducts();
+  const { isChecked } = useSorting();
   const { selectedBrands } = useFiltering();
 
   const filteredProducts =
@@ -21,14 +22,15 @@ const Explore = () => {
             {isProductLoading ? (
               "loading..."
             ) : (
-              <ProductFilter />
+              <ProductFilters />
             )}
           </div>
           <div className="flex flex-col basis-3/4 ml-5">
+            <ProductSorting />
             {isProductLoading ? (
               "loading..."
             ) : (
-              true ?
+              isChecked ?
                 <GridProductList products={filteredProducts} />
                 :
                 <ListProductList products={filteredProducts} />
