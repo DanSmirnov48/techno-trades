@@ -1,11 +1,12 @@
 import { ProductFilters, ProductSorting, GridProductList, ListProductList } from "@/components/root";
-import { useSorting, useFiltering } from "@/hooks/store";
+import { useSorting, useFiltering, useRatingFiltering } from "@/hooks/store";
 import { useGetProducts } from "@/lib/react-query/queries";
 
 const Explore = () => {
   const { data, isPending: isProductLoading } = useGetProducts();
   const { isChecked } = useSorting();
   const { selectedBrands } = useFiltering();
+  const { minRating, maxRating } = useRatingFiltering();
 
   const filteredProducts =
     data &&

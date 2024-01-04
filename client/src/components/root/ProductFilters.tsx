@@ -1,5 +1,6 @@
 import { Separator } from "../ui/separator";
 import ProductBrandFilters from "./ProductBrandFilters";
+import { ProductRatingFilter } from "./ProductRatingFilter";
 
 const ProductFilters: React.FC = () => {
   return (
@@ -8,6 +9,7 @@ const ProductFilters: React.FC = () => {
       <Separator />
       <div className="flex flex-col h-full mx-8">
         <ProductBrandFilters />
+        <ProductRatingFilter />
       </div>
     </div>
   );

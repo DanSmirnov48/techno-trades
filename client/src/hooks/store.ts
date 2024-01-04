@@ -67,6 +67,12 @@ interface FilteringState {
     setBrands: (brands: string[]) => void;
 }
 
+interface RatingFilteringState {
+    minRating: number | null;
+    maxRating: number | null;
+    setRating: (min: number | null, max: number | null) => void;
+}
+
 export const useSorting = create<SortingState>((set) => ({
     isChecked: false,
     selectedSort: sortCategories[0].value,
@@ -85,4 +91,14 @@ export const useFiltering = create<FilteringState>((set) => ({
                 : [...state.selectedBrands, brand],
         })),
     setBrands: (brands) => set(() => ({ selectedBrands: brands })),
+}));
+
+export const useRatingFiltering = create<RatingFilteringState>((set) => ({
+    minRating: null,
+    maxRating: null,
+    setRating: (min, max) =>
+        set(() => ({
+            minRating: min,
+            maxRating: max,
+        })),
 }));
