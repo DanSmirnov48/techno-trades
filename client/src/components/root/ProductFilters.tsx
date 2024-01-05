@@ -1,5 +1,6 @@
 import { Separator } from "../ui/separator";
 import ProductBrandFilters from "./ProductBrandFilters";
+import { ProductPriceFilter } from "./ProductPriceFilter";
 import { ProductRatingFilter } from "./ProductRatingFilter";
 
 const ProductFilters: React.FC = () => {
@@ -8,6 +9,7 @@ const ProductFilters: React.FC = () => {
       <h1 className="text-left text-2xl font-semibold py-4 px-8 text-dark-4">Filters</h1>
       <Separator />
       <div className="flex flex-col h-full mx-8">
+        <ProductPriceFilter />
         <ProductBrandFilters />
         <ProductRatingFilter />
       </div>
