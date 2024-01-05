@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import {categories} from '@/components/tables/products-table/filters'
+import { categories } from '@/components/tables/products-table/filters'
 import { NewArrivals, Promotion } from "@/components/root";
+import { buttonVariants } from "@/components/ui/button";
 
 const Home = () => {
   function Hero() {
@@ -17,16 +17,19 @@ const Home = () => {
             height: "550px",
           }}
         >
-          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[55%]">
+          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
               Unleash Innovation in Every Byte.
             </h1>
             <p className="text-xl md:text-2xl lg:text-3xl mt-2 text-dark-3 font-base">
               Explore a World of Cutting-Edge Tech
             </p>
-            <Button className="w-32 mt-6 md:mt-10 bg-dark-4 py-4 md:py-6 px-6 md:px-10">
+            <Link
+              to="/explore"
+              className={buttonVariants({className: "text-sm w-36"})}
+            >
               Shop Now
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -38,7 +41,7 @@ const Home = () => {
       <>
         <div className="flex flex-row justify-between items-center my-10 font-jost">
           <h1 className="text-dark-3 text-3xl">Shop by Categories</h1>
-          <Link to={"/shop"} className="text-lg">
+          <Link to={"/explore"} className="text-lg">
             Show All
           </Link>
         </div>
@@ -54,7 +57,7 @@ const Home = () => {
                   />
                 </div>
 
-                <Link to={`/shop?category=${status.value}`}>
+                <Link to={`/explore?category=${status.value}`}>
                   <div className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white">
                     <status.icon className="h-5 w-5 mr-3 text-muted-foreground md:hidden" />
                     <h5 className="text-xl font-medium text-dark-4 font-jost">
@@ -73,7 +76,7 @@ const Home = () => {
   return (
     <div className="flex flex-col flex-1 min-h-screen items-center">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
-      {Hero()}
+        {Hero()}
         <div className="my-32" />
         {ShopCategories()}
         <div className="my-32" />

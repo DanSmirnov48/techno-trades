@@ -1,9 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import RootLayout from "./_root/RootLayout";
-import { Home } from "./_root/pages";
+import { Explore, Home, ProductDetails } from "./_root/pages";
 import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
-// import { Toaster } from "./components/ui/toaster";
 import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
 import { Dashboard, Account, Tables, ProductCreateForm } from "./_dashboard/pages";
@@ -21,6 +20,8 @@ export default function App() {
         {/* Public Routes */}
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/products/:slug" element={<ProductDetails />} />
         </Route>
 
         {/* User Dashboard Routes */}
