@@ -1,5 +1,5 @@
 import { ProductFilters, ProductSorting, GridProductList, ListProductList } from "@/components/root";
-import { useSorting, useFiltering, useRatingFiltering } from "@/hooks/store";
+import { useSorting, useFiltering, useRatingFiltering, useStockFiltering } from "@/hooks/store";
 import { useGetProducts } from "@/lib/react-query/queries";
 import { useLocation } from "react-router-dom";
 
@@ -7,6 +7,7 @@ const Explore = () => {
   const location = useLocation();
   const { isChecked } = useSorting();
   const { selectedBrands } = useFiltering();
+  const { hideOutOfStock } = useStockFiltering();
   const { minRating, maxRating } = useRatingFiltering()
   const { data, isPending: isProductLoading } = useGetProducts();
 
