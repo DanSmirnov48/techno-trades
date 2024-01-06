@@ -6,10 +6,10 @@ export default function Dashboard() {
   return (
     <Shell variant={"default"}>
       <Tabs defaultValue="products" className="w-full">
-        <TabsList>
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
+        <TabsList className="w-full">
+          <TabsTrigger className="w-full" value="products">Products</TabsTrigger>
+          <TabsTrigger className="w-full" value="orders">Orders</TabsTrigger>
+          <TabsTrigger className="w-full" value="users">Users</TabsTrigger>
         </TabsList>
         <TabsContent value="products">
           <ProductsTable />

@@ -5,7 +5,7 @@ import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
-import { Dashboard, Account, Tables, ProductCreateForm } from "./_dashboard/pages";
+import { Dashboard, Account, Tables, ProductCreateForm, Notifications, Appearance } from "./_dashboard/pages";
 
 export default function App() {
   return (
@@ -32,6 +32,8 @@ export default function App() {
           {/* User Dashboard Routes FOR ADMINS*/}
           <Route path="/dashboard/data-tables" element={<Tables />} />
           <Route path="/dashboard/product" element={<ProductCreateForm />} />
+          <Route path="/dashboard/notifications/:id" element={<Notifications />} />
+          <Route path="/dashboard/appearance/:id" element={<Appearance />} />
         </Route>
       </Routes>
       <Toaster expand={false} position="top-right" richColors closeButton className=""/>
