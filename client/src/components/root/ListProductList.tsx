@@ -16,12 +16,12 @@ const ListProductList = ({ products }: ListProductListProps) => {
   return (
     <>
       <ul className="w-full grid grid-cols-1 gap-7">
-        {products.slice(0, 4).map((product) => (
+        {products.map((product) => (
           <li key={product._id} className="grid grid-flow-col gap-4 relative bg-white rounded-xl p-4 shadow-lg ring-1 ring-inset ring-dark-4/20">
             <div className="col-span-3 flex flex-col gap-5 w-full h-full py-5">
               <Link to={`/products/${product.slug}`}>
                 <div className="relative flex overflow-hidden items-center justify-center">
-                  <img className="w-52 h-52" src={product.image[0].url} />
+                  <img className="w-52 h-52 object-scale-down" src={product.image[0].url}/>
                 </div>
               </Link>
             </div>

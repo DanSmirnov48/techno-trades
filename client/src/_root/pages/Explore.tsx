@@ -1,19 +1,23 @@
 import { ProductFilters, ProductSorting, GridProductList, ListProductList } from "@/components/root";
 import { useSorting, useFiltering, useRatingFiltering } from "@/hooks/store";
 import { useGetProducts } from "@/lib/react-query/queries";
+import { useLocation } from "react-router-dom";
 
 const Explore = () => {
-  const { data, isPending: isProductLoading } = useGetProducts();
+  const location = useLocation();
   const { isChecked } = useSorting();
   const { selectedBrands } = useFiltering();
-  const { minRating, maxRating } = useRatingFiltering();
+  const { minRating, maxRating } = useRatingFiltering()
+  const { data, isPending: isProductLoading } = useGetProducts();
 
-  const filteredProducts =
-    data &&
-    data.data.products.filter((product: { brand: string }) => {
-      if (selectedBrands.length === 0) return true;
-      return selectedBrands.includes(product.brand);
-    });
+  const params = new URLSearchParams(location.search);
+  const category = params.get('category');
+
+  const filteredProducts = data && data.data.products.filter((product: { brand: string; category: string; }) => {
+    if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) return false;
+    if (category && product.category !== category) return false;
+    return true;
+  });
 
   return (
     <div className="flex flex-col flex-1 min-h-screen items-center bg-gray-100">

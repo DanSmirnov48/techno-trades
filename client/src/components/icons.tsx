@@ -53,6 +53,11 @@ import {
   Speaker,
   Mouse,
   Keyboard,
+  Image,
+  Percent,
+  Store,
+  LayoutGrid,
+  List,
 
 } from "lucide-react";
 
@@ -101,9 +106,14 @@ export const Icons = {
   arrowRight: ChevronRight,
   billing: CreditCard,
   truck: Truck,
+  store: Store,
   heart: Heart,
   close: XSquare,
   bell: Bell,
+  media: Image,
+  discount: Percent,
+  grid: LayoutGrid,
+  list: List,
 
   //product Catergories
   smartphone: Smartphone,

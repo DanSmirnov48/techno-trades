@@ -77,10 +77,13 @@ const ProductDetails = () => {
               </span>
             </>
           }
-          {product?.countInStock && product?.countInStock <= 5 &&
+          {product && product.countInStock === 0 &&
+            <span className="inline-flex items-center rounded-md bg-red-50 px-3 py-1 text-base font-semibold text-red-800 ring-1 ring-inset ring-red-600/20">Out of Stock</span>
+          }
+          {product && (product.countInStock <= 5 && product.countInStock !== 0) &&
             <span className="inline-flex items-center rounded-md bg-red-50 px-3 py-1 text-base font-semibold text-red-800 ring-1 ring-inset ring-red-600/20">Low Stock</span>
           }
-          {product && isProductAddedWithinNDays({ product, nDays: 365 }) &&
+          {product && isProductAddedWithinNDays({ product, nDays: 75 }) &&
             <span className="inline-flex items-center rounded-md bg-yellow-50 px-3 py-1 text-base font-semibold text-yellow-800 ring-1 ring-inset ring-yellow-600/20">New Arrival</span>
           }
         </div>
