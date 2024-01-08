@@ -21,28 +21,28 @@ const ProductSorting: React.FC = () => {
     selectedShowPerPage, setShowPerPage,
   } = useSorting();
 
-  // Update URL search params when sorting options change
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    params.set('sort', selectedSort);
-    params.set('show', selectedShowPerPage);
-    navigate({ search: `?${params.toString()}` });
-  }, [location.search, navigate, selectedSort, selectedShowPerPage]);
+  // // Update URL search params when sorting options change
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   params.set('sort', selectedSort);
+  //   params.set('show', selectedShowPerPage);
+  //   navigate({ search: `?${params.toString()}` });
+  // }, [location.search, navigate, selectedSort, selectedShowPerPage]);
 
-  // Parse URL search params on component mount
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const sortParam = params.get('sort');
-    const showParam = params.get('show');
+  // // Parse URL search params on component mount
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const sortParam = params.get('sort');
+  //   const showParam = params.get('show');
 
-    if (sortParam && sortCategories.some((category) => category.value === sortParam)) {
-      setSort(sortParam);
-    }
+  //   if (sortParam && sortCategories.some((category) => category.value === sortParam)) {
+  //     setSort(sortParam);
+  //   }
 
-    if (showParam && showPerPage.some((option) => option.value === showParam)) {
-      setShowPerPage(showParam);
-    }
-  }, [location.search, setSort, setShowPerPage]);
+  //   if (showParam && showPerPage.some((option) => option.value === showParam)) {
+  //     setShowPerPage(showParam);
+  //   }
+  // }, [location.search, setSort, setShowPerPage]);
 
   return (
     <div className="flex justify-between mb-3">

@@ -39,16 +39,16 @@ export const sortCategories: SortCategory[] = [
 
 export const showPerPage: ShowPerPageOption[] = [
     {
-        value: "10",
-        label: "Show: 10",
+        value: "2",
+        label: "Show: 2",
     },
     {
-        value: "30",
-        label: "Show: 30",
+        value: "4",
+        label: "Show: 4",
     },
     {
-        value: "all",
-        label: "Show: All",
+        value: "6",
+        label: "Show: 6",
     },
 ];
 

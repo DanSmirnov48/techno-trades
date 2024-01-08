@@ -164,6 +164,16 @@ export async function getProducts() {
   }
 }
 
+export async function getPaginatedProducts(page: number, pageSize: number) {
+  try {
+    const response = await axios.get(`/api/products/pp`, {
+      params: { page, pageSize },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
 export async function getProuctById(productId?: string) {
   try {
     if (productId) {
@@ -201,7 +211,7 @@ export async function createProduct(product: INewProduct) {
 
 export async function updateProduct(product: IUpdateProduct) {
   try {
-    const  data  = await axios.put(`/api/products/${product._id}`, product)
+    const data = await axios.put(`/api/products/${product._id}`, product)
     console.log(data)
     return data
   } catch (error) {
@@ -220,7 +230,7 @@ export async function deleteProduct(id: any) {
 
 export async function setProductDiscount(product: { id: string; discountedPrice?: number; isDiscounted: boolean }) {
   try {
-    const  data  = await axios.patch(`/api/products/${product.id}/update-discount`, product)
+    const data = await axios.patch(`/api/products/${product.id}/update-discount`, product)
     console.log(data)
     return data
   } catch (error) {

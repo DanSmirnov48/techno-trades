@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
+import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 
 // ============================================================
 // AUTH QUERIES
@@ -79,6 +79,13 @@ export const useGetProducts = () => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_PRODUCTS],
         queryFn: () => getProducts(),
+    });
+};
+
+export const useGetPaginatedProducts = (page: number, pageSize: number) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_PRODUCTS, page, pageSize],
+        queryFn: () => getPaginatedProducts(page, pageSize),
     });
 };
 

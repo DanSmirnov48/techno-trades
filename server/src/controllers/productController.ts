@@ -19,6 +19,24 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     }
 });
 
+export const getPaginatedProducts = asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { page = 1, pageSize = 10 } = req.query;
+      console.log(page, pageSize)
+  
+      const products = await ProductModel.find()
+        .skip((+page - 1) * +pageSize)
+        .limit(+pageSize);
+  
+      const totalProducts = await ProductModel.countDocuments();
+  
+      return res.status(200).json({ totalProducts, products });
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(400);
+    }
+  });
+
 export const getProductById = asyncHandler(
     async (req: Request, res: Response) => {
         const product = await ProductModel.findById(req.params.id);

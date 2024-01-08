@@ -7,6 +7,7 @@ import {
     updateProduct,
     getProductBySlug,
     setProductDiscount,
+    getPaginatedProducts,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -15,6 +16,9 @@ const router = express.Router();
 router.route("/")
     .get(getProducts)
     .post(protect, restrictTo("admin"), createProduct);
+
+router.route("/pp")
+    .get(getPaginatedProducts)
 
 router.route('/:slug')
     .get(getProductBySlug);
