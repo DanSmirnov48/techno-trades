@@ -6,6 +6,7 @@ import "./globals.css";
 import { QueryProvider } from "./lib/react-query/QueryProvider.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import Navbar from "./components/Navbar.tsx";
+import Footer from "./components/Footer.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <Navbar />
           <App />
+          <Footer/>
         </AuthProvider>
       </BrowserRouter>
     </QueryProvider>

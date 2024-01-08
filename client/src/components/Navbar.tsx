@@ -15,10 +15,16 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/shop"
+            to="/explore"
             className="flex items-center text-sm font-medium text-muted-foreground"
           >
             <span>Explore</span>
+          </Link>
+          <Link
+            to="/deals"
+            className="flex items-center text-sm font-medium text-muted-foreground"
+          >
+            <span>Epic Deals</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">

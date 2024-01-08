@@ -6,7 +6,7 @@ interface SortCategory {
 }
 
 interface ShowPerPageOption {
-    value: string;
+    value: number;
     label: string;
 }
 
@@ -39,26 +39,30 @@ export const sortCategories: SortCategory[] = [
 
 export const showPerPage: ShowPerPageOption[] = [
     {
-        value: "2",
-        label: "Show: 2",
+        value: 5,
+        label: "Show: 5",
     },
     {
-        value: "4",
-        label: "Show: 4",
+        value: 10,
+        label: "Show: 10",
     },
     {
-        value: "6",
-        label: "Show: 6",
+        value: 20,
+        label: "Show: 20",
+    },
+    {
+        value: 999,
+        label: "Show: All",
     },
 ];
 
 interface SortingState {
     isChecked: boolean;
     selectedSort: string;
-    selectedShowPerPage: string;
+    selectedShowPerPage: number;
     setSort: (value: string) => void;
     toggleCheckbox: () => void;
-    setShowPerPage: (value: string) => void;
+    setShowPerPage: (value: number) => void;
 }
 
 interface FilteringState {
@@ -71,6 +75,11 @@ interface RatingFilteringState {
     minRating: number | null;
     maxRating: number | null;
     setRating: (min: number | null, max: number | null) => void;
+}
+
+interface StockFilteringState {
+    hideOutOfStock: boolean;
+    toggleHideOutOfStock: () => void;
 }
 
 export const useSorting = create<SortingState>((set) => ({
@@ -101,4 +110,10 @@ export const useRatingFiltering = create<RatingFilteringState>((set) => ({
             minRating: min,
             maxRating: max,
         })),
+}));
+
+export const useStockFiltering = create<StockFilteringState>((set) => ({
+    hideOutOfStock: false,
+    toggleHideOutOfStock: () =>
+        set((state) => ({ hideOutOfStock: !state.hideOutOfStock })),
 }));

@@ -14,6 +14,20 @@ export const dashboardConfig: DashboardConfig = {
       items: [],
     },
     {
+      title: "Notifications",
+      for: "all",
+      href: "/dashboard/notifications/",
+      icon: "bell",
+      items: [],
+    },
+    {
+      title: "Appearance",
+      for: "all",
+      href: "/dashboard/appearance/",
+      icon: "theme",
+      items: [],
+    },
+    {
       title: "Data Table",
       for: "admin",
       href: "/dashboard/data-tables",

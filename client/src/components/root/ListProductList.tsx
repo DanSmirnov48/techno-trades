@@ -21,7 +21,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
             <div className="col-span-3 flex flex-col gap-5 w-full h-full py-5">
               <Link to={`/products/${product.slug}`}>
                 <div className="relative flex overflow-hidden items-center justify-center">
-                  <img className="w-52 h-52 object-scale-down" src={product.image[0].url}/>
+                  <img className="w-52 h-52 object-scale-down" src={product.image[0].url} />
                 </div>
               </Link>
             </div>
@@ -61,7 +61,10 @@ const ListProductList = ({ products }: ListProductListProps) => {
                     </span>
                   </>
                 }
-                {product.countInStock <= 5 &&
+                {product.countInStock === 0 &&
+                  <span className="inline-flex items-center rounded-md bg-red-50 px-3 py-1 text-base font-semibold text-red-800 ring-1 ring-inset ring-red-600/20">Out of Stock</span>
+                }
+                {(product.countInStock <= 5 && product.countInStock !== 0) &&
                   <span className="inline-flex items-center rounded-md bg-red-50 px-3 py-1 text-base font-semibold text-red-800 ring-1 ring-inset ring-red-600/20">Low Stock</span>
                 }
               </div>

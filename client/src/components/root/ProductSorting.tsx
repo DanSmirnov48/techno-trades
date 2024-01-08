@@ -66,8 +66,8 @@ const ProductSorting: React.FC = () => {
         </>
         <>
           <Select
-            onValueChange={(value) => setShowPerPage(value)}
-            value={selectedShowPerPage}
+            onValueChange={(value) => setShowPerPage(+value)}
+            value={selectedShowPerPage.toString()}
           >
             <SelectTrigger className="h-14 w-[150px] bg-white">
               <SelectValue placeholder={showPerPage[0].label} />
@@ -76,7 +76,7 @@ const ProductSorting: React.FC = () => {
             <SelectContent>
               <SelectGroup>
                 {showPerPage.map((status, index) => (
-                  <SelectItem key={index} value={status.value}>
+                  <SelectItem key={index} value={status.value.toString()}>
                     <span>{status.label}</span>
                   </SelectItem>
                 ))}

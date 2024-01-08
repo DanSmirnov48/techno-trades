@@ -83,7 +83,7 @@ export const ProductRatingFilter: React.FC = () => {
     useRatingFiltering.getState().setRating(null, null);
   }, []);
 
-  return renderRatingFilters(data?.data.products);
+  return renderRatingFilters(data?.data.products || []);
 };
 
 
