@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import RootLayout from "./_root/RootLayout";
-import { Explore, Home, ProductDetails } from "./_root/pages";
+import { Deals, Explore, Home, ProductDetails } from "./_root/pages";
 import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
@@ -21,6 +21,7 @@ export default function App() {
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/deals" element={<Deals />} />
           <Route path="/products/:slug" element={<ProductDetails />} />
         </Route>
 
