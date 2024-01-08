@@ -6,6 +6,7 @@ import { useSorting, useFiltering, useRatingFiltering, useStockFiltering } from 
 import { useGetPaginatedProducts, useGetProducts } from "@/lib/react-query/queries";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Pagination, PaginationContent } from "@/components/ui/pagination"
 
 const Explore = () => {
   const { selectedShowPerPage } = useSorting();
@@ -20,7 +21,6 @@ const Explore = () => {
 
   useEffect(() => {
     refetch();
-    console.log(selectedShowPerPage)
   }, [selectedShowPerPage]);
 
   return (
@@ -34,26 +34,13 @@ const Explore = () => {
             {!isProductLoading && <ProductSorting />}
             {!isProductLoading && <GridProductList products={data?.data.products} />}
 
-
-            {/* Pagination Controls */}
-            <div className="mt-4 flex justify-center items-center">
-              <Button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <span className="mx-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-
+            <Pagination>
+              <PaginationContent
+                totalPages={totalPages}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </Pagination>
           </div>
         </div>
       </div>
