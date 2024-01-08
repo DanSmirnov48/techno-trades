@@ -6,6 +6,7 @@ import "@smastrom/react-rating/style.css";
 import { ratingStyle } from "@/lib/utils";
 import { useRatingFiltering } from "@/hooks/store";
 import { useEffect } from "react";
+import { Label } from "../ui/label";
 
 
 
@@ -29,12 +30,13 @@ const renderRatingFilters = (products: Product[]) => {
     return (
       <div className="flex flex-row mx-0 my-1 justify-start items-center">
         <Checkbox
+          id="rating"
           checked={minRating === value}
           onCheckedChange={handleRatingChange}
           className="mr-1"
         />
         <Rating value={value} readOnly itemStyles={ratingStyle} style={{ maxWidth: 100 }} />
-        <h1 className="text-sm ml-2">{`${value} or more (${count})`}</h1>
+        <Label htmlFor="rating" className="text-sm ml-2">{`${value} or more (${count})`}</Label>
       </div>
     );
   };

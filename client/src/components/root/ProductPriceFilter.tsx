@@ -2,6 +2,7 @@ import { Product } from "@/types";
 import { Checkbox } from "../ui/checkbox";
 import { useGetProducts } from "@/lib/react-query/queries";
 import { useState } from "react";
+import { Label } from "../ui/label";
 
 interface PriceFilterProps {
   min: number;
@@ -18,8 +19,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
 
   return (
     <div className="flex flex-row mx-0 my-1 justify-start items-center">
-      <Checkbox className="mr-1" onCheckedChange={handleCheckboxChange} checked={isChecked} />
-      <h1 className="text-sm ml-2">{`£${min} to £${max}`}</h1>
+      <Checkbox id="price" className="mr-1" onCheckedChange={handleCheckboxChange} checked={isChecked} />
+      <Label htmlFor="price" className="text-sm ml-2">{`£${min} to £${max}`}</Label>
     </div>
   );
 };

@@ -67,3 +67,11 @@ export const productTableSchema = z.object({
 })
 
 export type ProductType = z.infer<typeof productTableSchema>
+
+// ============================================================
+// REVIEW
+// ============================================================
+export const ProductReviewValidation = z.object({
+    title: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 1000 characters." }),
+    comment: z.string().min(1, { message: "This field is required" }).max(5000, { message: "Maximum 5000 characters." }),
+});

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Product } from "@/types";
 import { useFiltering } from "@/hooks/store";
+import { Label } from "../ui/label";
 
 const ProductBrandFilter: React.FC = () => {
     const { data } = useGetProducts();
@@ -57,11 +58,12 @@ const ProductBrandFilter: React.FC = () => {
                     className="flex flex-row mx-0 my-1 justify-start items-center"
                 >
                     <Checkbox
+                        id="brand"
                         checked={selectedBrands.includes(name)}
                         onCheckedChange={() => toggleBrand(name)}
                         aria-label={`Select ${name} brand`}
                     />
-                    <h1 className="text-sm ml-2">{`${name} (${count})`}</h1>
+                    <Label htmlFor="brand" className="text-sm ml-2">{`${name} (${count})`}</Label>
                 </div>
             ))}
         </div>

@@ -6,10 +6,11 @@ import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays
 import { AddToCartButton } from "@/components/root";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
-import { GridProductList } from "@/components/root";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import ReviewsSection from "@/components/root/ReviewsSection";
+import ProductReviewForm from "@/components/root/ProductReviewForm";
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -277,11 +278,38 @@ const ProductDetails = () => {
           </div>
         </div>
         <>
-          <div className="flex flex-row justify-between items-center my-10 font-jost mt-[10rem]">
+          <div className="flex flex-row justify-between items-center my-4 font-jost mt-[10rem]">
             <h1 className="text-dark-3 text-3xl">You might also like</h1>
           </div>
-          <GridProductList products={relatedProducts} />
+
+          <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] rounded-xl">
+            <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-12 font-jost">
+              <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                {relatedProducts.map((product) => (
+                  <Link to={`/products/${product.slug}`} key={product._id}>
+                    <div className="group relative">
+                      <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
+                        <img
+                          src={product.image[0].url}
+                          alt={product.name}
+                          className="h-full w-full object-contain object-center p-2"
+                        />
+                      </div>
+                      <h3 className="mt-6 text-sm text-gray-500">£{product.price}</h3>
+                      <p className="text-base font-semibold text-gray-900">{product.name}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </>
+        <div className="container p-0 my-20">
+          {product && <ProductReviewForm product={product} />}
+        </div>
+        <div className="container p-0 my-20">
+          <ReviewsSection />
+        </div>
       </div>
     </section>
   );
