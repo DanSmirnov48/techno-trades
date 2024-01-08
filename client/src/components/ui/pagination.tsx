@@ -8,7 +8,7 @@ const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
     role="navigation"
     aria-label="pagination"
-    className={cn("mx-auto flex w-full justify-center", className)}
+    className={cn("mx-auto my-10 flex w-full justify-center", className)}
     {...props}
   />
 );
@@ -21,12 +21,17 @@ type PaginationContentProps = {
 
 const PaginationContent = React.forwardRef<HTMLUListElement, PaginationContentProps>(
   ({ className, totalPages, currentPage, onPageChange, ...props }, ref) => {
+    const handlePageChange = (newPage: number) => {
+      onPageChange(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const generatePageLinks = () => {
       const links = [];
       for (let i = 1; i <= totalPages; i++) {
         links.push(
           <li key={i}>
-            <PaginationLink onClick={() => onPageChange(i)} isActive={i === currentPage}>
+            <PaginationLink onClick={() => handlePageChange(i)} isActive={i === currentPage}>
               {i}
             </PaginationLink>
           </li>
@@ -42,17 +47,17 @@ const PaginationContent = React.forwardRef<HTMLUListElement, PaginationContentPr
         {...props}
       >
         <PaginationItem>
-          <PaginationFirst onClick={() => onPageChange(1)} disabled={currentPage === 1} />
+          <PaginationFirst onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
         </PaginationItem>
         <PaginationItem>
-          <PaginationPrevious onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} />
+          <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
         </PaginationItem>
         {generatePageLinks()}
         <PaginationItem>
-          <PaginationNext onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+          <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLast onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages} />
+          <PaginationLast onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
         </PaginationItem>
       </ul>
     );
@@ -69,14 +74,14 @@ PaginationItem.displayName = "PaginationItem";
 
 type PaginationLinkProps = {
   isActive?: boolean;
-  onClick?: () => void; // Add onClick prop
+  onClick?: () => void;
 } & Pick<ButtonProps, "size"> &
   React.ComponentProps<"button">;
 
 const PaginationLink = ({ className, isActive, size = "icon", onClick, ...props }: PaginationLinkProps) => (
   <PaginationItem>
     <button
-      type="button" // Use button type
+      type="button"
       aria-current={isActive ? "page" : undefined}
       className={cn(
         buttonVariants({
@@ -85,7 +90,7 @@ const PaginationLink = ({ className, isActive, size = "icon", onClick, ...props 
         }),
         className
       )}
-      onClick={onClick} // Add onClick handler
+      onClick={onClick}
       {...props}
     />
   </PaginationItem>
@@ -97,7 +102,7 @@ const PaginationPrevious = ({ className, onClick, ...props }: React.ComponentPro
     aria-label="Go to previous page"
     size="default"
     className={cn("gap-1 pl-2.5", className)}
-    onClick={onClick} // Add onClick handler
+    onClick={onClick}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
@@ -111,7 +116,7 @@ const PaginationNext = ({ className, onClick, ...props }: React.ComponentProps<t
     aria-label="Go to next page"
     size="default"
     className={cn("gap-1 pr-2.5", className)}
-    onClick={onClick} // Add onClick handler
+    onClick={onClick} 
     {...props}
   >
     <span>Next</span>
@@ -135,7 +140,7 @@ type PaginationFirstProps = React.ComponentProps<typeof PaginationLink>;
 const PaginationFirst = ({ className, onClick, ...props }: PaginationFirstProps) => (
   <PaginationLink
     size="default"
-    className={cn("bg-gray-200", className)}
+    className={cn("bg-gray-100", className)}
     onClick={onClick}
     {...props}
   >
@@ -149,7 +154,7 @@ type PaginationLastProps = React.ComponentProps<typeof PaginationLink>;
 const PaginationLast = ({ className, onClick, ...props }: PaginationLastProps) => (
   <PaginationLink
     size="default"
-    className={cn("bg-gray-200", className)}
+    className={cn("bg-gray-100", className)}
     onClick={onClick}
     {...props}
   >
