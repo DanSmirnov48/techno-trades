@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
 import AddToCartButton from "./AddToCartButton";
 import AddToFavoritesButton from "./AddToFavoritesButton";
-import { calculateDiscountPercentage, cn } from "@/lib/utils";
+import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
 
 type GridProductListProps = {
   products: Product[];
@@ -13,7 +13,7 @@ const GridProductList = ({ products }: GridProductListProps) => {
     <>
       <ul className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-7">
         {products.map((product) => (
-          <li key={product._id} className="relative h-[400px] mb-28">
+          <li key={product._id} className="relative">
             <div className="flex w-full  flex-col self-center overflow-hidden rounded-xl bg-white shadow-xl">
               <div className={cn("h-12 flex items-start", { "justify-between": product.isDiscounted === true, "justify-end": product.isDiscounted === false })}>
                 {product.isDiscounted &&
@@ -33,14 +33,22 @@ const GridProductList = ({ products }: GridProductListProps) => {
                 </div>
               </Link>
 
-              <div className="px-5 pb-5">
-                <h5 className="text-xl tracking-tight text-dark-4 h-20">
+              <div className="flex flex-col px-5 pb-5 gap-4">
+                <h5 className="text-xl tracking-tight text-dark-4">
                   {product.name}
                 </h5>
-
                 <div className="mt-2 mb-5 flex items-center justify-between">
                   <span className="text-2xl font-semibold text-dark-4">
-                    £{product.price}
+                    {product?.isDiscounted ? (
+                      <>
+                        <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
+                        <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
+                          {product && formatPrice(product.price, { currency: "GBP" })}
+                        </span>
+                      </>
+                    ) : (
+                      product && formatPrice(product.price, { currency: "GBP" })
+                    )}
                   </span>
                 </div>
 
