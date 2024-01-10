@@ -1,14 +1,17 @@
-import { Product } from "@/types";
 import { Checkbox } from "../ui/checkbox";
-import { useGetProducts } from "@/lib/react-query/queries";
-import { useState } from "react";
 import { Label } from "../ui/label";
+import { usePriceFilterStore } from "@/hooks/store";
 
 interface PriceFilterProps {
   min: number;
   max: number;
-  onChange: (selectedRange: { min: number; max: number } | null) => void;
+  onChange: (selectedRange: PriceRange | null) => void;
   isChecked: boolean;
+}
+
+interface PriceRange {
+  min: number;
+  max: number;
 }
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked }) => {
@@ -25,31 +28,22 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
   );
 };
 
-const renderPriceFilters = (products: Product[]) => {
+export const ProductPriceFilter: React.FC = () => {
+  const { selectedRanges, addSelectedRange, removeSelectedRange } = usePriceFilterStore();
+
+  const handlePriceFilterChange = (newRange: PriceRange | null, min: number, max: number) => {
+    if (newRange) {
+      addSelectedRange(newRange);
+    } else {
+      removeSelectedRange(min, max);
+    }
+  };
+
   const priceRanges: { min: number; max: number }[] = [
     { min: 100, max: 499 },
     { min: 500, max: 999 },
     { min: 1000, max: 5000 },
   ];
-
-  const [selectedRanges, setSelectedRanges] = useState<{ min: number; max: number }[]>([]);
-
-  const handlePriceFilterChange = (newRange: { min: number; max: number } | null, min: number, max: number) => {
-    // If a range is selected, add it to the array
-    if (newRange) {
-      setSelectedRanges([...selectedRanges, newRange]);
-    } else {
-      // If the checkbox is unchecked, remove the corresponding range from the array
-      const updatedRanges = selectedRanges.filter(
-        (range) => range.min !== min || range.max !== max
-      );
-      setSelectedRanges(updatedRanges);
-    }
-  };
-
-  // Calculate the overall minimum and maximum values from all selected ranges
-  const overallMin = Math.min(...selectedRanges.map((range) => range.min));
-  const overallMax = Math.max(...selectedRanges.map((range) => range.max));
 
   return (
     <>
@@ -60,19 +54,9 @@ const renderPriceFilters = (products: Product[]) => {
           min={min}
           max={max}
           onChange={(newRange) => handlePriceFilterChange(newRange, min, max)}
-          isChecked={
-            selectedRanges.some((range) => range.min === min && range.max === max)
-          }
+          isChecked={selectedRanges.some((range) => range.min === min && range.max === max)}
         />
       ))}
-      <div>
-        <p>£{overallMin} to £{overallMax}</p>
-      </div>
     </>
   );
-};
-
-export const ProductPriceFilter: React.FC = () => {
-  const { data } = useGetProducts();
-  return renderPriceFilters(data?.data.products || []); // Pass an empty array if data is undefined
 };

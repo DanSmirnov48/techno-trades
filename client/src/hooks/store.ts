@@ -69,6 +69,8 @@ interface FilteringState {
     selectedBrands: string[];
     toggleBrand: (brand: string) => void;
     setBrands: (brands: string[]) => void;
+    removeBrand: (brand: string) => void;
+    removeAllBrands: () => void;
 }
 
 interface RatingFilteringState {
@@ -80,6 +82,25 @@ interface RatingFilteringState {
 interface StockFilteringState {
     hideOutOfStock: boolean;
     toggleHideOutOfStock: () => void;
+}
+
+interface PriceRange {
+    min: number;
+    max: number;
+}
+
+interface PriceFilterStoreState {
+    selectedRanges: PriceRange[];
+    addSelectedRange: (range: PriceRange) => void;
+    removeSelectedRange: (min: number, max: number) => void;
+    removeAllRanges: () => void;
+}
+
+interface RatingFilterStoreState {
+    selectedRatings: number[];
+    addSelectedRating: (rating: number) => void;
+    removeSelectedRating: (rating: number) => void;
+    removeAllRatings: () => void;
 }
 
 export const useSorting = create<SortingState>((set) => ({
@@ -100,6 +121,10 @@ export const useFiltering = create<FilteringState>((set) => ({
                 : [...state.selectedBrands, brand],
         })),
     setBrands: (brands) => set(() => ({ selectedBrands: brands })),
+    removeBrand: (brand) => set((state) => ({
+        selectedBrands: state.selectedBrands.filter((selectedBrand) => selectedBrand !== brand),
+    })),
+    removeAllBrands: () => set(() => ({ selectedBrands: [] })),
 }));
 
 export const useRatingFiltering = create<RatingFilteringState>((set) => ({
@@ -116,4 +141,22 @@ export const useStockFiltering = create<StockFilteringState>((set) => ({
     hideOutOfStock: false,
     toggleHideOutOfStock: () =>
         set((state) => ({ hideOutOfStock: !state.hideOutOfStock })),
+}));
+
+export const usePriceFilterStore = create<PriceFilterStoreState>((set) => ({
+    selectedRanges: [],
+    addSelectedRange: (range) => set((state) => ({ selectedRanges: [...state.selectedRanges, range] })),
+    removeSelectedRange: (min, max) =>
+        set((state) => ({
+            selectedRanges: state.selectedRanges.filter((range) => range.min !== min || range.max !== max),
+        })),
+    removeAllRanges: () => set(() => ({ selectedRanges: [] })),
+}));
+
+export const useRatingFilterStore = create<RatingFilterStoreState>((set) => ({
+    selectedRatings: [],
+    addSelectedRating: (rating) => set((state) => ({ selectedRatings: [...state.selectedRatings, rating] })),
+    removeSelectedRating: (rating) =>
+        set((state) => ({ selectedRatings: state.selectedRatings.filter((selectedRating) => selectedRating !== rating) })),
+    removeAllRatings: () => set(() => ({ selectedRatings: [] })),
 }));
