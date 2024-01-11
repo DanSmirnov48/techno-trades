@@ -65,12 +65,12 @@ const renderRatingFilters = (products: Product[]) => {
   const sortedRatingsWithCount = getRatingsWithCount(products).sort((a, b) => b.value - a.value);
 
   return (
-    <>
-      <h4 className="text-sm font-sans mb-1 mt-4">By Rating</h4>
+    <div>
+      <h4>By Rating</h4>
       {sortedRatingsWithCount.map(({ value, count }) => (
         <RatingFilter key={value} value={value} count={count} />
       ))}
-    </>
+    </div>
   );
 };
 

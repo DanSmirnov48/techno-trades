@@ -4,6 +4,7 @@ import ProductBrandFilters from "./ProductBrandFilters";
 import { ProductPriceFilter } from "./ProductPriceFilter";
 import { ProductRatingFilter } from "./ProductRatingFilter";
 import AppliedFilters from "./AppliedFilters";
+import ProductCategoryFilter from "./ProductCategoryFilter";
 
 const ProductFilters: React.FC = () => {
   return (
@@ -12,10 +13,11 @@ const ProductFilters: React.FC = () => {
         Filters
       </h1>
       <Separator />
-      <div className="flex flex-col h-full mx-8">
-        <AppliedFilters/>
+      <div className="flex flex-col h-full mx-8 gap-4 my-4">
+        <AppliedFilters />
         <HideOutOfStock />
         <ProductPriceFilter />
+        <ProductCategoryFilter />
         <ProductBrandFilters />
         <ProductRatingFilter />
       </div>

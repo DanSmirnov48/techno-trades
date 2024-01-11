@@ -50,8 +50,8 @@ const ProductBrandFilter: React.FC = () => {
 
     return (
 
-        <div className="mb-4">
-            <h4 className="text-sm font-sans mb-1 mt-4">By Brand</h4>
+        <div>
+            <h4>By Brand</h4>
             {uniqueBrandsWithCount.map(({ name, count }) => (
                 <div
                     key={name}

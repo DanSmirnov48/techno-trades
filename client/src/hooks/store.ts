@@ -103,6 +103,14 @@ interface RatingFilterStoreState {
     removeAllRatings: () => void;
 }
 
+interface CategoryFilterStoreState {
+    selectedCategories: string[];
+    toggleCategory: (category: string) => void;
+    setCategories: (categories: string[]) => void;
+    removeCategory: (category: string) => void;
+    removeAllCategories: () => void;
+}
+
 export const useSorting = create<SortingState>((set) => ({
     isChecked: false,
     selectedSort: sortCategories[0].value,
@@ -160,3 +168,19 @@ export const useRatingFilterStore = create<RatingFilterStoreState>((set) => ({
         set((state) => ({ selectedRatings: state.selectedRatings.filter((selectedRating) => selectedRating !== rating) })),
     removeAllRatings: () => set(() => ({ selectedRatings: [] })),
 }));
+
+export const useCategoryFilter = create<CategoryFilterStoreState>((set) => ({
+    selectedCategories: [],
+    categoryCounts: {},
+    toggleCategory: (category) =>
+      set((state) => ({
+        selectedCategories: state.selectedCategories.includes(category)
+          ? state.selectedCategories.filter((selectedCategory) => selectedCategory !== category)
+          : [...state.selectedCategories, category],
+      })),
+    setCategories: (categories) => set(() => ({ selectedCategories: categories })),
+    removeCategory: (category) => set((state) => ({
+      selectedCategories: state.selectedCategories.filter((selectedCategory) => selectedCategory !== category),
+    })),
+    removeAllCategories: () => set(() => ({ selectedCategories: [] })),
+  }));

@@ -26,7 +26,7 @@ const HideOutOfStock = () => {
   }, [hideOutOfStock]);
 
   return (
-    <div className="flex flex-row gap-3 items-center my-5">
+    <div className="flex flex-row gap-3 items-center">
       <Switch
         id="stock"
         checked={hideOutOfStock}
