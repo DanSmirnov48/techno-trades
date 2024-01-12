@@ -1,7 +1,7 @@
 import { ProductType } from "@/lib/validation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { useSetProductDiscount } from "@/lib/react-query/queries";
@@ -12,14 +12,16 @@ type EditProps = {
 };
 
 export default function SetDiscount({ product, setOpen }: EditProps) {
-  const [discount, setDiscount] = useState<number>();
+  const currProductDiscount = product.isDiscounted && calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })
+  const [discount, setDiscount] = useState<number | undefined>(+currProductDiscount || 0);
   const { mutateAsync: setProductDiscount } = useSetProductDiscount()
 
   const StatBox = ({ label, value }: { label: string; value: string }) => (
     <Button
       onClick={() => setDiscount(Number(value))}
       className={cn(
-        "border h-16 bg-white hover:bg-neutral-200 border-gray-200 p-4 rounded-lg min-w-[100px] w-full text-center text-dark-4"
+        `border h-16 hover:bg-neutral-200 border-gray-200 p-4 rounded-lg min-w-[100px] w-full text-center text-dark-4 
+        ${discount === +value ? 'bg-gray-300' : 'bg-white'}`
       )}
     >
       <div className="flex gap-1">
@@ -65,8 +67,15 @@ export default function SetDiscount({ product, setOpen }: EditProps) {
         id="input"
         placeholder="Discount %"
         type="number"
+        onFocus={() => setDiscount(undefined)}
         onChange={(e) => setDiscount(Number(e.target.value.slice(0, 2)))}
       />
+
+      <h1>Current Disocount: {currProductDiscount}</h1>
+
+      <h1>Old Price: {formatPrice(product.price, { currency: "GBP" })}</h1>
+      {discount && <h1>Discount of: {product.price * discount / 100}</h1>}
+      {discount && <h1>New Price: {product.price - product.price * discount / 100}</h1>}
       <Button onClick={handleSubmit}>Submit</Button>
     </div>
   );

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ProductValidation } from "@/lib/validation";
+import { ProductCreateValidation } from "@/lib/validation";
 import { ProductImage } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,32 +28,37 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { FileWithPath } from "@uploadthing/react";
 import { useUploadThing } from "@/uploadthing";
-import { convertFileToUrl } from "@/lib/utils";
+import { cn, convertFileToUrl } from "@/lib/utils";
 import { Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useCreateProduct } from "@/lib/react-query/queries";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const ProductCreateForm = () => {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [discount, setDiscount] = useState<number | undefined>(undefined);
 
   const navigate = useNavigate();
   const { user } = useUserContext();
 
   const { mutateAsync: createProduct, isPending: isLoadingCreate } = useCreateProduct();
 
-  const form = useForm<z.infer<typeof ProductValidation>>({
-    resolver: zodResolver(ProductValidation),
+  const form = useForm<z.infer<typeof ProductCreateValidation>>({
+    resolver: zodResolver(ProductCreateValidation),
     defaultValues: {
       name: "",
       brand: "",
       description: "",
       price: 0,
       countInStock: 0,
+      isDiscounted: false,
+      discountedPrice: undefined
     },
   });
 
@@ -80,8 +85,7 @@ const ProductCreateForm = () => {
     accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
   });
 
-  const handleSubmit = async (value: z.infer<typeof ProductValidation>) => {
-
+  const handleSubmit = async (value: z.infer<typeof ProductCreateValidation>) => {
     if (files.length === 0) {
       form.setError("image", {
         type: "manual",
@@ -96,13 +100,22 @@ const ProductCreateForm = () => {
         url: imageData.url as string,
       }));
 
+      const discountedPrice = discount && form.getValues("price") - (form.getValues("price") * discount) / 100
+      if (value.isDiscounted && discountedPrice === undefined) {
+        form.setError("discountedPrice", {
+          type: "manual",
+          message: "If you set the discount, you must provide the discout value",
+        })
+        return
+      }
       const newProduct = await createProduct({
-        // const newProduct: INewProduct = ({
+      // const newProduct: INewProduct = ({
         ...value,
+        discountedPrice: value.isDiscounted ? discountedPrice : undefined,
         image: productImages,
         userId: user._id,
       });
-      console.log(newProduct)
+      
 
       if (newProduct && newProduct.message === 'Created Product') {
         toast.success('Product created successfully', {
@@ -112,6 +125,7 @@ const ProductCreateForm = () => {
           },
           duration: 5000,
         })
+        setDiscount(undefined)
         form.reset()
         setFiles([]);
         setFileUrls([]);
@@ -168,6 +182,22 @@ const ProductCreateForm = () => {
       </div>
     )
   }
+
+  const StatBox = ({ label, value }: { label: string; value: string }) => (
+    <Button
+      type="button"
+      onClick={() => setDiscount(Number(value))}
+      className={cn(
+        `border h-16 hover:bg-neutral-200 border-gray-200 p-4 rounded-lg min-w-[100px] w-full text-center text-dark-4 
+        ${discount === +value ? 'bg-gray-300' : 'bg-white'}`
+      )}
+    >
+      <div className="flex gap-1">
+        <h4 className="font-extrabold text-2xl">{value}</h4>
+        <p>{label}</p>
+      </div>
+    </Button>
+  );
 
   return (
     <>
@@ -276,6 +306,64 @@ const ProductCreateForm = () => {
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="isDiscounted"
+            render={({ field }) => (
+              <>
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      {(discount && form.getValues("isDiscounted")) ? `Discout of ${discount}% will be applied` : "Set Product Discount"}
+                    </FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+                <FormMessage className="shad-form_message" />
+              </>
+            )}
+          />
+
+          {form.getValues("isDiscounted") === true && (
+            <FormField
+              control={form.control}
+              name="discountedPrice"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start justify-start bg-neutral-100 rounded-lg border p-4">
+                  <FormControl>
+                    <div className="flex flex-col w-full  mx-auto gap-5 my-5">
+                      <Label>Choose one of:</Label>
+                      <div>
+                        <ul className="grid grid-cols-4 gap-5">
+                          <StatBox label="%" value="10" />
+                          <StatBox label="%" value="20" />
+                          <StatBox label="%" value="30" />
+                          <StatBox label="%" value="50" />
+                        </ul>
+                      </div>
+
+                      <Label htmlFor="inputs">Or enter manually:</Label>
+                      <Input
+                        id="input"
+                        placeholder="Discount %"
+                        type="number"
+                        className="h-12"
+                        value={discount}
+                        onChange={(e) => setDiscount(Number(e.target.value.slice(0, 2)))}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage className="shad-form_message" />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}

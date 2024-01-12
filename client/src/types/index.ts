@@ -60,15 +60,15 @@ export type Product = {
     brand: string;
     category: ProductCategory;
     description: string;
-    rating?: number;
-    numReviews?: number;
+    rating: number;
+    numReviews: number;
     price: number;
     countInStock: number;
     isDiscounted: boolean;
     discountedPrice?: number;
     reviews?: Review[];
-    createdAt?: string;
-    updatedAt?: string;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export type INewProduct = {
@@ -80,6 +80,8 @@ export type INewProduct = {
     description: string;
     price: number;
     countInStock: number;
+    isDiscounted: boolean;
+    discountedPrice?: number;
 };
 
 export type IUpdateProduct = {

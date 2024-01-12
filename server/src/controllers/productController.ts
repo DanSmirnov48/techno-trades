@@ -139,6 +139,8 @@ export const createProduct = asyncHandler(
                 description: req.body.description as string,
                 price: Number(req.body.price),
                 countInStock: Number(req.body.countInStock),
+                isDiscounted: req.body.isDiscounted as boolean,
+                discountedPrice: req.body.discountedPrice ? Number(req.body.discountedPrice) : undefined,
             });
 
             if (!createdProduct) {

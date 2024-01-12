@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProductType, ProductValidation } from "@/lib/validation";
+import { ProductType, ProductCreateValidation } from "@/lib/validation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -36,8 +36,8 @@ export default function EditDialog({ product, setOpen }: EditProps) {
   const { user } = useUserContext();
   const { mutateAsync: updateProduct, isError: isUpdatingError } = useUpdateProduct();
 
-  const form = useForm<z.infer<typeof ProductValidation>>({
-    resolver: zodResolver(ProductValidation),
+  const form = useForm<z.infer<typeof ProductCreateValidation>>({
+    resolver: zodResolver(ProductCreateValidation),
     defaultValues: {
       name: product.name,
       image: product.image,
@@ -49,7 +49,7 @@ export default function EditDialog({ product, setOpen }: EditProps) {
     },
   });
 
-  const handleSubmit = async (value: z.infer<typeof ProductValidation>) => {
+  const handleSubmit = async (value: z.infer<typeof ProductCreateValidation>) => {
     const updatedProduct = await updateProduct({
     // const updatedProduct = ({
       _id: product._id,
