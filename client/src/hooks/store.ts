@@ -107,8 +107,10 @@ interface CategoryFilterStoreState {
 }
 
 interface ProductStoreState {
-    filteredProducts: Product[] | null;
-    setFilteredProducts: (products: Product[] | null) => void;
+    filteredProducts: null | Product[];
+    totalProducts: number;
+    setFilteredProducts: (products: Product[]) => void;
+    setTotalProducts: (count: number) => void;
 }
 
 export const useSorting = create<SortingState>((set) => ({
@@ -177,5 +179,7 @@ export const useCategoryFilter = create<CategoryFilterStoreState>((set) => ({
 
 export const useProductStore = create<ProductStoreState>((set) => ({
     filteredProducts: null,
+    totalProducts: 0,
     setFilteredProducts: (products) => set({ filteredProducts: products }),
+    setTotalProducts: (count) => set({ totalProducts: count }),
 }));

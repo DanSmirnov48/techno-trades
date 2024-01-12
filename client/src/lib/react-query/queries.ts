@@ -3,7 +3,7 @@ import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
 import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getFilteredProducts, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
-import {useProductStore} from '@/hooks/store'
+import { useProductStore } from '@/hooks/store'
 
 // ============================================================
 // AUTH QUERIES
@@ -93,17 +93,19 @@ export const useGetPaginatedProducts = (page: number, pageSize: number) => {
 
 export const useGetFilteredProducts = () => {
     const setFilteredProducts = useProductStore((state) => state.setFilteredProducts);
+    const setTotalProducts = useProductStore((state) => state.setTotalProducts);
+
     return useMutation({
         mutationFn: (
-            { prices, brands, categories, ratings }:
-                { prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[] }
+            { hideOutOfStock, prices, brands, categories, ratings, page, pageSize }:
+                { hideOutOfStock?: boolean, prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[], page: number, pageSize: number }
         ) =>
-            getFilteredProducts({ prices, brands, categories, ratings }),
+            getFilteredProducts({ hideOutOfStock, prices, brands, categories, ratings, page, pageSize }),
 
         onSuccess: (data) => {
-            // const filteredProducts = data.data.products;
-            // console.log(filteredProducts)
-            setFilteredProducts(data.data.products);
+            const { totalProducts, products } = data.data;
+            setTotalProducts(totalProducts);
+            setFilteredProducts(products);
         },
     });
 };

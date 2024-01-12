@@ -39,11 +39,18 @@ export const getPaginatedProducts = asyncHandler(async (req: Request, res: Respo
 
 export const getFilteredProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const { prices, brands, categories, ratings } = req.body;
-        console.log({prices, brands, categories, ratings})
+        const { hideOutOfStock, prices, brands, categories, ratings } = req.body;
+        const { page = 1, pageSize = 10 } = req.body;
+        console.log({ prices, brands, categories, ratings })
+        console.log({ page, pageSize })
 
         // Build the base query
         const baseQuery: any = {};
+
+        // Apply hideOutOfStock filter
+        if (hideOutOfStock) {
+            baseQuery.countInStock = { $gt: 0 };
+        }
 
         // Apply price filter if available
         if (prices && prices.length > 0) {
@@ -68,10 +75,15 @@ export const getFilteredProducts = asyncHandler(async (req: Request, res: Respon
             baseQuery.rating = { $gte: Math.min(...ratings) };
         }
 
-        // Execute the query
-        const products = await ProductModel.find(baseQuery);
+        // Execute the query to get filtered products
+        const filteredProducts = await ProductModel.find(baseQuery)
+            .skip((+page - 1) * +pageSize)
+            .limit(+pageSize);
 
-        return res.status(200).json({ products }).end();
+        // Execute a separate count query to get the total count of filtered products
+        const totalFilteredProducts = await ProductModel.countDocuments(baseQuery);
+
+        return res.status(200).json({ totalProducts: totalFilteredProducts, products: filteredProducts }).end();
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Internal Server Error' });
