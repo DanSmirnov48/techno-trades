@@ -21,21 +21,62 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
 export const getPaginatedProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
-      const { page = 1, pageSize = 10 } = req.query;
-      console.log(page, pageSize)
-  
-      const products = await ProductModel.find()
-        .skip((+page - 1) * +pageSize)
-        .limit(+pageSize);
-  
-      const totalProducts = await ProductModel.countDocuments();
-  
-      return res.status(200).json({ totalProducts, products });
+        const { page = 1, pageSize = 10 } = req.query;
+        console.log(page, pageSize)
+
+        const products = await ProductModel.find()
+            .skip((+page - 1) * +pageSize)
+            .limit(+pageSize);
+
+        const totalProducts = await ProductModel.countDocuments();
+
+        return res.status(200).json({ totalProducts, products });
     } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
+        console.log(error);
+        return res.sendStatus(400);
     }
-  });
+});
+
+export const getFilteredProducts = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { prices, brands, categories, ratings } = req.body;
+        console.log({prices, brands, categories, ratings})
+
+        // Build the base query
+        const baseQuery: any = {};
+
+        // Apply price filter if available
+        if (prices && prices.length > 0) {
+            baseQuery.price = {
+                $gte: prices[0].min,
+                $lte: prices[prices.length - 1].max,
+            };
+        }
+
+        // Apply brand filter if available
+        if (brands && brands.length > 0) {
+            baseQuery.brand = { $in: brands };
+        }
+
+        // Apply category filter if available
+        if (categories && categories.length > 0) {
+            baseQuery.category = { $in: categories };
+        }
+
+        // Apply rating filter if available
+        if (ratings && ratings.length > 0) {
+            baseQuery.rating = { $gte: Math.min(...ratings) };
+        }
+
+        // Execute the query
+        const products = await ProductModel.find(baseQuery);
+
+        return res.status(200).json({ products }).end();
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 export const getProductById = asyncHandler(
     async (req: Request, res: Response) => {

@@ -1,3 +1,4 @@
+import { PriceRange } from "@/hooks/store";
 import { INewProduct, INewUser, IUpdateProduct, Product, UserImage } from "@/types";
 import axios from "axios";
 
@@ -174,6 +175,24 @@ export async function getPaginatedProducts(page: number, pageSize: number) {
     console.log(error);
   }
 }
+
+export async function getFilteredProducts(
+  { prices, brands, categories, ratings }:
+    { prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[] }) {
+  try {
+    const response = await axios.post(`/api/products/filter`, {
+      brands: brands,
+      categories: categories,
+      ratings: ratings,
+      prices: prices,
+    });
+    return response
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
+  }
+}
+
 export async function getProuctById(productId?: string) {
   try {
     if (productId) {

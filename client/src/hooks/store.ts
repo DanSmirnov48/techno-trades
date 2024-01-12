@@ -1,3 +1,4 @@
+import { Product } from '@/types';
 import { create } from 'zustand';
 
 interface SortCategory {
@@ -65,7 +66,7 @@ interface SortingState {
     setShowPerPage: (value: number) => void;
 }
 
-interface FilteringState {
+interface BrandsFilteringState {
     selectedBrands: string[];
     toggleBrand: (brand: string) => void;
     setBrands: (brands: string[]) => void;
@@ -73,18 +74,12 @@ interface FilteringState {
     removeAllBrands: () => void;
 }
 
-interface RatingFilteringState {
-    minRating: number | null;
-    maxRating: number | null;
-    setRating: (min: number | null, max: number | null) => void;
-}
-
 interface StockFilteringState {
     hideOutOfStock: boolean;
     toggleHideOutOfStock: () => void;
 }
 
-interface PriceRange {
+export interface PriceRange {
     min: number;
     max: number;
 }
@@ -111,6 +106,11 @@ interface CategoryFilterStoreState {
     removeAllCategories: () => void;
 }
 
+interface ProductStoreState {
+    filteredProducts: Product[] | null;
+    setFilteredProducts: (products: Product[] | null) => void;
+}
+
 export const useSorting = create<SortingState>((set) => ({
     isChecked: false,
     selectedSort: sortCategories[0].value,
@@ -120,7 +120,7 @@ export const useSorting = create<SortingState>((set) => ({
     setShowPerPage: (value) => set(() => ({ selectedShowPerPage: value })),
 }));
 
-export const useFiltering = create<FilteringState>((set) => ({
+export const useBrandFilter = create<BrandsFilteringState>((set) => ({
     selectedBrands: [],
     toggleBrand: (brand) =>
         set((state) => ({
@@ -133,16 +133,6 @@ export const useFiltering = create<FilteringState>((set) => ({
         selectedBrands: state.selectedBrands.filter((selectedBrand) => selectedBrand !== brand),
     })),
     removeAllBrands: () => set(() => ({ selectedBrands: [] })),
-}));
-
-export const useRatingFiltering = create<RatingFilteringState>((set) => ({
-    minRating: null,
-    maxRating: null,
-    setRating: (min, max) =>
-        set(() => ({
-            minRating: min,
-            maxRating: max,
-        })),
 }));
 
 export const useStockFiltering = create<StockFilteringState>((set) => ({
@@ -173,14 +163,19 @@ export const useCategoryFilter = create<CategoryFilterStoreState>((set) => ({
     selectedCategories: [],
     categoryCounts: {},
     toggleCategory: (category) =>
-      set((state) => ({
-        selectedCategories: state.selectedCategories.includes(category)
-          ? state.selectedCategories.filter((selectedCategory) => selectedCategory !== category)
-          : [...state.selectedCategories, category],
-      })),
+        set((state) => ({
+            selectedCategories: state.selectedCategories.includes(category)
+                ? state.selectedCategories.filter((selectedCategory) => selectedCategory !== category)
+                : [...state.selectedCategories, category],
+        })),
     setCategories: (categories) => set(() => ({ selectedCategories: categories })),
     removeCategory: (category) => set((state) => ({
-      selectedCategories: state.selectedCategories.filter((selectedCategory) => selectedCategory !== category),
+        selectedCategories: state.selectedCategories.filter((selectedCategory) => selectedCategory !== category),
     })),
     removeAllCategories: () => set(() => ({ selectedCategories: [] })),
-  }));
+}));
+
+export const useProductStore = create<ProductStoreState>((set) => ({
+    filteredProducts: null,
+    setFilteredProducts: (products) => set({ filteredProducts: products }),
+}));
