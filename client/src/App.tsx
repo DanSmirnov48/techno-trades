@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import RootLayout from "./_root/RootLayout";
-import { Deals, Explore, Home, ProductDetails } from "./_root/pages";
+import { Deals, Explore, Home, NotFound, ProductDetails } from "./_root/pages";
 import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
@@ -29,13 +29,14 @@ export default function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/account/:id" element={<Account />} />
+          <Route path="/dashboard/notifications/:id" element={<Notifications />} />
+          <Route path="/dashboard/appearance/:id" element={<Appearance />} />
 
           {/* User Dashboard Routes FOR ADMINS*/}
           <Route path="/dashboard/data-tables" element={<Tables />} />
           <Route path="/dashboard/product" element={<ProductCreateForm />} />
-          <Route path="/dashboard/notifications/:id" element={<Notifications />} />
-          <Route path="/dashboard/appearance/:id" element={<Appearance />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster expand={false} position="top-right" richColors closeButton className=""/>
     </main>
