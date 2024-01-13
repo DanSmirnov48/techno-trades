@@ -92,7 +92,7 @@ export const columns: ColumnDef<ProductType>[] = [
       return (
         <div className="flex space-x-2 ml-2">
           {discountedPrice == undefined && <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-700 ring-1 ring-inset ring-yellow-700/10"><X /></span>}
-          {discountedPrice && <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-800 ring-1 ring-inset ring-green-600/20">{discount}</span>}
+          {discountedPrice && <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-800 ring-1 ring-inset ring-green-600/20">{discount}%</span>}
           {/* {discountedPrice && <span className="flex items-center">{formatted}</span>} */}
         </div>
       )

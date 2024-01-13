@@ -18,13 +18,13 @@ const GridProductList = ({ products }: GridProductListProps) => {
               <div className={cn("h-12 flex items-start", { "justify-between": product.isDiscounted === true, "justify-end": product.isDiscounted === false })}>
                 {product.isDiscounted &&
                   <span className="rounded-md bg-purple-50 m-3 px-2 py-1 text-lg font-medium text-purple-800 ring-1 ring-inset ring-purple-600/20">
-                    {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}
+                    {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}%
                   </span>
                 }
                 <AddToFavoritesButton product={product} />
               </div>
               <Link to={`/products/${product.slug}`}>
-                <div className="relative mx-3 flex h-60 overflow-hidden rounded-xl bg-white items-top justify-center">
+                <div className="select-none relative mx-3 flex h-60 overflow-hidden rounded-xl bg-white items-top justify-center">
                   <img
                     className="w-44 h-4w-44 object-scale-down"
                     src={product.image[0].url}

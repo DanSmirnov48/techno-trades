@@ -1,61 +1,6 @@
+import { showPerPage, sortCategories } from '@/constants/idnex';
 import { Product } from '@/types';
 import { create } from 'zustand';
-
-interface SortCategory {
-    value: string;
-    label: string;
-}
-
-interface ShowPerPageOption {
-    value: number;
-    label: string;
-}
-
-export const sortCategories: SortCategory[] = [
-    {
-        value: "relevance",
-        label: "Sort By: Relevance",
-    },
-    {
-        value: "brandAsc",
-        label: "Sort By: Brand - A to Z",
-    },
-    {
-        value: "brandDesc",
-        label: "Sort By: Brand - Z to A",
-    },
-    {
-        value: "priceAsc",
-        label: "Sort By: Price - low to high",
-    },
-    {
-        value: "priceDesc",
-        label: "Sort By: Price - hight to low",
-    },
-    {
-        value: "customerRating",
-        label: "Sort By: Customer Rating",
-    },
-];
-
-export const showPerPage: ShowPerPageOption[] = [
-    {
-        value: 5,
-        label: "Show: 5",
-    },
-    {
-        value: 10,
-        label: "Show: 10",
-    },
-    {
-        value: 20,
-        label: "Show: 20",
-    },
-    {
-        value: 999,
-        label: "Show: All",
-    },
-];
 
 interface SortingState {
     isChecked: boolean;

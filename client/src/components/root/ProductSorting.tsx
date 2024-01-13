@@ -9,7 +9,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Icons } from "../icons";
-import { showPerPage, sortCategories, useSorting } from "@/hooks/store";
+import { useSorting } from "@/hooks/store";
+import { showPerPage, sortCategories } from "@/constants/idnex";
 
 const ProductSorting: React.FC = () => {
   const location = useLocation();

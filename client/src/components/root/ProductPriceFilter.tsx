@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { usePriceFilterStore } from "@/hooks/store";
+import { priceRanges } from "@/constants/idnex";
 
 interface PriceFilterProps {
   min: number;
@@ -38,13 +39,6 @@ export const ProductPriceFilter: React.FC = () => {
       removeSelectedRange(min, max);
     }
   };
-
-  const priceRanges: { min: number; max: number }[] = [
-    { min: 10, max: 100 },
-    { min: 100, max: 500 },
-    { min: 500, max: 1000 },
-    { min: 1000, max: 5000 },
-  ];
 
   useEffect(() => {
     const countByRange: { [key: string]: number } = {};

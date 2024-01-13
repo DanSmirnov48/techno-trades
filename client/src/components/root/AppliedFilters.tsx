@@ -1,22 +1,22 @@
 import {
   useCategoryFilter,
-  useFiltering,
+  useBrandFilter,
   usePriceFilterStore,
   useRatingFilterStore,
 } from "@/hooks/store";
 import { Button } from "../ui/button";
 import { Star, X } from "lucide-react";
+import { categoriesValues, priceRanges } from "@/constants/idnex";
 
 const AppliedFilters = () => {
   //-------------------------------BRANDS-----------------------------------------------------
-  const { selectedBrands, removeBrand, removeAllBrands } = useFiltering();
+  const { selectedBrands, removeBrand, removeAllBrands } = useBrandFilter();
   //-------------------------------PRICES-----------------------------------------------------
   const { selectedRanges, removeSelectedRange, removeAllRanges } = usePriceFilterStore();
   //-------------------------------RATING-----------------------------------------------------
   const { selectedRatings, removeSelectedRating, removeAllRatings } = useRatingFilterStore();
   //-------------------------------CATEGORY-----------------------------------------------------
   const { selectedCategories, removeCategory, removeAllCategories } = useCategoryFilter();;
-
 
   function clearAllFilter() {
     selectedBrands.length !== 0 && removeAllBrands();
@@ -28,10 +28,10 @@ const AppliedFilters = () => {
     <div>
       {(selectedRanges.length !== 0 ||
         selectedBrands.length !== 0 ||
-        selectedBrands.length !== 0 ||
+        selectedRatings.length !== 0 ||
         selectedCategories.length !== 0) && (
         <div className="flex flex-wrap">
-          {selectedRanges.map(({ min, max }, idx) => (
+          {selectedRanges.length !== priceRanges.length ? selectedRanges.map(({ min, max }, idx) => (
             <div key={`range-${idx}`} className="flex items-center mb-2 mr-1">
               <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
                 {`£${min} to £${max}`}
@@ -41,8 +41,15 @@ const AppliedFilters = () => {
                 />
               </span>
             </div>
-          ))}
-          {selectedCategories.map((category, idx) => (
+          )) : 
+          <div className="mb-2 mr-1">
+            <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
+              Any Price
+              <X className="cursor-pointer ml-1 text-black" onClick={() => removeAllRanges()} />
+            </span>
+          </div>
+          }
+          {selectedCategories.length !== categoriesValues.length ? selectedCategories.map((category, idx) => (
             <div key={`category-${idx}`} className="flex items-center mb-2 mr-1">
               <span className="inline-flex items-center rounded-md capitalize bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
                 {category}
@@ -52,8 +59,15 @@ const AppliedFilters = () => {
                 />
               </span>
             </div>
-          ))}
-          {selectedBrands.map((brand, idx) => (
+          )) :           
+          <div className="mb-2 mr-1">
+            <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
+              Any Category
+              <X className="cursor-pointer ml-1 text-black" onClick={() => removeAllCategories()} />
+            </span>
+          </div>
+          }
+          {selectedBrands.length !== 99 ? selectedBrands.map((brand, idx) => (
             <div key={`brand-${idx}`} className="flex items-center mb-2 mr-1">
               <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
                 {brand}
@@ -63,8 +77,15 @@ const AppliedFilters = () => {
                 />
               </span>
             </div>
-          ))}
-          {selectedRatings.map((rating, idx) => (
+          )) : 
+          <div className="mb-2 mr-1">
+            <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
+              Any Brand
+              <X className="cursor-pointer ml-1 text-black" onClick={() => removeAllBrands()} />
+            </span>
+          </div>
+          }
+          {selectedRatings.length !== 5 ? selectedRatings.map((rating, idx) => (
             <div key={`rating-${idx}`} className="flex items-center mb-2 mr-1">
               <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
                 <Star className="fill-yellow-400 text-yellow-500 mr-1" />
@@ -75,7 +96,14 @@ const AppliedFilters = () => {
                 />
               </span>
             </div>
-          ))}
+          )) : 
+          <div className="mb-2 mr-1">
+            <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">
+              Any Rating
+              <X className="cursor-pointer ml-1 text-black" onClick={() => removeAllRatings()} />
+            </span>
+          </div>
+          }
         </div>
       )}
       {selectedBrands.length + selectedRanges.length + selectedRatings.length + selectedCategories.length > 3 && (

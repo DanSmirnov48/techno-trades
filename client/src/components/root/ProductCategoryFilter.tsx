@@ -1,13 +1,12 @@
 import { useCategoryFilter } from "@/hooks/store";
-import { categories } from "../tables/products-table/filters";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { useGetProducts } from "@/lib/react-query/queries";
 import { useEffect } from "react";
+import { categoriesValues } from "@/constants/idnex";
 
 const ProductCategoryFilter = () => {
-  const { selectedCategories, toggleCategory, setCategories } =
-    useCategoryFilter();
+  const { selectedCategories, toggleCategory, setCategories } = useCategoryFilter();
   const { data } = useGetProducts();
 
   useEffect(() => {
@@ -42,9 +41,9 @@ const ProductCategoryFilter = () => {
     const counts: Record<string, number> = {};
 
     data?.data.products.forEach((product: { category: string }) => {
-      categories.forEach((category) => {
-        if (product.category === category.value) {
-          counts[category.value] = (counts[category.value] || 0) + 1;
+      categoriesValues.forEach((category) => {
+        if (product.category === category) {
+          counts[category] = (counts[category] || 0) + 1;
         }
       });
     });
@@ -57,18 +56,18 @@ const ProductCategoryFilter = () => {
   return (
     <div>
       <h4>By Category</h4>
-      {categories.map((category, index) => (
+      {categoriesValues.map((category, index) => (
         <div
           key={index}
           className="flex flex-row mx-0 my-1 justify-start items-center"
         >
           <Checkbox
-            id={category.value}
-            checked={selectedCategories.includes(category.value)}
-            onCheckedChange={() => toggleCategory(category.value)}
+            id={category}
+            checked={selectedCategories.includes(category)}
+            onCheckedChange={() => toggleCategory(category)}
           />
-          <Label htmlFor={category.value} className="text-sm ml-2 capitalize">
-            {`${category.label} (${categoryCounts[category.value] || 0})`}
+          <Label htmlFor={category} className="text-sm ml-2 capitalize">
+            {`${category} (${categoryCounts[category] || 0})`}
           </Label>
         </div>
       ))}
