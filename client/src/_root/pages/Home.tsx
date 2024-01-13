@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { categories } from '@/components/tables/products-table/filters'
 import { NewArrivals, Promotion } from "@/components/root";
 import { buttonVariants } from "@/components/ui/button";
+import { useCategoryFilter } from "@/hooks/store";
 
 const Home = () => {
   function Hero() {
@@ -26,7 +27,7 @@ const Home = () => {
             </p>
             <Link
               to="/explore"
-              className={buttonVariants({className: "text-sm w-36"})}
+              className={buttonVariants({ className: "text-sm w-36" })}
             >
               Shop Now
             </Link>
@@ -37,11 +38,13 @@ const Home = () => {
   }
 
   function ShopCategories() {
+    const { toggleCategory, removeAllCategories } = useCategoryFilter();
+
     return (
       <>
         <div className="flex flex-row justify-between items-center my-10 font-jost">
           <h1 className="text-dark-3 text-3xl">Shop by Categories</h1>
-          <Link to={"/explore"} className="text-lg">
+          <Link to="/explore" className="text-lg">
             Show All
           </Link>
         </div>
@@ -57,8 +60,11 @@ const Home = () => {
                   />
                 </div>
 
-                <Link to={`/explore?category=${status.value}`}>
-                  <div className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white">
+                <Link to="/explore">
+                  <div
+                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white"
+                    onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
+                  >
                     <status.icon className="h-5 w-5 mr-3 text-muted-foreground md:hidden" />
                     <h5 className="text-xl font-medium text-dark-4 font-jost">
                       {status.label}
