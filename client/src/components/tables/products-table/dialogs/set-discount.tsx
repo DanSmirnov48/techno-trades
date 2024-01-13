@@ -5,6 +5,7 @@ import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { useSetProductDiscount } from "@/lib/react-query/queries";
+import { AlertCircle } from "lucide-react";
 
 type EditProps = {
   product: ProductType;
@@ -12,8 +13,8 @@ type EditProps = {
 };
 
 export default function SetDiscount({ product, setOpen }: EditProps) {
-  const currProductDiscount = product.isDiscounted && calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })
-  const [discount, setDiscount] = useState<number | undefined>(+currProductDiscount || 0);
+  const currProductDiscount = product.isDiscounted ? calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice }) : undefined
+  const [discount, setDiscount] = useState<number | undefined>(currProductDiscount);
   const { mutateAsync: setProductDiscount } = useSetProductDiscount()
 
   const StatBox = ({ label, value }: { label: string; value: string }) => (
@@ -37,7 +38,7 @@ export default function SetDiscount({ product, setOpen }: EditProps) {
 
     let res = setProductDiscount({
       id: product._id,
-      isDiscounted: !product.isDiscounted,
+      isDiscounted: discount !== undefined,
       discountedPrice: discountedPrice,
     })
     console.log(res)
@@ -46,6 +47,16 @@ export default function SetDiscount({ product, setOpen }: EditProps) {
 
   return (
     <div className="flex flex-col w-full max-w-[700px] mx-auto gap-5 my-5">
+
+      {currProductDiscount && <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+        <AlertCircle className="w-6 h-6 mr-2" />
+        <span className="sr-only">Info</span>
+        <div className="text-base">
+          <span className="font-medium">Info alert!</span> This product is currenly on <span className="font-bold">{currProductDiscount}%</span> discount!
+        </div>
+      </div>
+      }
+
       <h1 className="body-bold">Set {product.name} for discount!</h1>
       <h1>Choose one of:</h1>
       <div>
@@ -67,15 +78,18 @@ export default function SetDiscount({ product, setOpen }: EditProps) {
         id="input"
         placeholder="Discount %"
         type="number"
-        onFocus={() => setDiscount(undefined)}
+        value={discount}
         onChange={(e) => setDiscount(Number(e.target.value.slice(0, 2)))}
       />
 
-      <h1>Current Disocount: {currProductDiscount}</h1>
+      <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
+        <span className="sr-only">Info</span>
+        <h1>Old Price: {formatPrice(product.price, { currency: "GBP" })}</h1>
+        {discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(product.price * discount / 100, { currency: "GBP" })}</span></h1>}
+        {discount && <h1>New Price:  {formatPrice(product.price - product.price * discount / 100, { currency: "GBP" })}</h1>}
+      </div>
 
-      <h1>Old Price: {formatPrice(product.price, { currency: "GBP" })}</h1>
-      {discount && <h1>Discount of: {product.price * discount / 100}</h1>}
-      {discount && <h1>New Price: {product.price - product.price * discount / 100}</h1>}
+
       <Button onClick={handleSubmit}>Submit</Button>
     </div>
   );

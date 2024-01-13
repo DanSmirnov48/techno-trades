@@ -28,8 +28,8 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { FileWithPath } from "@uploadthing/react";
 import { useUploadThing } from "@/uploadthing";
-import { cn, convertFileToUrl } from "@/lib/utils";
-import { Loader2, X } from "lucide-react";
+import { cn, convertFileToUrl, formatPrice } from "@/lib/utils";
+import { AlertCircle, Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useCreateProduct } from "@/lib/react-query/queries";
 import { useNavigate } from "react-router-dom";
@@ -109,13 +109,13 @@ const ProductCreateForm = () => {
         return
       }
       const newProduct = await createProduct({
-      // const newProduct: INewProduct = ({
+        // const newProduct: INewProduct = ({
         ...value,
         discountedPrice: value.isDiscounted ? discountedPrice : undefined,
         image: productImages,
         userId: user._id,
       });
-      
+
 
       if (newProduct && newProduct.message === 'Created Product') {
         toast.success('Product created successfully', {
@@ -338,6 +338,13 @@ const ProductCreateForm = () => {
                 <FormItem className="flex flex-col items-start justify-start bg-neutral-100 rounded-lg border p-4">
                   <FormControl>
                     <div className="flex flex-col w-full  mx-auto gap-5 my-5">
+                      <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+                        <AlertCircle className="w-6 h-6 mr-2" />
+                        <span className="sr-only">Info</span>
+                        <div className="text-base">
+                          <span className="font-medium">Info alert!</span> You will be able to modify the discount at the admin dashboard later!
+                        </div>
+                      </div>
                       <Label>Choose one of:</Label>
                       <div>
                         <ul className="grid grid-cols-4 gap-5">
@@ -357,6 +364,12 @@ const ProductCreateForm = () => {
                         value={discount}
                         onChange={(e) => setDiscount(Number(e.target.value.slice(0, 2)))}
                       />
+                      <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
+                        <span className="sr-only">Info</span>
+                        <h1>Current Price: <span className="font-semibold">{formatPrice(form.getValues("price"), { currency: "GBP" })}</span></h1>
+                        {discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
+                        {discount && <h1>Discounted Price:  <span className="text-blue-500 font-semibold">{formatPrice(form.getValues("price") - form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
+                      </div>
                     </div>
                   </FormControl>
                   <FormMessage className="shad-form_message" />
