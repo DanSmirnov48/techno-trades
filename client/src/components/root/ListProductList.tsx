@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
 import AddToCartButton from "./AddToCartButton";
 import AddToFavoritesButton from "./AddToFavoritesButton";
-import { calculateDiscountPercentage, cn, ratingStyle } from "@/lib/utils";
+import { calculateDiscountPercentage, cn, formatPrice, ratingStyle } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { Icons } from "../icons";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
+import { Card, CardContent } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 
 type ListProductListProps = {
   products: Product[];
@@ -18,17 +20,30 @@ const ListProductList = ({ products }: ListProductListProps) => {
       <ul className="w-full grid grid-cols-1 gap-7">
         {products.map((product) => (
           <li key={product._id} className="grid grid-flow-col gap-4 relative bg-white rounded-xl p-4 shadow-lg ring-1 ring-inset ring-dark-4/20">
-            <div className="col-span-3 flex flex-col gap-5 w-full h-full py-5">
-              <Link to={`/products/${product.slug}`}>
-                <div className="relative flex overflow-hidden items-center justify-center">
-                  <img className="w-52 h-52 object-scale-down" src={product.image[0].url} />
-                </div>
-              </Link>
+            <div className="col-span-2 flex flex-col gap-5 w-full h-full py-5 select-none">
+              <Carousel className="w-full max-w-[18rem]">
+                <CarouselContent>
+                  {product.image.map((_, index) => (
+                    <CarouselItem key={index}>
+                      <Card className="p-1">
+                        <CardContent
+                          className="flex aspect-square items-center justify-center p-6 cursor-grab"
+                          onMouseDown={(e) => e.currentTarget.style.cursor = "grabbing"}
+                          onMouseUp={(e) => e.currentTarget.style.cursor = "grab"}
+                          onMouseLeave={(e) => e.currentTarget.style.cursor = "grab"}
+                        >
+                          <img className="min-h-[13rem] min-w-[13rem] w-52 h-52 object-scale-down" src={product.image[index].url} />
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
             <div className="col-span-8 flex flex-col gap-5 w-full h-full py-5">
-              <h1 className="text-2xl font-medium tracking-wide text-dark-4">
+              <Link to={`/products/${product.slug}`} className="text-2xl font-medium tracking-wide text-dark-4">
                 {product.name}
-              </h1>
+              </Link>
               <div className="flex items-center">
                 <Rating
                   value={product?.rating || 0}
@@ -50,14 +65,23 @@ const ListProductList = ({ products }: ListProductListProps) => {
             </div>
             <div className="col-span-1 flex flex-col gap-5 w-full h-full py-5">
               <span className="text-2xl font-semibold text-dark-4">
-                £{product.price}
+                {product?.isDiscounted ? (
+                  <>
+                    <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
+                    <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
+                      {product && formatPrice(product.price, { currency: "GBP" })}
+                    </span>
+                  </>
+                ) : (
+                  product && formatPrice(product.price, { currency: "GBP" })
+                )}
               </span>
               <div className="flex flex-row gap-3">
                 {product.isDiscounted &&
                   <>
                     <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">Epic Deal</span>
                     <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-base font-semibold text-sky-800 ring-1 ring-inset ring-sky-600/20">
-                      {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })} off
+                      {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}% off
                     </span>
                   </>
                 }

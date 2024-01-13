@@ -7,10 +7,11 @@ import { AddToCartButton } from "@/components/root";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Fullscreen } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import ReviewsSection from "@/components/root/ReviewsSection";
 import ProductReviewForm from "@/components/root/ProductReviewForm";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -35,12 +36,15 @@ const ProductDetails = () => {
   function imageSection() {
     return (
       <div className="w-full px-4 mb-8 md:w-1/2 md:mb-0">
-        <div className="sticky top-0 overflow-hidden ">
-          <div className="relative mb-6 lg:mb-10 lg:h-96">
+        <div className="sticky top-0 overflow-hidden">
+          <div className="relative mb-6 lg:mb-10 lg:h-96 border-2 rounded-xl">
             <img
-              className="object-contain w-full lg:h-full cursor-pointer"
+              className="object-contain w-full lg:h-full p-3"
               src={mainImage?.url}
-              alt=""
+              alt={mainImage?.name}
+            />
+            <Fullscreen
+              className="absolute top-5 right-5 w-8 h-8 cursor-pointer"
               onClick={() => setOpen(true)}
             />
           </div>
@@ -48,8 +52,7 @@ const ProductDetails = () => {
             {product?.image.map((image) => (
               <div key={image._id} className="w-1/2 p-2 sm:w-1/4">
                 <a
-                  className="block border p-2 border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
-                  href="#"
+                  className="block border rounded-xl p-2 border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
                   onClick={() => setMainImage(image)}
                 >
                   <img
@@ -74,7 +77,7 @@ const ProductDetails = () => {
             <>
               <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-base font-semibold text-purple-800 ring-1 ring-inset ring-purple-600/20">Epic Deal</span>
               <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-base font-semibold text-sky-800 ring-1 ring-inset ring-sky-600/20">
-                {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })} off
+                {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}% off
               </span>
             </>
           }
@@ -264,20 +267,32 @@ const ProductDetails = () => {
             <div className="lg:pl-20 font-jost">
               {infoSection()}
               {spectsSection()}
-              <AddToCartButton product={product!} />
+              {product && <AddToCartButton product={product} />}
               <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-w-screen-lg h-[calc(60vh)]">
-                  <img
-                    className="object-contain max-w-2xl h-full m-auto"
-                    src={mainImage?.url}
-                    alt=""
-                  />
+                <DialogContent className="max-w-screen-lg flex justify-center select-none">
+                  <Carousel className="w-full max-w-4xl">
+                    <CarouselContent>
+                      {product?.image.map((_, index) => (
+                        <CarouselItem
+                          key={index}
+                          className="flex aspect-square items-center justify-center p-6 cursor-grab"
+                          onMouseDown={(e) => e.currentTarget.style.cursor = "grabbing"}
+                          onMouseUp={(e) => e.currentTarget.style.cursor = "grab"}
+                          onMouseLeave={(e) => e.currentTarget.style.cursor = "grab"}
+                        >
+                          <img className="object-contain max-w-2xl h-full m-auto" src={product.image[index].url} />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
                 </DialogContent>
               </Dialog>
             </div>
           </div>
         </div>
-        <>
+        <section>
           <div className="flex flex-row justify-between items-center my-4 font-jost mt-[10rem]">
             <h1 className="text-dark-3 text-3xl">You might also like</h1>
           </div>
@@ -303,7 +318,7 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-        </>
+        </section>
         <div className="container p-0 my-20">
           {product && <ProductReviewForm product={product} />}
         </div>
