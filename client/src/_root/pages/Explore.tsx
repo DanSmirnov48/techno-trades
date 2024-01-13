@@ -1,10 +1,11 @@
 import { ProductFilters, ProductSorting, GridProductList, ListProductList } from "@/components/root";
 import { FilterLoader } from "@/components/root/FilterLoader";
 import { ProductLoader } from "@/components/root/ProductLoader";
-import { useSorting, useBrandFilter, useStockFiltering, usePriceFilterStore, sortCategories, useRatingFilterStore, useCategoryFilter, useProductStore } from "@/hooks/store";
+import { useSorting, useBrandFilter, useStockFiltering, usePriceFilterStore, useRatingFilterStore, useCategoryFilter, useProductStore } from "@/hooks/store";
 import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-query/queries";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
+import { sortCategories } from "@/constants/idnex";
 
 const Explore = () => {
 
@@ -16,7 +17,7 @@ const Explore = () => {
   const { selectedBrands } = useBrandFilter();
   const { selectedRatings } = useRatingFilterStore();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const { isPending: isProductLoading } = useGetPaginatedProducts(currentPage, selectedShowPerPage);
 
   const filteredProducts = useProductStore((state) => state.filteredProducts);
@@ -79,12 +80,18 @@ const Explore = () => {
           </div>
           <div className="flex flex-col basis-3/4 ml-5">
             {!filteredProductsLoading && <ProductSorting />}
-            {filteredProductsLoading ? <ProductLoader /> : (
+            {filteredProductsLoading ? <ProductLoader /> : totalProducts > 0 ? (
               isChecked ? (
                 filteredAndSortedProducts && <GridProductList products={filteredAndSortedProducts} />
               ) : (
                 filteredAndSortedProducts && <ListProductList products={filteredAndSortedProducts} />
               )
+            ) : (
+              <div className="flex flex-col items-center w-full justify-center h-full gap-3">
+                <img src="/public/images/2762885.png" className="w-[30rem] object-contain" />
+                <h1 className="text-4xl text-muted-foreground font-medium">Uh-oh! Looks like we can't keep up with you!</h1>
+                <p className="text-xl text-muted-foreground font-extralight">Try removing some of the filters</p>
+              </div>
             )}
           </div>
         </div>
