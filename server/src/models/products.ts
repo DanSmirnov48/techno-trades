@@ -8,7 +8,7 @@ interface IReview {
     user: Types.ObjectId;
 }
 
-interface IProduct extends Document {
+export interface IProduct extends Document {
     user: Types.ObjectId;
     slug: string;
     name: string;
