@@ -177,17 +177,18 @@ export async function getPaginatedProducts(page: number, pageSize: number) {
 }
 
 export async function getFilteredProducts(
-  { hideOutOfStock, prices, brands, categories, ratings, page, pageSize }:
-    { hideOutOfStock?: boolean, prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[], page: number, pageSize: number }) {
+  { hideOutOfStock, prices, brands, categories, ratings, page, pageSize, sort }:
+    { hideOutOfStock?: boolean, prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[], page: number, pageSize: number, sort?: string; }) {
   try {
     const response = await axios.post(`/api/products/filter`, {
-      hideOutOfStock: hideOutOfStock,
-      brands: brands,
-      categories: categories,
-      ratings: ratings,
-      prices: prices,
-      page: page,
-      pageSize: pageSize,
+      hideOutOfStock,
+      brands,
+      categories,
+      ratings,
+      prices,
+      page,
+      pageSize,
+      sort,
     });
     return response
   } catch (error) {

@@ -5,7 +5,7 @@ interface PriceRange {
     max: number;
 }
 
-interface FilterProductsParams {
+interface FilterAndSortProductsParams {
     hideOutOfStock?: boolean;
     prices?: PriceRange[];
     brands?: string[];
@@ -13,9 +13,10 @@ interface FilterProductsParams {
     ratings?: number[];
     page?: number;
     pageSize?: number;
+    sort?: string;
 }
 
-export const filterProducts = async ({
+export const filterAndSortProducts = async ({
     hideOutOfStock,
     prices,
     brands,
@@ -23,7 +24,8 @@ export const filterProducts = async ({
     ratings,
     page = 1,
     pageSize = 10,
-}: FilterProductsParams): Promise<{ totalFilteredProducts: number; filteredProducts: IProduct[] }> => {
+    sort
+}: FilterAndSortProductsParams): Promise<{ totalFilteredProducts: number; filteredAndSortedProducts: IProduct[] }> => {
     // Build the base query
     const baseQuery: any = {};
 
@@ -56,12 +58,41 @@ export const filterProducts = async ({
     }
 
     // Execute the query to get filtered products
-    const filteredProducts = await ProductModel.find(baseQuery)
+    const query = ProductModel.find(baseQuery);
+
+    // Apply sorting if provided
+    if (sort) {
+        switch (sort) {
+            case 'brandAsc':
+                query.sort({ brand: 1 });
+                break;
+            case 'brandDesc':
+                query.sort({ brand: -1 });
+                break;
+            case 'priceAsc':
+                query.sort({ price: 1 });
+                break;
+            case 'priceDesc':
+                query.sort({ price: -1 });
+                break;
+            case 'customerRating':
+                query.sort({ rating: -1 });
+                break;
+            case 'deals':
+                query.sort({ isDiscounted: -1 });
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Apply skip and limit for pagination
+    const filteredAndSortedProducts = await query
         .skip((+page - 1) * +pageSize)
         .limit(+pageSize);
 
     // Execute a separate count query to get the total count of filtered products
     const totalFilteredProducts = await ProductModel.countDocuments(baseQuery);
 
-    return { totalFilteredProducts, filteredProducts };
+    return { totalFilteredProducts, filteredAndSortedProducts };
 };

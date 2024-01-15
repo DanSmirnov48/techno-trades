@@ -8,7 +8,7 @@ import {
     UpdateProductById,
 } from "../models/products";
 import { ObjectId } from "mongoose";
-import { filterProducts } from "../utils/filterProducts";
+import { filterAndSortProducts } from "../utils/filterAndSortProducts";
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -40,10 +40,10 @@ export const getPaginatedProducts = asyncHandler(async (req: Request, res: Respo
 
 export const getFilteredProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const { hideOutOfStock, prices, brands, categories, ratings, page = 1, pageSize = 10 } = req.body;
-        console.log({ hideOutOfStock, prices, brands, categories, ratings, page, pageSize  });
+        const { hideOutOfStock, prices, brands, categories, ratings, page = 1, pageSize = 10, sort } = req.body;
+        console.log({ hideOutOfStock, prices, brands, categories, ratings, page, pageSize, sort });
 
-        const { totalFilteredProducts, filteredProducts } = await filterProducts({
+        const { filteredAndSortedProducts, totalFilteredProducts } = await filterAndSortProducts({
             hideOutOfStock,
             prices,
             brands,
@@ -51,9 +51,10 @@ export const getFilteredProducts = asyncHandler(async (req: Request, res: Respon
             ratings,
             page,
             pageSize,
+            sort
         });
 
-        return res.status(200).json({ totalProducts: totalFilteredProducts, products: filteredProducts }).end();
+        return res.status(200).json({ totalProducts: totalFilteredProducts, products: filteredAndSortedProducts }).end();
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Internal Server Error' });

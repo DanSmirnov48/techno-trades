@@ -97,10 +97,10 @@ export const useGetFilteredProducts = () => {
 
     return useMutation({
         mutationFn: (
-            { hideOutOfStock, prices, brands, categories, ratings, page, pageSize }:
-                { hideOutOfStock?: boolean, prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[], page: number, pageSize: number }
+            { hideOutOfStock, prices, brands, categories, ratings, page, pageSize, sort }:
+                { hideOutOfStock?: boolean, prices?: PriceRange[], brands?: string[], categories?: string[], ratings?: number[], page: number, pageSize: number, sort?: string; }
         ) =>
-            getFilteredProducts({ hideOutOfStock, prices, brands, categories, ratings, page, pageSize }),
+            getFilteredProducts({ hideOutOfStock, prices, brands, categories, ratings, page, pageSize, sort }),
 
         onSuccess: (data) => {
             const { totalProducts, products } = data.data;

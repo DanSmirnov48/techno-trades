@@ -5,7 +5,6 @@ import { useSorting, useBrandFilter, useStockFiltering, usePriceFilterStore, use
 import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-query/queries";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
-import { sortCategories } from "@/constants/idnex";
 
 const Explore = () => {
 
@@ -36,7 +35,8 @@ const Explore = () => {
         categories: selectedCategories,
         ratings: selectedRatings,
         page: currentPage,
-        pageSize: selectedShowPerPage
+        pageSize: selectedShowPerPage,
+        sort: selectedSort
       })
     }
     handle()
@@ -48,28 +48,9 @@ const Explore = () => {
     selectedCategories,
     selectedRatings,
     currentPage,
-    selectedShowPerPage
+    selectedShowPerPage,
+    selectedSort
   ])
-
-  const filteredAndSortedProducts = filteredProducts && filteredProducts.sort((a, b) => {
-    const effectivePriceA = a.isDiscounted ? a.discountedPrice! : a.price;
-    const effectivePriceB = b.isDiscounted ? b.discountedPrice! : b.price;
-
-    switch (selectedSort) {
-      case sortCategories[1].value: // "brandAsc"
-        return a.brand.localeCompare(b.brand);
-      case sortCategories[2].value: // "brandDesc"
-        return b.brand.localeCompare(a.brand);
-      case sortCategories[3].value: // "priceAsc"
-        return effectivePriceA - effectivePriceB;
-      case sortCategories[4].value: // "priceDesc"
-        return effectivePriceB - effectivePriceA;
-      case sortCategories[5].value: // "customerRating"
-        return b.rating - a.rating;
-      default:
-        return 0;
-    }
-  })
 
   return (
     <div className="flex flex-col flex-1 items-center bg-gray-100">
@@ -80,15 +61,15 @@ const Explore = () => {
           </div>
           <div className="flex flex-col basis-3/4 ml-5">
             {!filteredProductsLoading && <ProductSorting />}
-            {filteredProductsLoading ? <ProductLoader /> : totalProducts > 0 ? (
+            {filteredProductsLoading ? <ProductLoader /> : (filteredProducts && totalProducts > 0) ? (
               isChecked ? (
-                filteredAndSortedProducts && <GridProductList products={filteredAndSortedProducts} />
+                <GridProductList products={filteredProducts} />
               ) : (
-                filteredAndSortedProducts && <ListProductList products={filteredAndSortedProducts} />
+                <ListProductList products={filteredProducts} />
               )
             ) : (
               <div className="flex flex-col items-center w-full justify-center h-full gap-3">
-                <img src="/public/images/2762885.png" className="w-[30rem] object-contain" />
+                <img src="/images/2762885.png" className="w-[30rem] object-contain" />
                 <h1 className="text-4xl text-muted-foreground font-medium">Uh-oh! Looks like we can't keep up with you!</h1>
                 <p className="text-xl text-muted-foreground font-extralight">Try removing some of the filters</p>
               </div>
