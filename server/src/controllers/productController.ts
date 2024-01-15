@@ -61,6 +61,18 @@ export const getFilteredProducts = asyncHandler(async (req: Request, res: Respon
     }
 });
 
+export const searchProducts = asyncHandler(async (req: Request, res: Response) => {
+    const { q } = req.query;
+
+    try {
+      const results = await ProductModel.find({ name: { $regex: new RegExp(q as string, 'i') } }).limit(10);
+      res.json({ results });
+    } catch (error) {
+      console.error('Error searching for products:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 export const getProductById = asyncHandler(
     async (req: Request, res: Response) => {
         const product = await ProductModel.findById(req.params.id);

@@ -35,6 +35,10 @@ export const sortCategories: SortCategory[] = [
         value: "customerRating",
         label: "Sort By: Customer Rating",
     },
+    {
+        value: "deals",
+        label: "Sort By: Deals",
+    },
 ];
 
 export const showPerPage: ShowPerPageOption[] = [

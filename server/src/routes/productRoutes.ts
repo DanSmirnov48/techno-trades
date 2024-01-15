@@ -9,6 +9,7 @@ import {
     setProductDiscount,
     getPaginatedProducts,
     getFilteredProducts,
+    searchProducts,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -23,6 +24,9 @@ router.route("/pp")
 
 router.route("/filter")
     .post(getFilteredProducts)
+
+router.route("/search")
+    .get(searchProducts)
 
 router.route('/:slug')
     .get(getProductBySlug);

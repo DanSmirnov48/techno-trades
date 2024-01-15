@@ -5,6 +5,7 @@ import { useSorting, useBrandFilter, useStockFiltering, usePriceFilterStore, use
 import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-query/queries";
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
+import ProductSearch from "@/components/root/ProductSearch";
 
 const Explore = () => {
 
@@ -55,6 +56,7 @@ const Explore = () => {
   return (
     <div className="flex flex-col flex-1 items-center bg-gray-100">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
+        <ProductSearch/>
         <div className="flex flex-row min-h-[65rem]">
           <div className="basis-1/4">
             {isProductLoading ? <FilterLoader /> : <ProductFilters />}
