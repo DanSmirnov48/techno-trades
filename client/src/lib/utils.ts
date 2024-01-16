@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Star } from "@smastrom/react-rating";
+import { Product } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -49,8 +50,17 @@ export const calculateDiscountPercentage = ({ normalPrice, discountedPrice }: { 
     return roundedPercentage % 1 === 0 ? roundedPercentage.toString() + '%' : percentage.toFixed(2) + '%';
   };
 
-  return formatPercentage(discountPercentage);
+  return Math.round(discountPercentage);
 };
+
+export const isProductAddedWithinNDays = ({product, nDays} : {product: Product, nDays: number}): boolean => {
+  const currentDate = new Date();
+  const nDaysAgo = new Date();
+  nDaysAgo.setDate(currentDate.getDate() - nDays);
+
+  const productCreatedAt = new Date(product.createdAt);
+  return productCreatedAt >= nDaysAgo;
+}
 
 export const ratingStyle = {
   itemShapes: Star,

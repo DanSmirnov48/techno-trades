@@ -34,7 +34,7 @@ const renderRatingFilters = (products: Product[]) => {
           className="mr-1"
         />
         <Rating value={value} readOnly itemStyles={ratingStyle} style={{ maxWidth: 100 }} />
-        <Label htmlFor={`rating-${value}`} className="text-sm ml-2">{`${value} or more (${count})`}</Label>
+        <Label htmlFor={`rating-${value}`} className="font-jost text-base ml-2">{`${value} or more (${count})`}</Label>
       </div>
     );
   };
@@ -65,12 +65,11 @@ const renderRatingFilters = (products: Product[]) => {
   const sortedRatingsWithCount = getRatingsWithCount(products).sort((a, b) => b.value - a.value);
 
   return (
-    <div>
-      <h4>By Rating</h4>
+    <>
       {sortedRatingsWithCount.map(({ value, count }) => (
         <RatingFilter key={value} value={value} count={count} />
       ))}
-    </div>
+    </>
   );
 };
 

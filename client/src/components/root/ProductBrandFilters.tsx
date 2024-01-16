@@ -48,8 +48,7 @@ const ProductBrandFilter: React.FC = () => {
     }));
 
   return (
-    <div>
-      <h4>By Brand</h4>
+    <>
       {uniqueBrandsWithCount.map(({ name, count }) => (
         <div
           key={name}
@@ -61,10 +60,10 @@ const ProductBrandFilter: React.FC = () => {
             onCheckedChange={() => toggleBrand(name)}
             aria-label={`Select ${name} brand`}
           />
-          <Label htmlFor="brand" className="text-sm ml-2">{`${name} (${count})`}</Label>
+          <Label htmlFor="brand" className="ml-2 font-jost text-base">{`${name} (${count})`}</Label>
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

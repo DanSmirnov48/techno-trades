@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
 import AddToCartButton from "./AddToCartButton";
 import AddToFavoritesButton from "./AddToFavoritesButton";
-import { calculateDiscountPercentage, cn, formatPrice, ratingStyle } from "@/lib/utils";
+import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { Icons } from "../icons";
 import { Rating } from "@smastrom/react-rating";
@@ -20,6 +20,9 @@ const ListProductList = ({ products }: ListProductListProps) => {
       <ul className="w-full grid grid-cols-1 gap-7">
         {products.map((product) => (
           <li key={product._id} className="grid grid-flow-col gap-4 relative bg-white rounded-xl p-4 shadow-lg ring-1 ring-inset ring-dark-4/20">
+            {isProductAddedWithinNDays({ product, nDays: 14 }) &&
+              <img src="/images/new.png" alt="" className="absolute z-30 w-[100px] h-[100px] select-none"/>
+            }
             <div className="col-span-2 flex flex-col gap-5 w-full h-full py-5 select-none">
               <Carousel className="w-full max-w-[18rem]">
                 <CarouselContent>

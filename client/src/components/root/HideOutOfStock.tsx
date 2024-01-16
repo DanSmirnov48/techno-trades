@@ -32,7 +32,7 @@ const HideOutOfStock = () => {
         checked={hideOutOfStock}
         onCheckedChange={handleSwitchChange}
       />
-      <Label htmlFor="stock">Hide out of Stock</Label>
+      <Label className="font-jost text-base" htmlFor="stock">Hide out of Stock</Label>
     </div>
   );
 };

@@ -22,7 +22,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
   return (
     <div className="flex flex-row mx-0 my-1 justify-start items-center">
       <Checkbox id="price" className="mr-1" onCheckedChange={handleCheckboxChange} checked={isChecked} />
-      <Label htmlFor="price" className="text-sm ml-2">{`£${min} to £${max} (${productCount})`}</Label>
+      <Label htmlFor="price" className="font-jost text-base ml-2">{`£${min} to £${max} (${productCount})`}</Label>
     </div>
   );
 };
@@ -50,8 +50,7 @@ export const ProductPriceFilter: React.FC = () => {
   }, [data?.data.products]);
 
   return (
-    <div>
-      <h4>By Price</h4>
+    <>
       {priceRanges.map(({ min, max }, idx) => (
         <PriceFilter
           key={idx}
@@ -62,6 +61,6 @@ export const ProductPriceFilter: React.FC = () => {
           productCount={productsCountByRange[`${min}-${max}`] || 0}
         />
       ))}
-    </div>
+    </>
   );
 };

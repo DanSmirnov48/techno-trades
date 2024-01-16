@@ -54,8 +54,7 @@ const ProductCategoryFilter = () => {
   const categoryCounts = getCategoryCounts();
 
   return (
-    <div>
-      <h4>By Category</h4>
+    <>
       {categoriesValues.map((category, index) => (
         <div
           key={index}
@@ -66,12 +65,12 @@ const ProductCategoryFilter = () => {
             checked={selectedCategories.includes(category)}
             onCheckedChange={() => toggleCategory(category)}
           />
-          <Label htmlFor={category} className="text-sm ml-2 capitalize">
+          <Label htmlFor={category} className="ml-2 capitalize font-jost text-base">
             {`${category} (${categoryCounts[category] || 0})`}
           </Label>
         </div>
       ))}
-    </div>
+    </>
   );
 };
 
