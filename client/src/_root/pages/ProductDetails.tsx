@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
-import { AddToCartButton } from "@/components/root";
+import { AddToCartButton, AddToFavoritesButton } from "@/components/root";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -268,6 +268,8 @@ const ProductDetails = () => {
               {infoSection()}
               {spectsSection()}
               {product && <AddToCartButton product={product} />}
+              <div className="mt-2"/>
+              {product && <AddToFavoritesButton product={product} variant="button"/>}
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-screen-lg flex justify-center select-none">
                   <Carousel className="w-full max-w-4xl">
