@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
 import AddToCartButton from "./AddToCartButton";
 import AddToFavoritesButton from "./AddToFavoritesButton";
-import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
+import { calculateDiscountPercentage, formatPrice } from "@/lib/utils";
 
 type GridProductListProps = {
   products: Product[];
@@ -14,19 +14,19 @@ const GridProductList = ({ products }: GridProductListProps) => {
       <ul className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-7">
         {products.map((product) => (
           <li key={product._id} className="relative">
-            <div className="flex w-full  flex-col self-center overflow-hidden rounded-xl bg-white shadow-xl">
-              <div className={cn("h-12 flex items-start", { "justify-between": product.isDiscounted === true, "justify-end": product.isDiscounted === false })}>
-                {product.isDiscounted &&
-                  <span className="rounded-md bg-purple-50 m-3 px-2 py-1 text-lg font-medium text-purple-800 ring-1 ring-inset ring-purple-600/20">
-                    {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}%
-                  </span>
-                }
+            {product.isDiscounted &&
+              <span className="absolute top-0 left-0 px-6 py-2 rounded-tl-xl rounded-br-xl bg-purple-100 text-lg font-medium text-purple-800 ring-1 ring-inset ring-purple-600/30">
+                {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}%
+              </span>
+            }
+            <div className="flex w-full  flex-col self-center overflow-hidden border rounded-xl bg-white shadow-xl">
+              <div className="h-12 flex items-start justify-end">
                 <AddToFavoritesButton product={product} />
               </div>
               <Link to={`/products/${product.slug}`}>
                 <div className="select-none relative mx-3 flex h-60 overflow-hidden rounded-xl bg-white items-top justify-center">
                   <img
-                    className="w-44 h-4w-44 object-scale-down"
+                    className="w-44 h-44 object-scale-down"
                     src={product.image[0].url}
                     alt="post"
                   />

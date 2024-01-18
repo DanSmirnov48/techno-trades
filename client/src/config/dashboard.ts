@@ -28,6 +28,13 @@ export const dashboardConfig: DashboardConfig = {
       items: [],
     },
     {
+      title: "Favourites",
+      for: "all",
+      href: "/dashboard/favourites/",
+      icon: "heart",
+      items: [],
+    },
+    {
       title: "Data Table",
       for: "admin",
       href: "/dashboard/data-tables",
