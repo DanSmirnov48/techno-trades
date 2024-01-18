@@ -41,7 +41,7 @@ export const getCurentUser = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await getUser();
-        return res.status(200).json({ data: users });
+        return res.status(200).json(users);
     } catch (error) {
         console.log(error);
         return res.sendStatus(400)

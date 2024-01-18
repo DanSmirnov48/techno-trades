@@ -39,7 +39,7 @@ router.route("/deactivate-me").delete(protect, deleteMe);             //✔️
 // Get CURRENT AUTHORIZED user
 router.route("/me").get(protect, getMe, getCurentUser);               //❌ 
 
-router.route("/").get(getAllUsers);                                   //✔️
+router.route("/").get(protect, restrictTo("admin"), getAllUsers);     //✔️
 
 router.route("/:id").get(getUserById);                                //✔️
 

@@ -77,3 +77,17 @@ export const ProductReviewValidation = z.object({
     title: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 1000 characters." }),
     comment: z.string().min(1, { message: "This field is required" }).max(5000, { message: "Maximum 5000 characters." }),
 });
+
+// ============================================================
+// USERS TABLE
+// ============================================================
+
+export const usersableSchema = z.object({
+    _id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string().email(),
+    role: z.string(),
+    photo: z.custom<UserImage>().optional().or(z.literal("")),
+})
+export type UserType = z.infer<typeof usersableSchema>

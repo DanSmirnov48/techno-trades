@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getFilteredProducts, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
+import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -71,6 +71,13 @@ export const useGetUserById = (userId: string) => {
         queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
         queryFn: () => getUserById(userId),
         enabled: !!userId,
+    });
+};
+
+export const useGetAllUsers = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_ALL_USER],
+        queryFn: () => getAllUsers(),
     });
 };
 

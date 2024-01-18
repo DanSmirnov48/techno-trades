@@ -119,6 +119,21 @@ export async function getUserById(userId: string) {
   }
 }
 
+export async function getAllUsers() {
+  try {
+    const response = await axios.get(`/api/users`);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
 // ============================================================
 // MEDIA
 // ============================================================

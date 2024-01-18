@@ -1,6 +1,7 @@
 export enum QUERY_KEYS {
     //users keys
     GET_USER_BY_ID = "getUserById",
+    GET_ALL_USER = "getAllUsers",
 
     //products keys
     GET_PRODUCTS = "getProducts",
