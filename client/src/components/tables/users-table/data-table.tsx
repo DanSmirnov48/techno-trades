@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { DataTablePagination } from "../shared/pagination"
+import { DataTableToolbar } from "./data-table-toolbar"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -62,6 +63,7 @@ export function DataTable<TData, TValue>({
   })
   return (
     <div className="space-y-4 py-8">
+      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -73,9 +75,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
