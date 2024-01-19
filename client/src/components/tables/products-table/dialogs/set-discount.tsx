@@ -85,8 +85,8 @@ export default function SetDiscount({ product, setOpen }: EditProps) {
       <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
         <span className="sr-only">Info</span>
         <h1>Old Price: {formatPrice(product.price, { currency: "GBP" })}</h1>
-        {discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(product.price * discount / 100, { currency: "GBP" })}</span></h1>}
-        {discount && <h1>New Price:  {formatPrice(product.price - product.price * discount / 100, { currency: "GBP" })}</h1>}
+        {!!discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(product.price * discount / 100, { currency: "GBP" })}</span></h1>}
+        {!!discount && <h1>New Price:  {formatPrice(product.price - product.price * discount / 100, { currency: "GBP" })}</h1>}
       </div>
 
 

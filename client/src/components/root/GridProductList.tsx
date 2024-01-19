@@ -21,7 +21,7 @@ const GridProductList = ({ products }: GridProductListProps) => {
             }
             <div className="flex w-full  flex-col self-center overflow-hidden border rounded-xl bg-white shadow-xl">
               <div className="h-12 flex items-start justify-end">
-                <AddToFavoritesButton product={product} variant="button" />
+                <AddToFavoritesButton product={product} variant="icon" />
               </div>
               <Link to={`/products/${product.slug}`}>
                 <div className="select-none relative mx-3 flex h-60 overflow-hidden rounded-xl bg-white items-top justify-center">

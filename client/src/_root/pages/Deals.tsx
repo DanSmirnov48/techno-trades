@@ -1,4 +1,5 @@
 import { GridProductList } from "@/components/root";
+import { ProductLoader } from "@/components/root/ProductLoader";
 import { useGetProducts } from "@/lib/react-query/queries";
 import { Product } from "@/types";
 
@@ -13,11 +14,7 @@ const Deals = () => {
     <div className="flex flex-col flex-1 items-center bg-gray-100">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         <div className="flex flex-row">
-          {isProductLoading ? (
-            "loading..."
-          ) : (
-            <GridProductList products={filteredProducts} />
-          )}
+          {isProductLoading ? <ProductLoader displayType="grid"/> : <GridProductList products={filteredProducts} />}
         </div>
       </div>
     </div>

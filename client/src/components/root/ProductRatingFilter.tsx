@@ -33,7 +33,7 @@ const renderRatingFilters = (products: Product[]) => {
           onCheckedChange={handleRatingChange}
           className="mr-1"
         />
-        <Rating value={value} readOnly itemStyles={ratingStyle} style={{ maxWidth: 100 }} />
+        <Rating value={value} readOnly itemStyles={ratingStyle} style={{ maxWidth: 120 }} />
         <Label htmlFor={`rating-${value}`} className="font-jost text-base ml-2">{`${value} or more (${count})`}</Label>
       </div>
     );

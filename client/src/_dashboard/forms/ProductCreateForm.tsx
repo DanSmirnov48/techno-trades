@@ -367,8 +367,8 @@ const ProductCreateForm = () => {
                       <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
                         <span className="sr-only">Info</span>
                         <h1>Current Price: <span className="font-semibold">{formatPrice(form.getValues("price"), { currency: "GBP" })}</span></h1>
-                        {discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
-                        {discount && <h1>Discounted Price:  <span className="text-blue-500 font-semibold">{formatPrice(form.getValues("price") - form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
+                        {!!discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
+                        {!!discount && <h1>Discounted Price:  <span className="text-blue-500 font-semibold">{formatPrice(form.getValues("price") - form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}
                       </div>
                     </div>
                   </FormControl>

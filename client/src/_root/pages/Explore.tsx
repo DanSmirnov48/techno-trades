@@ -6,6 +6,7 @@ import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-que
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
 import ProductSearch from "@/components/root/ProductSearch";
+import { toast } from "sonner";
 
 const Explore = () => {
 
@@ -41,6 +42,7 @@ const Explore = () => {
       })
     }
     handle()
+    toast.info('Products refetched.')
     return
   }, [
     hideOutOfStock,
@@ -54,7 +56,7 @@ const Explore = () => {
   ])
 
   return (
-    <div className="flex flex-col flex-1 items-center bg-gray-100">
+    <div className="flex flex-col flex-1 items-center bg-[#F3F3F3]">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         <ProductSearch/>
         <div className="flex flex-row min-h-[65rem]">
@@ -63,7 +65,7 @@ const Explore = () => {
           </div>
           <div className="flex flex-col basis-3/4 ml-5">
             {!filteredProductsLoading && <ProductSorting />}
-            {filteredProductsLoading ? <ProductLoader /> : (filteredProducts && totalProducts > 0) ? (
+            {filteredProductsLoading ? <ProductLoader displayType={isChecked ? 'grid' : 'list'} showFilterLoader/> : (filteredProducts && totalProducts > 0) ? (
               isChecked ? (
                 <GridProductList products={filteredProducts} />
               ) : (
