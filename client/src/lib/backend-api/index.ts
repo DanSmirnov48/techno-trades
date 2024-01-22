@@ -1,5 +1,5 @@
 import { PriceRange } from "@/hooks/store";
-import { INewProduct, INewUser, IUpdateProduct, Product, UserImage } from "@/types";
+import { INewProduct, INewUser, IUpdateProduct, IUser, Product, UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
@@ -36,19 +36,16 @@ export async function signInAccount(user: { email: string; password: string }) {
   }
 }
 
-export async function validateUserByJwt(jwt: string) {
+export async function validateUserByJwt() {
   try {
-    const response = await axios.get('/api/users/validate', {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
+    const response = await axios.get('/api/users/validate');
     return response;
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
+
 export async function signOutAccount() {
   try {
     const response = await axios.get('/api/users/logout')

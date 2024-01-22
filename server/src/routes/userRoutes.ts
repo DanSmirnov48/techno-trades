@@ -12,20 +12,23 @@ import {
   logIn,
   logout,
   protect,
+  refreshAccessToken,
   resetPassword,
   restrictTo,
   signup,
   updatePassword,
-  validateJWT,
+  validate,
 } from "../controllers/authController";
+import { authRateLimiter } from "../config/site";
 
 const router = express.Router();
 
 // User AUTHENTICATION
 router.route("/signup").post(signup);                                 //✔️
-router.route("/login").post(logIn);                                   //✔️
+router.route("/login").post(authRateLimiter, logIn);                  //✔️
 router.route('/logout').get(logout);                                  //✔️
-router.route("/validate").get(validateJWT);                           //✔️
+router.route("/validate").get(validate);                              //✔️
+router.route('/refresh-token').get(refreshAccessToken);               //✔️
 
 // Password RESET and UPDATE for UNAUTHORIZED users
 router.route("/forgot-password").post(forgotPassword);                //❌

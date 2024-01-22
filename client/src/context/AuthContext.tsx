@@ -8,7 +8,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import Cookies from 'js-cookie';
 import { IUser } from "@/types";
 import { useValidateUserByJwt } from "@/lib/react-query/queries";
 
@@ -16,21 +15,23 @@ interface AuthResponse {
   status: number;
   statusText: string;
   data?: {
-    user: IUser;
+    data: {
+      user: IUser;
+    }
   };
 }
 
-export const INITIAL_USER = {
-  _id: "",
-  firstName: "",
-  lastName: "",
-  email: "",
+export const INITIAL_USER: IUser = {
+  _id: '',
+  firstName: '',
+  lastName: '',
+  email: '',
   photo: {
-    key: "",
-    name: "",
-    url: "",
+    key: '',
+    name: '',
+    url: '',
   },
-  role: "",
+  role: '',
 };
 
 const INITIAL_STATE = {
@@ -43,7 +44,7 @@ const INITIAL_STATE = {
   checkAuthUser: async () => false as boolean,
 };
 
-type IContextType = {
+interface IContextType {
   user: IUser;
   isLoading: boolean;
   setUser: Dispatch<SetStateAction<IUser>>;
@@ -65,28 +66,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { mutateAsync: validateJWT, isPending: validating } = useValidateUserByJwt()
 
   const checkAuthUser = async () => {
-    const jwt = Cookies.get('jwt');
     setIsLoading(true);
 
     try {
-      if (jwt) {
-        const { data, status }: AuthResponse = await validateJWT(jwt);
-        if (data && status === 200 && !validating) {
-          setUser({
-            _id: data.user._id,
-            firstName: data.user.firstName,
-            lastName: data.user.lastName,
-            email: data.user.email,
-            photo: data.user.photo,
-            role: data.user.role,
-          })
-          data.user.role === 'admin' && setIsAdmin(true);
-          setIsAuthenticated(true);
-          return true;
-        }
+      const {data, status}: AuthResponse = await validateJWT();
+      if (data && status === 200 && !validating) {
+        setUser({
+          _id: data.data.user._id,
+          firstName: data.data.user.firstName,
+          lastName: data.data.user.lastName,
+          email: data.data.user.email,
+          photo: data.data.user.photo,
+          role: data.data.user.role,
+        })
+        data.data.user.role === 'admin' && setIsAdmin(true);
+        setIsAuthenticated(true);
+        return true;
+      }else{
+        console.log(data, status)
+        return false;
       }
-
-      return false;
     } catch (error) {
       console.error('Error in checkAuthUser:', error);
       return false;
@@ -99,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuthUser();
   }, []);
 
-  const value = {
+  const value: IContextType = {
     user,
     setUser,
     isLoading,

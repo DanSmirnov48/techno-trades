@@ -27,7 +27,7 @@ export const useSignInAccount = () => {
 
 export const useValidateUserByJwt = () => {
     return useMutation({
-        mutationFn: (jwt: string) => validateUserByJwt(jwt),
+        mutationFn: () => validateUserByJwt(),
         onSuccess: (data) => { },
         onError: (data) => { },
     });

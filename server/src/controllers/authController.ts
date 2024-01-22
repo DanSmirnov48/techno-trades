@@ -11,36 +11,73 @@ interface CustomRequest extends Request {
     user?: UserDocument;
 }
 
-const signToken = (id: string) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET!, {
-        expiresIn: process.env.JWT_EXPIRES_IN
+const isTokenValid = (decodedToken: { exp?: number, iat?: number }): boolean => {
+    // Check if the expiration time is present and in the future
+    if (!decodedToken.exp || Date.now() >= decodedToken.exp * 1000) {
+        return false;
+    }
+
+    // Check if the token was issued in the future (clock skew)
+    if (decodedToken.iat && decodedToken.iat * 1000 > Date.now()) {
+        return false;
+    }
+    // The token is considered valid
+    return true;
+};
+
+const signToken = (id: string, secret: string, expiresIn: string | number) => {
+    if (!secret) {
+        throw new Error('JWT secret is missing.');
+    }
+
+    return jwt.sign({ id }, secret, {
+        expiresIn
     });
 };
 
-const createSendToken = (user: UserDocument, statusCode: number, req: Request, res: Response,) => {
-    const token = signToken(user._id.toString());
+const createSendToken = (user: UserDocument, statusCode: number, req: Request, res: Response, includeRefreshToken: boolean = true) => {
+    // Create Access Token
+    const accessToken = signToken(user._id.toString(), process.env.JWT_SECRET!, process.env.JWT_EXPIRES_IN!);
 
-    const expires = parseInt("14", 10) * 24 * 60 * 60 * 1000;
+    // Set expiration for access token (24 hours)
+    const accessExpires = 24 * 60 * 60 * 1000; // 24 hours
+    const accessExpirationDate = new Date(Date.now() + accessExpires);
 
-    // Corrected: Add expires to the current timestamp
-    const expirationDate = new Date(Date.now() + expires);
-
-    res.cookie('jwt', token, {
-        expires: expirationDate,
+    // Set cookies for access token
+    res.cookie('accessToken', accessToken, {
+        expires: accessExpirationDate,
         httpOnly: false,
         secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     });
 
+    // Optionally, create and set a new refresh token
+    if (includeRefreshToken) {
+        // Create Refresh Token
+        const refreshToken = signToken(user._id.toString(), process.env.REFRESH_TOKEN_SECRET!, process.env.REFRESH_TOKEN_EXPIRES_IN!);
+
+        // Set expiration for refresh token (14 days)
+        const refreshExpires = 14 * 24 * 60 * 60 * 1000; // 14 days
+        const refreshExpirationDate = new Date(Date.now() + refreshExpires);
+
+        // Set cookies for refresh token
+        res.cookie('refreshToken', refreshToken, {
+            expires: refreshExpirationDate,
+            httpOnly: true,
+            secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+        });
+    }
+
     // Remove password from output
     user.password = undefined as any;
 
-    res.status(statusCode).json({
+    // Send response
+    return res.status(statusCode).json({
         status: 'success',
-        token,
+        accessToken,
         data: {
             user
         }
-    });
+    }).end();
 };
 
 export const signup = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -73,7 +110,8 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
 });
 
 export const logout = (req: Request, res: Response) => {
-    res.clearCookie("jwt");
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.status(200).json({ status: 'success' });
     res.end()
 };
@@ -86,8 +124,8 @@ export const protect = asyncHandler(async (req: CustomRequest, res: Response, ne
         req.headers.authorization.startsWith('Bearer')
     ) {
         token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.jwt) {
-        token = req.cookies.jwt;
+    } else if (req.cookies.accessToken) {
+        token = req.cookies.accessToken;
     }
 
     if (!token) {
@@ -135,27 +173,121 @@ export const restrictTo = (...roles: Array<UserDocument['role']>) => {
     };
 };
 
-export const validateJWT = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const token = req.cookies.jwt;
+export const validate = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { accessToken, refreshToken } = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+    if (accessToken && accessToken !== undefined) {
+        console.log("accessToken")
+        try {
+            // Verify and decode the JWT
+            const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
+
+            // Retrieve user from the database using the decoded user ID
+            const user = await User.findById(decoded.id)
+
+            if (!user) {
+                return res.status(401).json({ error: 'Invalid token - user not found' });
+            }
+
+            res.locals.user = user;
+            return res.status(200).json({
+                status: 'success',
+                accessToken,
+                data: {
+                    user
+                }
+            }).end();
+        } catch (error) {
+            console.error('Access Token Verification Error:', error);
+            return res.status(401).json({ error: 'Invalid access token' });
+        }
     }
 
-    // Verify and decode the JWT
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+    if (refreshToken) {
+        console.log("refreshToken")
+        try {
+            // Decode the refresh token to get the user ID
+            const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as { id: string };
 
-    // Retrieve user from the database using the decoded user ID
-    const user = await User.findById(decoded.id)
+            // Retrieve the user from the database using the user ID
+            const user = await User.findById(decodedRefreshToken.id);
 
-    if (!user) {
-        return res.status(401).json({ error: 'Invalid token - user not found' });
+            if (!user) return res.status(401).json({ error: 'Invalid refresh token - user not found' });
+
+            // Use your existing function to generate only a new access token
+            createSendToken(user, 200, req, res, false); // Pass false to exclude a new refresh token
+        } catch (error) {
+            console.error('Refresh Token Verification Error:', error);
+            return res.status(401).json({ error: 'Invalid refresh token' });
+        }
     }
 
-    res.status(200).json({ user });
-    res.locals.user = user;
-    // next();
+    if(accessToken == undefined && refreshToken == undefined){
+        return res.status(401).json('Unauthorized');
+    }
 });
+
+export const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return next(new Error('No refresh token provided.'));
+    }
+
+    try {
+        // Verify the refresh token
+        const decodedRefreshToken = await promisify<string, string>(jwt.verify)(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+
+        // Check if the refresh token is still valid
+        //@ts-ignore
+        if (isTokenValid(decodedRefreshToken)) {
+            // Generate a new access token
+            //@ts-ignore
+            const newAccessToken = signToken(decodedRefreshToken.id, process.env.JWT_SECRET!, process.env.JWT_EXPIRES_IN!);
+
+            // Set the new access token in the response header
+            res.setHeader('Authorization', `Bearer ${newAccessToken}`);
+
+            // Continue to the next middleware or route
+            next();
+        } else {
+            return next(new Error('Invalid refresh token. Please log in again.'));
+        }
+    } catch (error) {
+        return next(new Error('Invalid refresh token. Please log in again.'));
+    }
+});
+
+export const validateAccessToken = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        // Extract the access token from the request
+        const accessToken = req.headers.authorization?.split(' ')[1];
+
+        if (!accessToken) {
+            return res.status(401).json({ error: 'No access token provided.' });
+        }
+
+        // Verify the access token
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
+
+        // Assume User.findById is a function to retrieve a user by ID
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid access token - user not found.' });
+        }
+
+        // Attach the user to the request or response.locals if needed
+        req.user = user;
+        res.locals.user = user;
+
+        // Continue to the next middleware or route
+        next();
+    } catch (error) {
+        console.error('Access Token Verification Error:', error);
+        return res.status(401).json({ error: 'Invalid access token.' });
+    }
+};
 
 export const forgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // 1) Get user based on POSTed email
