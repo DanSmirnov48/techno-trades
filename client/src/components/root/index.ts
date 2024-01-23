@@ -4,6 +4,9 @@ export { default as Promotion } from './Promotion'
 export { default as AddToCartButton } from './AddToCartButton'
 export { default as AddToFavoritesButton } from './AddToFavoritesButton'
 
+export { default as Cart } from './Cart'
+export { default as CartItem } from './CartItem'
+
 export { default as GridProductList } from './GridProductList'
 export { default as ListProductList } from './ListProductList'
 
