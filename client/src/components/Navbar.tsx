@@ -3,6 +3,7 @@ import { buttonVariants } from "./ui/button";
 import { LogIn } from "lucide-react";
 import { UserNav } from "./UserNav";
 import { useUserContext } from "@/context/AuthContext";
+import Cart from "./root/Cart";
 
 const Navbar = () => {
   const { isAuthenticated } = useUserContext();
@@ -30,6 +31,7 @@ const Navbar = () => {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <>
+            <Cart />
               {isAuthenticated ? (
                 <>
                   <UserNav />

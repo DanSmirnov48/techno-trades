@@ -18,7 +18,7 @@ const GridProductList = ({ products }: GridProductListProps) => {
             : 'relative bg-white border rounded-xl shadow-md '} transform transition duration-400 ease-in-out hover:shadow-2xl hover:-translate-y-3 dark:hover:shadow-black/40 `}
           >
             {product.isDiscounted && <span className='absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]' />}
-            <div className={`${product.isDiscounted && 'inline-flex h-full w-full items-center justify-center rounded-xl bg-white px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl'}`}>
+            <div className={`${product.isDiscounted && 'inline-flex h-full w-full items-center justify-center rounded-xl bg-white text-sm font-medium text-white backdrop-blur-3xl'}`}>
               {product.isDiscounted &&
                 <span className="absolute top-0 left-0 px-6 py-3 rounded-tl-xl rounded-br-xl bg-purple-100 text-lg font-medium text-purple-800 ring-1 ring-inset ring-purple-600/30">
                   {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}%
