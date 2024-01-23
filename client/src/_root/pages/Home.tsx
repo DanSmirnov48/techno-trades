@@ -3,6 +3,7 @@ import { categories } from '@/components/tables/products-table/filters'
 import { NewArrivals, Promotion } from "@/components/root";
 import { buttonVariants } from "@/components/ui/button";
 import { useCategoryFilter } from "@/hooks/store";
+import SplideCarousel from "@/components/root/SplideCarousel";
 
 const Home = () => {
   function Hero() {
@@ -83,6 +84,8 @@ const Home = () => {
     <div className="flex flex-col flex-1 min-h-screen items-center">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         {Hero()}
+        <div className="my-32" />
+        {SplideCarousel()}
         <div className="my-32" />
         {ShopCategories()}
         <div className="my-32" />
