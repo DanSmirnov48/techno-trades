@@ -29,9 +29,10 @@ export const getMe = (
 export const getCurentUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const user = await User.findById(id).select('+password +role')
+        const cookies = req.cookies;
+        const user = await User.findById(id).select('+role')
 
-        res.status(200).json({ user });
+        res.status(200).json({ "User": user, "Cookies": { accessToke: cookies.accessToken, lastSignIn: cookies.lastSignInTime } });
     } catch (error) {
         console.log(error);
         return res.sendStatus(400)

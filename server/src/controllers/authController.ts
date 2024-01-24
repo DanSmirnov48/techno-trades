@@ -47,7 +47,8 @@ const createSendToken = (user: UserDocument, statusCode: number, req: Request, r
     res.cookie('accessToken', accessToken, {
         expires: accessExpirationDate,
         httpOnly: false,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: 'strict',
     });
 
     // Optionally, create and set a new refresh token
@@ -63,9 +64,19 @@ const createSendToken = (user: UserDocument, statusCode: number, req: Request, r
         res.cookie('refreshToken', refreshToken, {
             expires: refreshExpirationDate,
             httpOnly: true,
-            secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+            secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+            sameSite: 'strict',
         });
     }
+
+    // Set cookie for last sign-in time
+    const lastSignInTime = new Date();
+    res.cookie('lastSignInTime', lastSignInTime.toISOString(), {
+        expires: new Date(253402300000000),
+        httpOnly: false,
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: 'strict',
+    });
 
     // Remove password from output
     user.password = undefined as any;
@@ -222,7 +233,7 @@ export const validate = asyncHandler(async (req: CustomRequest, res: Response, n
         }
     }
 
-    if(accessToken == undefined && refreshToken == undefined){
+    if (accessToken == undefined && refreshToken == undefined) {
         return res.status(401).json('Unauthorized');
     }
 });

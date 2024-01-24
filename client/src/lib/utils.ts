@@ -10,12 +10,17 @@ export function cn(...inputs: ClassValue[]) {
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
 export function formatDate(input: string | number): string {
-  const date = new Date(input)
-  return date.toLocaleDateString("en-US", {
+  const date = new Date(input);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
     month: "long",
     day: "numeric",
-    year: "numeric",
-  })
+    hour: "numeric",
+    minute: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", options);
 }
 
 export function formatPrice(
@@ -53,7 +58,7 @@ export const calculateDiscountPercentage = ({ normalPrice, discountedPrice }: { 
   return Math.round(discountPercentage);
 };
 
-export const isProductAddedWithinNDays = ({product, nDays} : {product: Product, nDays: number}): boolean => {
+export const isProductAddedWithinNDays = ({ product, nDays }: { product: Product, nDays: number }): boolean => {
   const currentDate = new Date();
   const nDaysAgo = new Date();
   nDaysAgo.setDate(currentDate.getDate() - nDays);

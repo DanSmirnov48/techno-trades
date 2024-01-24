@@ -40,7 +40,7 @@ router.route("/update-me").patch(protect, updateMe);                  //✔️
 router.route("/deactivate-me").delete(protect, deleteMe);             //✔️
 
 // Get CURRENT AUTHORIZED user
-router.route("/me").get(protect, getMe, getCurentUser);               //❌ 
+router.route("/me").get(protect, getMe, getCurentUser);               //✔️ 
 
 router.route("/").get(protect, restrictTo("admin"), getAllUsers);     //✔️
 
