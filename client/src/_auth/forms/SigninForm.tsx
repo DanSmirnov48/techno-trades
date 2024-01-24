@@ -17,7 +17,7 @@ import { SigninValidation } from "@/lib/validation";
 import { Icons, } from "@/components/icons";
 import { useSignInAccount } from "@/lib/react-query/queries";
 import { IUser } from "@/types";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -34,6 +34,7 @@ const SigninForm = () => {
   const { checkAuthUser } = useUserContext();
 
   const [type, setType] = useState<'password' | 'text'>('password');
+  const [error, setError] = useState<string | undefined>();
 
   const handleToggle = () => {
     if (type === 'password') {
@@ -57,7 +58,8 @@ const SigninForm = () => {
     try {
       const session: AuthResponse = await signInAccount(user);
       if (session.error && session.error.error === "Incorrect email or password") {
-        toast.error('Incorrect email or password')
+        setError(session.error.error)
+        // toast.error('Incorrect email or password')
       }
       const isUser = await checkAuthUser();
       if (session.data && session.data.status === "success" && isUser) {
@@ -87,7 +89,7 @@ const SigninForm = () => {
         <span className="w-5/6 px-4 py-3 font-bold text-center">Sign in with Google</span>
       </Link>
 
-      <div className="flex items-center justify-between mt-6">
+      <div className="flex items-center justify-between my-6">
         <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
 
         <div className="text-xs text-center text-gray-500 uppercase dark:text-gray-400">or login with email</div>
@@ -95,6 +97,15 @@ const SigninForm = () => {
         <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
       </div>
 
+      {error &&
+        <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+          <AlertCircle className="w-6 h-6 mr-2" />
+          <span className="sr-only">Info</span>
+          <div className="text-base">
+            <span className="font-medium">{error}</span>
+          </div>
+        </div>
+      }
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSignin)} className="flex flex-col gap-5 w-full mt-4">
@@ -107,7 +118,7 @@ const SigninForm = () => {
                 <FormItem>
                   <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} />
+                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +138,7 @@ const SigninForm = () => {
                   </div>
                   <div className="relative">
                     <FormControl className="flex-grow pr-10">
-                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} />
+                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)}/>
                     </FormControl>
                     <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
                       {type === 'password' ? <Eye /> : <EyeOff />}
