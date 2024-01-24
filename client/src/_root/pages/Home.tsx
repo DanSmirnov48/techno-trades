@@ -52,8 +52,8 @@ const Home = () => {
         <ul className="w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {categories.map((status, index) => (
             <li key={index}>
-              <div className="flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3]">
-                <div className="relative m-6 h-40 hidden md:flex">
+              <div className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3]">
+                <div className="relative m-6 h-40 hidden md:flex transform group-hover:animate-pulse transition-transform">
                   <img
                     className="w-full h-full object-scale-down"
                     src={status.image}
@@ -63,7 +63,7 @@ const Home = () => {
 
                 <Link to="/explore">
                   <div
-                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white"
+                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white transform transition duration-400 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-black/40"
                     onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
                   >
                     <status.icon className="h-5 w-5 mr-3 text-muted-foreground md:hidden" />

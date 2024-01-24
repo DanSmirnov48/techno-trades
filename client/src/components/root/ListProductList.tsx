@@ -20,7 +20,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
       <ul className="w-full grid grid-cols-1 gap-7">
         {products.map((product) => (
           <div className={`${product.isDiscounted
-            ? 'relative overflow-hidden rounded-xl border border-slate-800 p-[4px] backdrop-blur-3xl'
+            ? 'relative overflow-hidden rounded-xl p-[5px] backdrop-blur-3xl'
             : 'relative bg-white border rounded-xl shadow-md '}`}
           >
             {product.isDiscounted && <span className='absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]' />}

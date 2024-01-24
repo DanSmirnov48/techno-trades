@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const NewArrivals: FC = () => {
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const { data: products, isLoading: allProductsLoading } = useGetProducts();
-  
+
   useEffect(() => {
     if (!allProductsLoading && products) {
       const sortedProducts = products.data.products.sort(
@@ -42,15 +42,19 @@ const NewArrivals: FC = () => {
           {newProducts.map((product) => (
             <Link to={`/products/${product.slug}`} key={product._id}>
               <div className="group relative">
-                <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-                  <img
-                    src={product.image[0].url}
-                    alt={product.name}
-                    className="h-full w-full object-contain object-center p-2"
-                  />
+                <div className="transform group-hover:-translate-y-3 transition-transform duration-300 ease-out">
+                  <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
+                    <img
+                      src={product.image[0].url}
+                      alt={product.name}
+                      className="h-full w-full object-contain object-center p-5"
+                    />
+                  </div>
+                  <div className="transform origin-center group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
+                    <h3 className="mt-6 text-sm text-gray-500 capitalize">{product.category}</h3>
+                    <p className="text-base font-semibold text-gray-900">{product.name}</p>
+                  </div>
                 </div>
-                <h3 className="mt-6 text-sm text-gray-500 capitalize">{product.category}</h3>
-                <p className="text-base font-semibold text-gray-900">{product.name}</p>
               </div>
             </Link>
           ))}

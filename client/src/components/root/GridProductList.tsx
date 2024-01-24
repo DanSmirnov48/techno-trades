@@ -14,7 +14,7 @@ const GridProductList = ({ products }: GridProductListProps) => {
       <ul className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-7">
         {products.map((product) => (
           <div className={`${product.isDiscounted
-            ? 'relative overflow-hidden rounded-xl border border-slate-800 p-[4px] backdrop-blur-3xl'
+            ? 'relative overflow-hidden rounded-xl p-[5px] backdrop-blur-3xl'
             : 'relative bg-white border rounded-xl shadow-md '} transform transition duration-400 ease-in-out hover:shadow-2xl hover:-translate-y-3 dark:hover:shadow-black/40 `}
           >
             {product.isDiscounted && <span className='absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]' />}
