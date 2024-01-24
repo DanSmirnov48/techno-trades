@@ -46,7 +46,16 @@ export function CartTableItem({ product, qty }: props) {
         <div className="ml-4 flex flex-1 flex-col sm:ml-6 justify-center gap-1">
           <h3 className="text-lg text-black font-semibold">{product.name}</h3>
           <p className="text-base font-extralight text-black">
-            {formatPrice(product.price, { currency: "GBP" })}
+            {product?.isDiscounted ? (
+              <>
+                <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
+                <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
+                  {product && formatPrice(product.price, { currency: "GBP" })}
+                </span>
+              </>
+            ) : (
+              product && formatPrice(product.price, { currency: "GBP" })
+            )}
           </p>
         </div>
       </div>
@@ -92,7 +101,7 @@ export function CartTableItem({ product, qty }: props) {
         <TableCell className="px-0">{ProductDetails()}</TableCell>
         <TableCell className="px-0">{qtyButton()}</TableCell>
         <TableCell className="text-center text-base px-0">
-          {formatPrice(product.price * quantity, { currency: "GBP" })}
+          {formatPrice(product.isDiscounted ? product.discountedPrice! : product.price* quantity, { currency: "GBP" })}
         </TableCell>
         <TableCell className="text-right px-0">{ProductRemove()}</TableCell>
       </TableRow>

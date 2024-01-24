@@ -63,7 +63,7 @@ const Home = () => {
 
                 <Link to="/explore">
                   <div
-                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white transform transition duration-400 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-black/40"
+                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white transform transition duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-black/40"
                     onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
                   >
                     <status.icon className="h-5 w-5 mr-3 text-muted-foreground md:hidden" />

@@ -26,7 +26,7 @@ const Cart: React.FC<CartProps> = ({ triggerStyles, showText = false }) => {
   const { items } = useCart();
   const itemCount = items.length;
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const cartTotal = items.reduce((total, { product, quantity }) => total + product.price * quantity, 0);
+  const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
 
   useEffect(() => {
     setIsMounted(true);

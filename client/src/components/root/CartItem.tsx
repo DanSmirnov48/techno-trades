@@ -52,7 +52,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
 
         <div className="flex flex-col space-y-1 font-medium">
           <span className="ml-auto line-clamp-1 text-sm">
-            {formatPrice(product.price, {currency: 'GBP'})}
+            {formatPrice(product.isDiscounted ? product.discountedPrice! : product.price, {currency: 'GBP'})}
           </span>
         </div>
       </div>

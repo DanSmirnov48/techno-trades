@@ -19,7 +19,7 @@ const Cart = () => {
   const delivery = Number(49.99);
   const { items } = useCart();
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const cartTotal = items.reduce((total, { product, quantity }) => total + product.price * quantity, 0);
+  const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
   const { user, isAuthenticated } = useUserContext();
 
   useEffect(() => {
