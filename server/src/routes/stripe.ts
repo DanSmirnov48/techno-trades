@@ -22,6 +22,14 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
     try {
         const line_items = await Promise.all(orders.map(async (item: any) => {
             const product = await ProductModel.findById(item.productId) as IProduct;
+            if (!product) {
+                console.error(`Product not found for id: ${item.productId}`);
+                return null;
+            }
+            if (item.quantity > product.countInStock) {
+                console.error(`Insufficient stock for product: ${product.name}`);
+                return res.status(400).send({ error: `Insufficient stock for product: ${product.name}` });
+            }
 
             const images = product.image.map(img => img.url);
             const price = product.isDiscounted ? product.discountedPrice! : product.price;
@@ -45,6 +53,11 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
         }));
 
         const validLineItems = line_items.filter(Boolean);
+
+        if (validLineItems.length === 0) {
+            console.error("No valid line items found.");
+            return res.status(400).send({ error: "Invalid request. No valid line items found." });
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],

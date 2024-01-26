@@ -11,13 +11,20 @@ type props = {
   qty: number;
 };
 export function CartTableItem({ product, qty }: props) {
+  let currentProductPrice = product.isDiscounted ? product.discountedPrice! : product.price
   const { removeItem, updateQuantity } = useCart();
   const [quantity, setQuantity] = useState(qty);
 
   const enterQty = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedQty = Number(e.target.value);
-    setQuantity(updatedQty);
-    updateQuantity(product._id!, updatedQty);
+    const re = /^[0-9\b]+$/;
+
+    if (e.target.value === '' || re.test(e.target.value)) {
+      const updatedQty = Number(e.target.value);
+      if (updatedQty <= product.countInStock) {
+        setQuantity(updatedQty);
+        updateQuantity(product._id!, updatedQty);
+      }
+    }
   };
 
   const decrementQty = () => {
@@ -27,9 +34,11 @@ export function CartTableItem({ product, qty }: props) {
   };
 
   const incrementQty = () => {
-    const updatedQty = quantity + 1;
-    setQuantity(updatedQty);
-    updateQuantity(product._id!, updatedQty);
+    if (product.countInStock >= quantity + 1) {
+      const updatedQty = quantity + 1;
+      setQuantity(updatedQty);
+      updateQuantity(product._id!, updatedQty);
+    }
   };
 
   function ProductDetails() {
@@ -97,11 +106,11 @@ export function CartTableItem({ product, qty }: props) {
 
   return (
     <>
-      <TableRow key={product._id} className={cn("hover:bg-transparent")}>
+      <TableRow key={product._id} className={cn("hover:bg-transparent select-none")}>
         <TableCell className="px-0">{ProductDetails()}</TableCell>
         <TableCell className="px-0">{qtyButton()}</TableCell>
         <TableCell className="text-center text-base px-0">
-          {formatPrice(product.isDiscounted ? product.discountedPrice! : product.price* quantity, { currency: "GBP" })}
+          {formatPrice(currentProductPrice * quantity, { currency: "GBP" })}
         </TableCell>
         <TableCell className="text-right px-0">{ProductRemove()}</TableCell>
       </TableRow>
