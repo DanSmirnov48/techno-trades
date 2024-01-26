@@ -14,6 +14,7 @@ import {
 import { Link } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { size } from "lodash";
+import { useCreateOrder } from "@/lib/react-query/queries";
 
 const Cart = () => {
   const delivery = Number(49.99);
@@ -21,6 +22,7 @@ const Cart = () => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
   const { user, isAuthenticated } = useUserContext();
+  const { mutateAsync: CreateOrder } = useCreateOrder();
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,8 +35,7 @@ const Cart = () => {
         quantity: quantity,
       };
     });
-
-    console.log(order)
+    await CreateOrder({ orders: order, userId: user._id });
   }
 
   return (

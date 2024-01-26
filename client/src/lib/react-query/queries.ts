@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
+import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -177,6 +177,22 @@ export const useSetProductDiscount = () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_PRODUCTS],
             });
+        },
+    });
+};
+
+// ============================================================
+// ORDERS
+// ============================================================
+
+export const useCreateOrder = () => {
+    return useMutation({
+        mutationFn: (data: {
+            orders: { productId: string; quantity: number }[];
+            userId: string;
+        }) => createOrder(data),
+        onSuccess: (data) => {
+            console.log("success", data);
         },
     });
 };

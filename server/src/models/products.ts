@@ -27,6 +27,7 @@ export interface IProduct extends Document {
     countInStock: number;
     isDiscounted: boolean;
     discountedPrice?: number;
+    [key: string]: any;
 }
 
 const reviewSchema = new Schema<IReview>({

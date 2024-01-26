@@ -272,3 +272,21 @@ export async function setProductDiscount(product: { id: string; discountedPrice?
     console.log(error);
   }
 }
+
+
+// ============================================================
+// ORDERS
+// ============================================================
+export async function createOrder(data: { orders: { productId: string; quantity: number }[]; userId: string }) {
+  try {
+    const { data: responseData } = await axios.post('/api/stripe/create-checkout-session', data);
+
+    if (responseData && responseData.url) {
+      window.location.href = responseData.url;
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('Error during checkout:', error);
+  }
+}
