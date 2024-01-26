@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { config } from 'dotenv';
 import { IProduct, ProductModel } from "../models/products";
 import asyncHandler from "../middlewares/asyncHandler";
+import { handleStripeEvent } from "../controllers/orderController";
 
 config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -131,8 +132,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), asyncHandler(
 
     try {
         const event = stripe.webhooks.constructEvent(stripePayload, stripeSignature, stripeSecret);
+        const response = await handleStripeEvent(event)
+        res.status(200).send(response).end();
         console.log('Webhook verified');
-        console.log(event)
     } catch (err: any) {
         console.log(`Webhook Error: ${err.message}`);
         res.status(400).send(`Webhook Error: ${err.message}`).end();
