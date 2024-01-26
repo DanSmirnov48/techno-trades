@@ -120,4 +120,23 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
     }
 }));
 
+router.post('/webhook', express.raw({ type: 'application/json' }), asyncHandler(async (req: Request, res: Response) => {
+    const stripeSignature = req.headers['stripe-signature'] as string;
+    if (!stripeSignature) {
+        throw new Error('No stripe signature found!');
+    }
+
+    const stripePayload = (req as any).rawBody || req.body.toString();
+    const stripeSecret = process.env.STRIPE_TEST_KEY!;
+
+    try {
+        const event = stripe.webhooks.constructEvent(stripePayload, stripeSignature, stripeSecret);
+        console.log('Webhook verified');
+        console.log(event)
+    } catch (err: any) {
+        console.log(`Webhook Error: ${err.message}`);
+        res.status(400).send(`Webhook Error: ${err.message}`).end();
+    }
+}));
+
 export default router;
