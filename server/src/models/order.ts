@@ -1,7 +1,8 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import { Document, Model, PopulatedDoc, Schema, Types, model } from 'mongoose';
+import { IProduct } from './products';
 
 interface OrderProduct {
-    productId: string;
+    product: Types.ObjectId;
     quantity: number;
 }
 
@@ -49,7 +50,7 @@ interface PaymentIntentDetails {
 }
 
 interface Order {
-    userId: string;
+    user: Types.ObjectId;
     customerId: string;
     customerEmail: string;
     paymentIntentId: string;
@@ -61,19 +62,33 @@ interface Order {
     shippingCost: OrderShippingCost;
     deliveryStatus: string;
     paymentStatus: string;
+    orderNumber: string;
 }
 
-export interface OrderDocument extends Order, Document { }
+export interface IOrder extends Order, Document {
+    products: Array<{
+        product: PopulatedDoc<IProduct & Document>;
+        quantity: number;
+    }>;
+}
 
-const OrderSchema = new mongoose.Schema({
-    userId: { type: String, required: true },
+const OrderSchema = new Schema<IOrder>({
+    user: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+    },
     customerId: { type: String, required: true },
     customerEmail: { type: String, required: true },
     paymentIntentId: { type: String, required: true },
     paymentIntentDetails: { type: Object, required: true },
     products: [
         {
-            productId: { type: String, required: true },
+            product: {
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: 'ProductModel',
+            },
             quantity: { type: Number, required: true },
         },
     ],
@@ -93,6 +108,17 @@ const OrderSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const Order = mongoose.model<OrderDocument>('Order', OrderSchema);
+export const OrderModel = model<IOrder>('Order', OrderSchema);
 
-export default Order;
+export const GetCurrUserOrders = async function (userId: Types.ObjectId) {
+    try {
+        const orders = await OrderModel.find({ user: userId }).populate({
+            path: 'products.product',
+            model: 'Product',
+        })
+        return orders;
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        throw new Error('Internal server error');
+    }
+};

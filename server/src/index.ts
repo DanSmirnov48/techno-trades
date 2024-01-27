@@ -13,6 +13,7 @@ import mediaRoutes from "./routes/mediaRoutes";
 import stripe from "./routes/stripe";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
+import orderRouter from "./routes/orderRouter";
 
 config()
 connectDB()
@@ -39,6 +40,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/stripe", stripe);
 app.use(express.json())
+app.use('/api/orders', orderRouter)
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/media', mediaRoutes)

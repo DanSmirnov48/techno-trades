@@ -1,26 +1,56 @@
 import { Stripe } from 'stripe';
 import { config } from 'dotenv';
-import mongoose from 'mongoose';
-import Order from '../models/order';
+import mongoose, { ObjectId } from 'mongoose';
+import {OrderModel, IOrder, GetCurrUserOrders} from '../models/order';
+import asyncHandler from '../middlewares/asyncHandler';
+import { UserDocument } from '../models/users';
+import express, { Request, Response } from "express";
 
 config()
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+interface CustomRequest extends Request {
+    user?: UserDocument;
+}
+
+export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
+    try {
+        const userId = req.user?._id;
+        if (!userId) {
+            res.status(400).json({ error: 'User not authenticated' });
+            return;
+        }
+        // @ts-ignore
+        const orders = await GetCurrUserOrders(userId);
+        console.log({orders})
+        console.log(orders.map((o) => o.products))
+        if (orders) {
+            return res.status(200).json({ orders });
+        } else {
+            res.status(404);
+            throw new Error('No orders found for the user');
+        }
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 const createOrder = async (customer: any, data: any, payment: Stripe.Response<Stripe.PaymentMethod>) => {
 
     const items = JSON.parse(customer.metadata.cart);
 
-    const newOrder = new Order({
+    const newOrder = new OrderModel({
         //----CUCTOMER
-        userId: customer.metadata.userId,
+        user: customer.metadata.userId as ObjectId,
         customerEmail: customer.email,
         customerId: customer.id,
         //----ORDER
         orderNumber: generateOrderNumber(),
         paymentIntentId: data.payment_intent,
         products: items.map((item: any) => ({
-            productId: new mongoose.Types.ObjectId(item.productId),
+            product: item.productId as ObjectId,
             quantity: item.quantity,
         })),
         subtotal: data.amount_subtotal,
@@ -59,6 +89,7 @@ const createOrder = async (customer: any, data: any, payment: Stripe.Response<St
 
     try {
         const savedOrder = await newOrder.save();
+        console.log({savedOrder})
         console.log("Order Created");
 
         return savedOrder;
