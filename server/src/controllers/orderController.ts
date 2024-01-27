@@ -1,9 +1,79 @@
 import { Stripe } from 'stripe';
 import { config } from 'dotenv';
+import mongoose from 'mongoose';
+import Order from '../models/order';
 
 config()
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+const createOrder = async (customer: any, data: any, payment: Stripe.Response<Stripe.PaymentMethod>) => {
+
+    const items = JSON.parse(customer.metadata.cart);
+
+    const newOrder = new Order({
+        //----CUCTOMER
+        userId: customer.metadata.userId,
+        customerEmail: customer.email,
+        customerId: customer.id,
+        //----ORDER
+        orderNumber: generateOrderNumber(),
+        paymentIntentId: data.payment_intent,
+        products: items.map((item: any) => ({
+            productId: new mongoose.Types.ObjectId(item.productId),
+            quantity: item.quantity,
+        })),
+        subtotal: data.amount_subtotal,
+        total: data.amount_total,
+        shippingAddress: data.shipping_details.address,
+        shippingCost: data.shipping_cost,
+        paymentStatus: data.payment_status,
+        //----PAYMENT
+        paymentIntentDetails: {
+            id: payment.id,
+            object: payment.object,
+            billing_details: {
+                address: {
+                    line1: payment.billing_details.address?.line1,
+                    line2: payment.billing_details.address?.line2,
+                    city: payment.billing_details.address?.city,
+                    postal_code: payment.billing_details.address?.postal_code,
+                    state: payment.billing_details.address?.state,
+                    country: payment.billing_details.address?.country,
+                },
+                email: payment.billing_details.email,
+                name: payment.billing_details.name,
+                phone: payment.billing_details.phone,
+            },
+            card: {
+                brand: payment.card?.brand,
+                country: payment.card?.country,
+                exp_month: payment.card?.exp_month,
+                exp_year: payment.card?.exp_year,
+                last4: payment.card?.last4,
+            },
+            metadata: payment.metadata,
+            type: payment.type,
+        }
+    });
+
+    try {
+        const savedOrder = await newOrder.save();
+        console.log("Order Created");
+
+        return savedOrder;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+function generateOrderNumber(): string {
+    const prefix = "PROSHOP";
+    const randomDigits = Math.floor(Math.random() * 100000000);
+    const orderNumber = `${prefix}${randomDigits.toString().padStart(8, '0')}`;
+    return orderNumber;
+}
 
 export const handleStripeEvent = async (event: Stripe.Event) => {
     const eventType = event.type;
@@ -25,7 +95,8 @@ export const handleStripeEvent = async (event: Stripe.Event) => {
             const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId!);
 
             console.log({customer, paymentIntent, paymentMethod});
-            response = { success: true };
+            const order = await createOrder(customer, paymentIntent, paymentMethod);
+            response = { success: true, order };
 
             break;
         case 'payment_intent.succeeded':
