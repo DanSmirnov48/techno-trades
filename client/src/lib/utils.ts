@@ -72,3 +72,22 @@ export const ratingStyle = {
   activeFillColor: "#ffb700",
   inactiveFillColor: "#fbf1a9",
 };
+
+export function truncateText({ text, maxLength }: { text: string | undefined, maxLength: number }): string {
+  if (!text) {
+    return '';
+  }
+
+  const words = text.split(' ');
+
+  if (words.length <= maxLength) {
+    return text;
+  }
+
+  const truncatedWords = words.slice(0, maxLength);
+  return `${truncatedWords.join(' ')}...`;
+}
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

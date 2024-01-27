@@ -7,4 +7,7 @@ export enum QUERY_KEYS {
     GET_PRODUCTS = "getProducts",
     GET_PRODUCT_BY_ID = "getProductById",
     GET_PRODUCT_BY_SLUG = "getProductBySlug",
+
+    // ORDER KEYS
+    GET_MY_ORDERS = "getMyOrders",
 }

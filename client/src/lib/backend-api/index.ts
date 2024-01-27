@@ -1,5 +1,6 @@
 import { PriceRange } from "@/hooks/store";
 import { INewProduct, INewUser, IUpdateProduct, IUser, Product, UserImage } from "@/types";
+import { Order } from "@/types/order";
 import axios from "axios";
 
 // ============================================================
@@ -288,5 +289,16 @@ export async function createOrder(data: { orders: { productId: string; quantity:
     return responseData;
   } catch (error) {
     console.error('Error during checkout:', error);
+  }
+}
+
+export async function getMyOrders() {
+  try {
+    const response = await axios.get(`/api/orders/my-orders`);
+    if(response.status === 200){
+      return response.data.orders as Order[];
+    }
+  } catch (error) {
+    console.log(error);
   }
 }

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import RootLayout from "./_root/RootLayout";
-import { Cart, Deals, Explore, Home, NotFound, ProductDetails } from "./_root/pages";
+import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, ProductDetails } from "./_root/pages";
 import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
@@ -22,6 +22,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout-success" element={<CkeckoutSuccess />} />
           <Route path="/deals" element={<Deals />} />
           <Route path="/products/:slug" element={<ProductDetails />} />
         </Route>
