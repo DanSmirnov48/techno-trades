@@ -302,3 +302,12 @@ export async function getMyOrders() {
     console.log(error);
   }
 }
+
+export async function getOrders() {
+  try {
+    const { data } = await axios.get(`/api/orders`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}

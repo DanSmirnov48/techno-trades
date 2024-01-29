@@ -16,7 +16,7 @@ type OrderShippingAddress = {
     state: string;
 }
 
-type PaymentMethodDetails = {
+export type PaymentMethodDetails = {
     id: string;
     object: string;
     billing_details: {
@@ -60,7 +60,8 @@ export type Order = {
         amount_total: number;
         shipping_rate: string;
     };
-    orderNumber:number;
+    orderNumber: string;
     deliveryStatus: "pending" | "shipped" | "delivered";
     paymentStatus: "paid" | "unpaid";
+    createdAt: Date;
 }

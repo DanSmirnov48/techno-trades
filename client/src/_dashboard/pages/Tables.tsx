@@ -1,6 +1,7 @@
 import { Shell } from "@/components/dashboard/shell";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductsTable from '@/components/tables/products-table/data'
+import OrdersTable from '@/components/tables/orders-table/data'
 import UsersTable from "@/components/tables/users-table/data";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -35,7 +36,7 @@ export default function Dashboard() {
           <ProductsTable />
         </TabsContent>
         <TabsContent value="orders">
-          <h1>Orders</h1>
+          <OrdersTable />
         </TabsContent>
         <TabsContent value="users">
           <UsersTable />

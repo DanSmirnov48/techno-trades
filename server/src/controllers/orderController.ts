@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { config } from 'dotenv';
 import mongoose, { ObjectId } from 'mongoose';
-import {OrderModel, IOrder, GetCurrUserOrders} from '../models/order';
+import {OrderModel, IOrder, GetCurrUserOrders, GetOrder} from '../models/order';
 import asyncHandler from '../middlewares/asyncHandler';
 import { UserDocument } from '../models/users';
 import express, { Request, Response } from "express";
@@ -13,6 +13,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 interface CustomRequest extends Request {
     user?: UserDocument;
 }
+
+export const getOrders = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const orders = await GetOrder();
+        return res.status(200).json({ "orders": orders });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
     try {

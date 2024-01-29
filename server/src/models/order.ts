@@ -110,6 +110,8 @@ const OrderSchema = new Schema<IOrder>({
 
 export const OrderModel = model<IOrder>('Order', OrderSchema);
 
+export const GetOrder = () => OrderModel.find()
+
 export const GetCurrUserOrders = async function (userId: Types.ObjectId) {
     try {
         const orders = await OrderModel.find({ user: userId }).populate({

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
+import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -201,5 +201,12 @@ export const useGetMyOrders = () => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_MY_ORDERS],
         queryFn: () => getMyOrders(),
+    });
+};
+
+export const useGetOrders = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_ORDERS],
+        queryFn: () => getOrders(),
     });
 };

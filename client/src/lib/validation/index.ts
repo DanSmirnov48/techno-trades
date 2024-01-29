@@ -91,3 +91,38 @@ export const usersableSchema = z.object({
     photo: z.custom<UserImage>().optional().or(z.literal("")),
 })
 export type UserType = z.infer<typeof usersableSchema>
+
+// ============================================================
+// ORDER TABLE
+// ============================================================
+
+const cardDetailsSchema = z.object({
+    brand: z.string(),
+    country: z.string(),
+    exp_month: z.number(),
+    exp_year: z.number(),
+    last4: z.string(),
+});
+
+const shippingDetailsSchema = z.object({
+    amount_subtotal: z.number(),
+    amount_tax: z.number(),
+    amount_total: z.number(),
+    shipping_rate: z.string(),
+});
+
+export const orderTableSchema = z.object({
+    _id: z.string(),
+    orderNumber: z.string(),
+    user: z.string(),
+    customerId: z.string(),
+    customerEmail: z.string().email(),
+    total: z.number(),
+    paymentIntentDetails: z.object({ card: cardDetailsSchema }),
+    shippingCost: shippingDetailsSchema,
+    createdAt: z.string(),
+    deliveryStatus: z.enum(["pending", "shipped", "delivered"]),
+    paymentStatus: z.enum(["paid", "unpaid"]),
+});
+
+export type OrderType = z.infer<typeof orderTableSchema>
