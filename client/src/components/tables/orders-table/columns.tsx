@@ -113,5 +113,9 @@ export const columns: ColumnDef<OrderType>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
-  }
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row}/>
+  },
 ]

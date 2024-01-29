@@ -101,6 +101,7 @@ export const Icons = {
   ellipsis: MoreVertical,
   orders: Package,
   trash: Trash,
+  orderStatus: Truck,
   user: User,
   post: FileText,
   arrowRight: ChevronRight,
