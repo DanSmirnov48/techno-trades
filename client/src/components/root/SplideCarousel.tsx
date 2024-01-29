@@ -24,7 +24,7 @@ const SplideCarousel = () => {
                     drag: "free",
                     arrows: true,
                     pagination: true,
-                    perPage: 3,
+                    perPage: 4,
                     width: "100%",
                     gap: "25px",
                     breakpoints: {

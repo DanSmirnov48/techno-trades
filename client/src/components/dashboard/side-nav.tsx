@@ -42,8 +42,8 @@ export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
                     item.disabled && "cursor-not-allowed opacity-60"
                   )}
                 >
-                  <Icon className="lg:mr-2 lg:h-5 lg:w-5 h-8 w-h-8" aria-hidden="true" />
-                  <span className="hidden lg:block">{item.title}</span>
+                  <Icon className="xl:mr-2 xl:h-5 xl:w-5 h-8 w-h-8" aria-hidden="true" />
+                  <span className="hidden xl:block">{item.title}</span>
                 </span>
               </Link>
             ) : (
