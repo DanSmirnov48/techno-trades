@@ -325,7 +325,7 @@ const ProductDetails = () => {
           {product && <ProductReviewForm product={product} />}
         </div>
         <div className="container p-0 my-20">
-          <ReviewsSection />
+          <ReviewsSection product={product!} />
         </div>
       </div>
     </section>
