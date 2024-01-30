@@ -37,9 +37,9 @@ export async function signInAccount(user: { email: string; password: string }) {
   }
 }
 
-export async function validateUserByJwt() {
+export async function getUserSession() {
   try {
-    const response = await axios.get('/api/users/validate');
+    const response = await axios.get('/api/users/me');
     return response;
   } catch (error) {
     console.log(error);

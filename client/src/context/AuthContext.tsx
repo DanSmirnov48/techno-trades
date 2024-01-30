@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { IUser } from "@/types";
-import { useValidateUserByJwt } from "@/lib/react-query/queries";
+import { useGetUserSession } from "@/lib/react-query/queries";
 
 interface AuthResponse {
   status: number;
@@ -17,7 +17,10 @@ interface AuthResponse {
   data?: {
     data: {
       user: IUser;
+      accessToke: string;
+      lastSignIn: string;
     }
+    status: string
   };
 }
 
@@ -63,13 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { mutateAsync: validateJWT, isPending: validating } = useValidateUserByJwt()
+  const { mutateAsync: getSession, isPending: validating } = useGetUserSession()
 
   const checkAuthUser = async () => {
     setIsLoading(true);
 
     try {
-      const {data, status}: AuthResponse = await validateJWT();
+      const { data, status }: AuthResponse = await getSession();
       if (data && status === 200 && !validating) {
         setUser({
           _id: data.data.user._id,
@@ -82,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data.data.user.role === 'admin' && setIsAdmin(true);
         setIsAuthenticated(true);
         return true;
-      }else{
+      } else {
         console.log(data, status)
         return false;
       }

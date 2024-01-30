@@ -30,9 +30,16 @@ export const getCurentUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const cookies = req.cookies;
-        const user = await User.findById(id).select('+role')
+        const user = await User.findById(id)
 
-        res.status(200).json({ "User": user, "Cookies": { accessToke: cookies.accessToken, lastSignIn: cookies.lastSignInTime } });
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                user,
+                accessToke: cookies.accessToken,
+                lastSignIn: cookies.lastSignInTime
+            }
+        }).end();
     } catch (error) {
         console.log(error);
         return res.sendStatus(400)

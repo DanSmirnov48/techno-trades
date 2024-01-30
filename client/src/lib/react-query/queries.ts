@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, validateUserByJwt } from "../backend-api";
+import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -25,9 +25,9 @@ export const useSignInAccount = () => {
     });
 };
 
-export const useValidateUserByJwt = () => {
+export const useGetUserSession= () => {
     return useMutation({
-        mutationFn: () => validateUserByJwt(),
+        mutationFn: () => getUserSession(),
         onSuccess: (data) => { },
         onError: (data) => { },
     });
