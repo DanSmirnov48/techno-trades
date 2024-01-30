@@ -5,7 +5,7 @@ import AuthLayout from "./_auth/AuthLayout";
 import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
-import { Dashboard, Account, Tables, ProductCreateForm, Notifications, Appearance, Favourites } from "./_dashboard/pages";
+import { Dashboard, Account, Tables, ProductCreateForm, Notifications, Appearance, Favourites, Orders } from "./_dashboard/pages";
 
 export default function App() {
   return (
@@ -31,6 +31,7 @@ export default function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/account/:id" element={<Account />} />
+          <Route path="/dashboard/my-orders/:id" element={<Orders />} />
           <Route path="/dashboard/notifications/:id" element={<Notifications />} />
           <Route path="/dashboard/appearance/:id" element={<Appearance />} />
           <Route path="/dashboard/favourites/:id" element={<Favourites />} />
@@ -41,7 +42,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Toaster expand={false} position="top-right" richColors closeButton className=""/>
+      <Toaster expand={false} position="top-right" richColors closeButton className="" />
     </main>
   );
 }

@@ -14,6 +14,13 @@ export const dashboardConfig: DashboardConfig = {
       items: [],
     },
     {
+      title: "My Oders",
+      for: "all",
+      href: "/dashboard/my-orders/",
+      icon: "orders",
+      items: [],
+    },
+    {
       title: "Notifications",
       for: "all",
       href: "/dashboard/notifications/",
