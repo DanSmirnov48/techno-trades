@@ -1,9 +1,9 @@
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
-import { BadgeCheck, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { ratingStyle } from "@/lib/utils";
+import { formatDate, ratingStyle } from "@/lib/utils";
 import { Product, Review } from "@/types";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type ReviewFormProps = {
   product: Product;
@@ -14,41 +14,34 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
   function testReview(idx: number) {
     return (
       <div key={idx} className="mt-5 border-t border-gray-200">
-        <div className="py-5 flex space-x-6 gap-20">
-          <div className="flex-none">
-            <div className="flex-auto flex flex-col gap-4">
-              <Rating
-                value={Math.floor(Math.random() * 5) + 1}
-                readOnly
-                className="mr-2 max-w-[100px]"
-                itemStyles={ratingStyle}
-              />
-              <div>
-                <h4 className="font-semibold">Bessie Cooper</h4>
-                <h4 className="font-medium text-gray-900">March 14, 2021</h4>
-              </div>
-              <div className="flex flex-row">
-                <BadgeCheck className="text-white fill-green-500 h-6 w-6 mr-1" />{" "}
-                Verified
-              </div>
-            </div>
-          </div>
-          <div className="flex-auto flex flex-col gap-4">
-            <h4 className="font-semibold">Great product, smooth purchase</h4>
-            <h4 className="font-medium text-dark-4">
-              Almost completed building my replacement website and very pleased
-              with the result. Although the customization is great the theme's
-              features and Customer Support have also been great..
-            </h4>
+        <div className="flex items-center my-4">
+          <Avatar className="h-10 w-10 me-4">
+            <AvatarFallback>F U</AvatarFallback>
+          </Avatar>
+          <div className="font-medium dark:text-white">
+            <p>Jese Leos <span className="block text-sm text-gray-500 dark:text-gray-400">Joined on August 2014</span></p>
           </div>
         </div>
-        <div className="flex justify-end items-center">
-          <h1>Was this helpful?</h1>
-          <ThumbsUp className="w-4 h-5 pb-1 fill-gray-700 ml-5 mr-1 hover:fill-green-600 cursor-pointer" />
-          {Math.floor(Math.random() * 40) + 1}
-          <ThumbsDown className="w-4 h-5 fill-gray-700 ml-2 mr-1 hover:fill-red-600 cursor-pointer" />
-          {Math.floor(Math.random() * 40) + 1}
+        <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse">
+          <Rating
+            value={Math.floor(Math.random() * 5) + 1}
+            readOnly
+            className="mr-2 max-w-[100px]"
+            itemStyles={ratingStyle}
+          />
+          <h3 className="ms-2 text-sm font-semibold text-gray-900 dark:text-white">Thinking to buy another one!</h3>
         </div>
+        <footer className="mb-5 text-sm text-gray-500 dark:text-gray-400"><p>Reviewed in the United Kingdom on <span>March 3, 2017</span></p></footer>
+        <p className="mb-2 text-gray-500 dark:text-gray-400">This is my third Invicta Pro Diver. They are just fantastic value for money. This one arrived yesterday and the first thing I did was set the time, popped on an identical strap from another Invicta and went in the shower with it to test the waterproofing.... No problems.</p>
+        <p className="mb-3 text-gray-500 dark:text-gray-400">It is obviously not the same build quality as those very expensive watches. But that is like comparing a Citroën to a Ferrari. This watch was well under £100! An absolute bargain.</p>
+        <a href="#" className="block mb-5 text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Read more</a>
+        <aside>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">19 people found this helpful</p>
+          <div className="flex items-center mt-3">
+            <a href="#" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Helpful</a>
+            <a href="#" className="ps-4 text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 border-gray-200 ms-4 border-s md:mb-0 dark:border-gray-600">Report abuse</a>
+          </div>
+        </aside>
       </div>
     );
   }
@@ -98,39 +91,38 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
         {product.reviews && product.reviews.length > 0 ? (
           product.reviews.map((review, idx) => (
             <div key={idx} className="mt-5 border-t border-gray-200">
-              <div className="py-5 flex space-x-6 gap-20">
-                <div className="flex-none">
-                  <div className="flex-auto flex flex-col gap-4">
-                    <Rating
-                      value={review.rating}
-                      readOnly
-                      className="mr-2 max-w-[100px]"
-                      itemStyles={ratingStyle}
-                    />
-                    <div>
-                      <h4 className="font-semibold">{review.name}</h4>
-                      <h4 className="font-medium text-gray-900">{new Intl.DateTimeFormat('en-GB', {
-                        dateStyle: 'medium',
-                      }).format(new Date(review.createdAt))}</h4>
-                    </div>
-                    <div className="flex flex-row">
-                      <BadgeCheck className="text-white fill-green-500 h-6 w-6 mr-1" />
-                      Verified
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-auto flex flex-col gap-4">
-                  <h4 className="font-semibold">{review.title}</h4>
-                  <h4 className="font-medium text-dark-4">{review.comment}</h4>
+              <div className="flex items-center my-4">
+                <Avatar className="h-10 w-10 me-2">
+                  <AvatarImage
+                    src={review.user.photo && review.user.photo.url}
+                    alt={review.user.firstName}
+                    className="object-cover"
+                  />
+                  <AvatarFallback>{review.user.firstName.slice(0, 1)}{review.user.lastName.slice(0, 1)}</AvatarFallback>
+                </Avatar>
+                <div className="font-medium dark:text-white">
+                  <p>{review.name}<span className="block text-sm text-gray-500 dark:text-gray-400">Joined on {formatDate(review.user.createdAt.toString(), "year-month")}</span></p>
                 </div>
               </div>
-              <div className="flex justify-end items-center">
-                <h1>Was this helpful?</h1>
-                <ThumbsUp className="w-4 h-5 pb-1 fill-gray-700 ml-5 mr-1 hover:fill-green-600 cursor-pointer" />
-                {Math.floor(Math.random() * 40) + 1}
-                <ThumbsDown className="w-4 h-5 fill-gray-700 ml-2 mr-1 hover:fill-red-600 cursor-pointer" />
-                {Math.floor(Math.random() * 40) + 1}
+              <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse">
+                <Rating
+                  value={review.rating}
+                  readOnly
+                  className="mr-2 max-w-[100px]"
+                  itemStyles={ratingStyle}
+                />
+                <h3 className="ms-2 text-sm font-semibold text-gray-900 dark:text-white">{review.title}</h3>
               </div>
+              <footer className="mb-5 text-sm text-gray-500 dark:text-gray-400"><p>Reviewed in the United Kingdom on <span>{formatDate(review.createdAt.toString(), "year-month")}</span></p></footer>
+              <p className="mb-2 text-gray-500 dark:text-gray-400">{review.comment}</p>
+              <a href="#" className="block mb-5 text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Read more</a>
+              <aside>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">19 people found this helpful</p>
+                <div className="flex items-center mt-3">
+                  <a href="#" className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Helpful</a>
+                  <a href="#" className="ps-4 text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 border-gray-200 ms-4 border-s md:mb-0 dark:border-gray-600">Report abuse</a>
+                </div>
+              </aside>
             </div>
           ))
         ) : (

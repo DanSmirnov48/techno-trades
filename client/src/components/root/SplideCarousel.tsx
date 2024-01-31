@@ -45,7 +45,7 @@ const SplideCarousel = () => {
                         pauseOnHover: true,
                         pauseOnFocus: true,
                         rewind: false,
-                        speed: 4
+                        speed: 3
                     }
                 }}
                 className={""}

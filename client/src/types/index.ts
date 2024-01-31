@@ -14,6 +14,8 @@ export type IUser = {
     email: string;
     photo: UserImage;
     role: string;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export type INewUser = {
@@ -27,12 +29,14 @@ export type INewUser = {
 //-------------PRODUCT TYPES----------------------------------
 
 export type Review = {
+    _id: string;
     name: string;
     rating: number;
     title: string;
     comment: string;
-    user: string;
+    user: IUser;
     createdAt: string;
+    updatedAt: string;
 };
 
 export type ProductImage = {

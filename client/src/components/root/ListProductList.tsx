@@ -19,7 +19,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
     <>
       <ul className="w-full grid grid-cols-1 gap-7">
         {products.map((product) => (
-          <div className={`${product.isDiscounted
+          <div key={product._id} className={`${product.isDiscounted
             ? 'relative overflow-hidden rounded-xl p-[5px] backdrop-blur-3xl'
             : 'relative bg-white border rounded-xl shadow-md '}`}
           >

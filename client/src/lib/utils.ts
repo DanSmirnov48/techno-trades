@@ -9,24 +9,37 @@ export function cn(...inputs: ClassValue[]) {
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
-export function formatDate(input: string | number, formatType: 'long' | 'short' = 'long'): string {
+export function formatDate(input: string | number, formatType: 'long' | 'short' | 'year-month' = 'long'): string {
   const date = new Date(input);
 
-  const longOptions: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  };
+  let options: Intl.DateTimeFormatOptions;
 
-  const shortOptions: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-
-  const options = formatType === 'long' ? longOptions : shortOptions;
+  switch (formatType) {
+    case 'long':
+      options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      break;
+    case 'short':
+      options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      };
+      break;
+    case 'year-month':
+      options = {
+        year: "numeric",
+        month: "long",
+      };
+      break;
+    default:
+      throw new Error('Invalid format type');
+  }
 
   return date.toLocaleDateString("en-US", options);
 }

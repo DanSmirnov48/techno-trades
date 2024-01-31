@@ -13,7 +13,7 @@ const GridProductList = ({ products }: GridProductListProps) => {
     <>
       <ul className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-7">
         {products.map((product) => (
-          <div className={`${product.isDiscounted
+          <div key={product._id} className={`${product.isDiscounted
             ? 'relative overflow-hidden rounded-xl p-[5px] backdrop-blur-3xl'
             : 'relative bg-white border rounded-xl shadow-md '} transform transition duration-400 ease-in-out hover:shadow-2xl hover:-translate-y-3 dark:hover:shadow-black/40 `}
           >
