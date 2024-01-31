@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import User, { UserDocument, getUser } from '../models/users';
+import { User, IUser, getUser } from '../models/users';
 import asyncHandler from '../middlewares/asyncHandler';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
-    user?: UserDocument;
+    user?: IUser;
 }
 
 const filterObj = <T extends Record<string, unknown>>

@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import mongoose, { ObjectId } from 'mongoose';
 import {OrderModel, IOrder, GetCurrUserOrders, GetOrder} from '../models/order';
 import asyncHandler from '../middlewares/asyncHandler';
-import { UserDocument } from '../models/users';
+import { IUser } from '../models/users';
 import express, { Request, Response } from "express";
 
 config()
@@ -11,7 +11,7 @@ config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 interface CustomRequest extends Request {
-    user?: UserDocument;
+    user?: IUser;
 }
 
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {

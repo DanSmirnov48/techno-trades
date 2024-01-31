@@ -1,10 +1,10 @@
-import mongoose, { ObjectId, Query, Schema } from 'mongoose';
+import mongoose, { Model, ObjectId, Query, Schema, Types, model } from 'mongoose';
 import validator from 'validator'
 import * as bcrypt from 'bcrypt';
 import crypto from 'crypto'
 
-export interface UserDocument extends Document {
-    _id: ObjectId | string;
+export interface IUser extends Document {
+    _id: Types.ObjectId;
     firstName: string;
     lastName: string;
     email: string;
@@ -20,10 +20,17 @@ export interface UserDocument extends Document {
     passwordResetToken?: string;
     passwordResetExpires?: Date;
     active: boolean;
-    correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
 }
 
-const userSchema: Schema<UserDocument> = new Schema({
+interface IUserMethods {
+    correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
+    changedPasswordAfter(JWTTimestamp: number): boolean;
+    createPasswordResetToken(): string;
+}
+
+type UserModel = Model<IUser, {}, IUserMethods>;
+
+const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     firstName: {
         type: String,
         required: [true, 'A user must have a first name'],
@@ -59,7 +66,7 @@ const userSchema: Schema<UserDocument> = new Schema({
         type: String,
         required: [true, 'Please confirm your password'],
         validate: {
-            validator: function (this: UserDocument, value: string) {
+            validator: function (this: IUser, value: string) {
                 return value === this.password;
             },
             message: 'Passwords do not match!',
@@ -73,7 +80,7 @@ const userSchema: Schema<UserDocument> = new Schema({
         default: true,
         select: false,
     },
-});
+}, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
     // Only run this function if password was actually modified
@@ -94,17 +101,14 @@ userSchema.pre('save', function (next) {
     next();
 });
 
-userSchema.pre(/^find/, function (this: Query<UserDocument[], UserDocument>, next) {
+userSchema.pre(/^find/, function (this: Query<IUser[], IUser>, next) {
     // 'this' now refers to the query object
     this.find({ active: { $ne: false } });
 
     next();
 });
 
-userSchema.methods.correctPassword = async function (
-    candidatePassword: string,
-    userPassword: string
-): Promise<boolean> {
+userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string): Promise<boolean> {
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
@@ -113,12 +117,10 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boole
         const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
         return JWTTimestamp < changedTimestamp;
     }
-    // False means NOT changed
     return false;
 }
 
-userSchema.methods.createPasswordResetToken = function () {
-    // Generate a secure random token
+userSchema.methods.createPasswordResetToken = function (): string {
     const resetToken = crypto.randomBytes(32).toString('hex');
 
     this.passwordResetToken = crypto
@@ -128,14 +130,15 @@ userSchema.methods.createPasswordResetToken = function () {
 
     console.log({ resetToken }, this.passwordResetToken);
 
-    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+
+    this.passwordResetExpires = expirationTime;
 
     return resetToken;
 };
 
-const User = mongoose.model<UserDocument>('User', userSchema);
-
-export default User
+export const User = mongoose.model<IUser, UserModel>('User', userSchema);
 
 export const getUser = () => User.find()
 
@@ -144,14 +147,12 @@ export const getUserByEmail = (email: string) => User.findOne({ email })
 export const getUserBySessionToken = (sessionToken: string) => User.findOne({
     'authentication.sessionToken': sessionToken
 })
-export const getUserById = (id: string) =>
-    User.findById(id)
+export const getUserById = (id: string) => User.findById(id)
 
 export const createUser = async (values: Record<string, any>) =>
     new User(values).save().then((user) => user.toObject())
 
-export const deleteUserById = (id: string) =>
-    User.findByIdAndDelete(id)
+export const deleteUserById = (id: string) => User.findByIdAndDelete(id)
 
 export const updateUserById = (id: string, values: Record<string, any>) =>
     User.findByIdAndUpdate(id, values)

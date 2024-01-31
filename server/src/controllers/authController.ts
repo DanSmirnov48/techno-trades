@@ -1,14 +1,14 @@
 import crypto from 'crypto';
 import { promisify } from 'util';
 import jwt from 'jsonwebtoken'
-import User, { UserDocument } from '../models/users'
+import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
 import { sendEmail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
-    user?: UserDocument;
+    user?: IUser;
 }
 
 const isTokenValid = (decodedToken: { exp?: number, iat?: number }): boolean => {
@@ -35,7 +35,7 @@ const signToken = (id: string, secret: string, expiresIn: string | number) => {
     });
 };
 
-const createSendToken = (user: UserDocument, statusCode: number, req: Request, res: Response, includeRefreshToken: boolean = true) => {
+const createSendToken = (user: IUser, statusCode: number, req: Request, res: Response, includeRefreshToken: boolean = true) => {
     // Create Access Token
     const accessToken = signToken(user._id.toString(), process.env.JWT_SECRET!, process.env.JWT_EXPIRES_IN!);
 
@@ -116,8 +116,8 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
     if (!user || !(await user.correctPassword(password, user.password))) {
         return res.status(401).json({ error: 'Incorrect email or password' });
     }
-    // // 3) If everything ok, send token to client
-    createSendToken(user, 200, req, res);
+    // 3) If everything ok, send token to client
+    createSendToken(user!, 200, req, res);
 });
 
 export const logout = (req: Request, res: Response) => {
@@ -140,11 +140,8 @@ export const protect = asyncHandler(async (req: CustomRequest, res: Response, ne
     }
 
     if (!token) {
-        return next(
-            new Error('You are not logged in! Please log in to get access.')
-        );
+        return
     }
-    console.log(token)
 
     // 2) Verification token
     const decoded = await promisify<string, string>(jwt.verify)(token, process.env.JWT_SECRET!);
@@ -165,7 +162,7 @@ export const protect = asyncHandler(async (req: CustomRequest, res: Response, ne
     next();
 });
 
-export const restrictTo = (...roles: Array<UserDocument['role']>) => {
+export const restrictTo = (...roles: Array<IUser['role']>) => {
     return (req: CustomRequest, res: Response, next: NextFunction) => {
         // Ensure req.user and req.user.role are defined
         if (!req.user || !req.user.role) {
@@ -372,7 +369,7 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
     const user = await User.findById(req.user?._id).select('+password');
 
     if (user) {
-        // 2) Check if POSTed current password is correct 
+        // 2) Check if POSTed current password is correct
         if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
             return res.status(401).json({ error: "Wrong Password" });
         }
