@@ -1,14 +1,15 @@
-import { formatPrice, truncateText } from "@/lib/utils";
+import { cn, formatPrice, truncateText } from "@/lib/utils";
 import { Order } from "@/types/order";
 import { Icons } from "../icons";
 
 type Props = {
   order: Order;
+  className?: string;
 };
 
-const OrderInvoice = ({ order }: Props) => {
+const OrderInvoice = ({ order, className }: Props) => {
   return (
-    <div className="font-jost">
+    <div className={cn("font-jost", className)}>
       <div className="max-w-xl">
         <h1 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
           Thank you!

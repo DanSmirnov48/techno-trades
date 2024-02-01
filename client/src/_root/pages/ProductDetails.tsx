@@ -268,8 +268,8 @@ const ProductDetails = () => {
               {infoSection()}
               {spectsSection()}
               {product && <AddToCartButton product={product} />}
-              <div className="mt-2"/>
-              {product && <AddToFavoritesButton product={product} variant="button"/>}
+              <div className="mt-2" />
+              {product && <AddToFavoritesButton product={product} variant="button" />}
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-screen-lg flex justify-center select-none">
                   <Carousel className="w-full max-w-4xl">
@@ -305,15 +305,19 @@ const ProductDetails = () => {
                 {relatedProducts.map((product) => (
                   <Link to={`/products/${product.slug}`} key={product._id}>
                     <div className="group relative">
-                      <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-                        <img
-                          src={product.image[0].url}
-                          alt={product.name}
-                          className="h-full w-full object-contain object-center p-2"
-                        />
+                      <div className="transform group-hover:-translate-y-3 transition-transform duration-300 ease-out">
+                        <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
+                          <img
+                            src={product.image[0].url}
+                            alt={product.name}
+                            className="h-full w-full object-contain object-center p-5"
+                          />
+                        </div>
+                        <div className="transform origin-center group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
+                          <h3 className="mt-6 text-sm text-gray-500 capitalize">{product.category}</h3>
+                          <p className="text-base font-semibold text-gray-900">{product.name}</p>
+                        </div>
                       </div>
-                      <h3 className="mt-6 text-sm text-gray-500">£{product.price}</h3>
-                      <p className="text-base font-semibold text-gray-900">{product.name}</p>
                     </div>
                   </Link>
                 ))}
@@ -321,6 +325,7 @@ const ProductDetails = () => {
             </div>
           </div>
         </section>
+
         <div className="container p-0 my-20">
           {product && <ProductReviewForm product={product} />}
         </div>

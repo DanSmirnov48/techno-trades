@@ -58,7 +58,7 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
   const renderStarRatings = () => {
     return [5, 4, 3, 2, 1].map((rating) => (
       <div key={rating} className="flex items-center mt-1">
-        <p className="pr-4">{`${rating} star`}</p>
+        <p className="pr-4 whitespace-nowrap">{`${rating} star`}</p>
         <Progress value={calculatePercentage(rating)} className="h-3 max-w-sm" />
         <span className="pl-4 text-sm font-medium text-gray-500 dark:text-gray-400">
           {getReviewCountByRating(rating)}
@@ -70,20 +70,18 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
   return (
     <section className="reviews-section font-jost" id="reviews">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mb-10">
-        <div className="">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold">Customer reviews & ratings</h1>
-            <div className="flex flex-row">
-              <Rating
-                value={product.rating}
-                readOnly
-                className="mr-2 max-w-[100px]"
-                itemStyles={ratingStyle}
-              />
-              <h1>({product.rating} out of 5)</h1>
-            </div>
-            <h1>Based on {product.numReviews} reviews</h1>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-semibold">Customer reviews & ratings</h1>
+          <div className="flex flex-row">
+            <Rating
+              value={product.rating}
+              readOnly
+              className="mr-2 max-w-[100px]"
+              itemStyles={ratingStyle}
+            />
+            <h1>({product.rating} out of 5)</h1>
           </div>
+          <h1>Based on {product.numReviews} reviews</h1>
         </div>
         <div className="">{renderStarRatings()}</div>
       </div>
