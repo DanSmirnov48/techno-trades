@@ -6,8 +6,18 @@ import { SigninForm, SignupForm } from "./_auth/forms";
 import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
 import { Dashboard, Account, Tables, ProductCreateForm, Notifications, Appearance, Favourites, Orders } from "./_dashboard/pages";
+import ProtectedRoute, { ProtectedRouteProps, UserRole } from "./components/ProtectedRoute";
+import { useUserContext } from "./context/AuthContext";
 
 export default function App() {
+  const { isAuthenticated, user } = useUserContext();
+
+  const defaultProtectedRouteProps: Omit<ProtectedRouteProps, 'outlet'> = {
+    isAuthenticated: isAuthenticated,
+    redirectPath: '/sign-in',
+    currentRole: user.role as UserRole,
+  };
+
   return (
     <main className="flex">
       <Routes>
@@ -29,16 +39,16 @@ export default function App() {
 
         {/* User Dashboard Routes */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/account/:id" element={<Account />} />
-          <Route path="/dashboard/my-orders/:id" element={<Orders />} />
-          <Route path="/dashboard/notifications/:id" element={<Notifications />} />
-          <Route path="/dashboard/appearance/:id" element={<Appearance />} />
-          <Route path="/dashboard/favourites/:id" element={<Favourites />} />
+          <Route path="/dashboard" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Dashboard />} allowedRoles={['admin', "user"]} />} />
+          <Route path="/dashboard/account/:id" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Account />} allowedRoles={['admin', "user"]} />} />
+          <Route path="/dashboard/my-orders/:id" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Orders />} allowedRoles={['admin', "user"]} />} />
+          <Route path="/dashboard/notifications/:id" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Notifications />} allowedRoles={['admin', "user"]} />} />
+          <Route path="/dashboard/appearance/:id" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Appearance />} allowedRoles={['admin', "user"]} />} />
+          <Route path="/dashboard/favourites/:id" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Favourites />} allowedRoles={['admin', "user"]} />} />
 
           {/* User Dashboard Routes FOR ADMINS*/}
-          <Route path="/dashboard/data-tables" element={<Tables />} />
-          <Route path="/dashboard/product" element={<ProductCreateForm />} />
+          <Route path="/dashboard/data-tables" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<Tables />} allowedRoles={['admin']} />} />
+          <Route path="/dashboard/product" element={<ProtectedRoute {...defaultProtectedRouteProps} outlet={<ProductCreateForm />} allowedRoles={['admin']} />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
