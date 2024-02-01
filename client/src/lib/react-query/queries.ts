@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -208,5 +208,21 @@ export const useGetOrders = () => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_ORDERS],
         queryFn: () => getOrders(),
+    });
+};
+
+// ============================================================
+// REVIEWS
+// ============================================================
+export const useCreateReview = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (review: { productId: string; rating: number; title: string; comment: string }) => 
+            createReview(review),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCT_BY_ID, data],
+            });
+        },
     });
 };

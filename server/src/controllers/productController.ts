@@ -7,8 +7,13 @@ import {
     ProductModel,
     UpdateProductById,
 } from "../models/products";
-import { ObjectId } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { filterAndSortProducts } from "../utils/filterAndSortProducts";
+import { IUser } from "../models/users";
+
+interface CustomRequest extends Request {
+    user: IUser;
+}
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -88,7 +93,10 @@ export const getProductById = asyncHandler(
 export const getProductBySlug = asyncHandler(
     async (req: Request, res: Response) => {
         const { slug } = req.params;
-        const product = await ProductModel.findOne({ slug });
+        const product = await ProductModel.findOne({ slug }).populate({
+            path: 'reviews.user',
+            model: 'User',
+        });
 
         if (!product) {
             return res.status(404).json({ error: 'Product by slug not found' });
@@ -216,3 +224,43 @@ export const setProductDiscount = asyncHandler(
     }
 );
 
+export const createProductReview = asyncHandler(
+    async (req: CustomRequest, res: Response) => {
+        const { rating, title, comment } = req.body
+        const { id } = req.params
+        const user = req.user
+
+        // console.log({rating, title, comment, id, user})
+
+        const product = await ProductModel.findById(id);
+
+        if (product) {
+            const alreadyReviewed = product.reviews
+                .find(r => r.user.toString() === user._id.toString())
+
+            if (alreadyReviewed) {
+                res.status(400).json({ error: "Product already reviewed" });
+            }
+
+            const review = {
+                name: user.firstName.concat(" " + user.lastName),
+                rating: Number(rating),
+                title,
+                comment,
+                user: user._id
+            }
+
+            product.reviews.push(review)
+            product.numReviews = product.reviews.length
+
+            product.rating = product.reviews.reduce((acc, curr) =>
+                curr.rating + acc, 0) / product.reviews.length
+
+            await product.save()
+            res.status(201).json({ message: 'Review Added' })
+        } else {
+            res.status(404)
+            throw new Error('Product not found')
+        }
+    }
+);

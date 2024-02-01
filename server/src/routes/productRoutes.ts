@@ -10,6 +10,7 @@ import {
     getPaginatedProducts,
     getFilteredProducts,
     searchProducts,
+    createProductReview
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -30,6 +31,9 @@ router.route("/search")
 
 router.route('/:slug')
     .get(getProductBySlug);
+
+router.route('/:id/reviews')
+    .post(protect, createProductReview)
 
 router.route("/:id")
     .get(getProductById)

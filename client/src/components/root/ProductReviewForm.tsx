@@ -6,12 +6,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
 import { ProductReviewValidation } from "@/lib/validation";
-import { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { ratingStyle } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { useCreateReview } from "@/lib/react-query/queries";
+import { toast } from "sonner";
 
 type ReviewFormProps = {
   product: Product;
@@ -19,30 +20,58 @@ type ReviewFormProps = {
 
 const ProductReviewForm = ({ product }: ReviewFormProps) => {
   const { isAuthenticated } = useUserContext();
-  const [rating, setRating] = useState<number>(0);
+  const { mutateAsync: CreateReview } = useCreateReview()
 
   const form = useForm<z.infer<typeof ProductReviewValidation>>({
     resolver: zodResolver(ProductReviewValidation),
     defaultValues: {
+      rating: 0,
       title: "",
       comment: "",
     },
   });
 
-
-  const handleSubmit = async (value: z.infer<typeof ProductReviewValidation>) => { };
+  const handleSubmit = async (value: z.infer<typeof ProductReviewValidation>) => {
+    if (isAuthenticated) {
+      const res = await CreateReview({
+        productId: product._id!,
+        rating: value.rating,
+        title: value.title,
+        comment: value.comment
+      })
+      if (res && (res.status === 201 && res.statusText === "Created")) {
+        form.reset()
+        toast.success('Success', {
+          description: "Review Published",
+          duration: 4000,
+        })
+      } else {
+        toast.error('Oops, Someone Fucked Up', {
+          description: "Error Creating Reivew",
+          duration: 4000,
+        })
+      }
+    }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-3 max-w-wull"
       >
-
-        <Rating
-          value={rating}
-          onChange={setRating}
-          itemStyles={ratingStyle}
-          style={{ maxWidth: 150 }}
+        <FormField
+          control={form.control}
+          name="rating"
+          render={({ field }) => (
+            <FormItem>
+              <Rating
+                itemStyles={ratingStyle}
+                style={{ maxWidth: 150 }}
+                {...field}
+              />
+              <FormMessage className="shad-form_message" />
+            </FormItem>
+          )}
         />
 
         <FormField

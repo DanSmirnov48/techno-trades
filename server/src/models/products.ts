@@ -4,6 +4,7 @@ import slugify from 'slugify'
 interface IReview {
     name: string;
     rating: number;
+    title: string;
     comment: string;
     user: Types.ObjectId;
 }
@@ -33,6 +34,7 @@ export interface IProduct extends Document {
 const reviewSchema = new Schema<IReview>({
     name: { type: String, required: true },
     rating: { type: Number, required: true },
+    title: { type: String, required: true },
     comment: { type: String, required: true },
     user: {
         type: Schema.Types.ObjectId,
