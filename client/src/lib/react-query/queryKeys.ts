@@ -11,4 +11,5 @@ export enum QUERY_KEYS {
     // ORDER KEYS
     GET_MY_ORDERS = "getMyOrders",
     GET_ORDERS = "getOrders",
+    GET_ORDER_BY_SESSION_ID = "getOrderBySessionId",
 }

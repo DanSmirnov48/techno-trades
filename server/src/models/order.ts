@@ -24,6 +24,7 @@ interface OrderShippingCost {
 
 interface PaymentIntentDetails {
     id: string;
+    sessionId: string;
     object: string;
     billing_details: {
         address: {
@@ -110,7 +111,22 @@ const OrderSchema = new Schema<IOrder>({
 
 export const OrderModel = model<IOrder>('Order', OrderSchema);
 
-export const GetOrder = () => OrderModel.find()
+export const GetOrders = () => OrderModel.find().populate({
+    path: 'user',
+    model: 'User',
+});
+
+export const GetOrderById = (id: any) => OrderModel.findById({ id })
+
+export const GetOrdersBySessionId = (sessionId: string) => OrderModel.findOne({
+    'paymentIntentDetails.sessionId': sessionId
+}).populate({
+    path: 'user',
+    model: 'User',
+}).populate({
+    path: 'products.product',
+    model: 'Product',
+});
 
 export const GetCurrUserOrders = async function (userId: Types.ObjectId) {
     try {

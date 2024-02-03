@@ -1,10 +1,10 @@
 import { Stripe } from 'stripe';
 import { config } from 'dotenv';
-import mongoose, { ObjectId } from 'mongoose';
-import {OrderModel, IOrder, GetCurrUserOrders, GetOrder, UpdateOrderShippingStatusById} from '../models/order';
+import { ObjectId } from 'mongoose';
+import { OrderModel, GetCurrUserOrders, GetOrders, UpdateOrderShippingStatusById, GetOrdersBySessionId } from '../models/order';
 import asyncHandler from '../middlewares/asyncHandler';
 import { IUser } from '../models/users';
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 
 config()
 
@@ -16,15 +16,22 @@ interface CustomRequest extends Request {
 
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const orders = await GetOrder().populate({
-            path: 'user',
-            model: 'User',
-        });;
+        const orders = await GetOrders()
         console.log(orders)
         return res.status(200).json({ "orders": orders });
     } catch (error) {
         console.error("Error fetching orders:", error);
         return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+export const getOrdersBySessionId = asyncHandler(async (req: Request, res: Response) => {
+    const order = await GetOrdersBySessionId(req.params.id)
+    if (order) {
+        return res.status(200).json({ order });
+    } else {
+        res.status(404);
+        throw new Error("Order not found");
     }
 });
 
@@ -46,10 +53,8 @@ export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response
             res.status(400).json({ error: 'User not authenticated' });
             return;
         }
-
+        
         const orders = await GetCurrUserOrders(userId);
-        console.log({orders})
-        console.log(orders.map((o) => o.products))
         if (orders) {
             return res.status(200).json({ orders });
         } else {
@@ -86,6 +91,7 @@ const createOrder = async (customer: any, data: any, payment: Stripe.Response<St
         //----PAYMENT
         paymentIntentDetails: {
             id: payment.id,
+            sessionId: data.id,
             object: payment.object,
             billing_details: {
                 address: {
@@ -114,7 +120,7 @@ const createOrder = async (customer: any, data: any, payment: Stripe.Response<St
 
     try {
         const savedOrder = await newOrder.save();
-        console.log({savedOrder})
+        console.log({ savedOrder })
         console.log("Order Created");
 
         return savedOrder;
@@ -150,7 +156,7 @@ export const handleStripeEvent = async (event: Stripe.Event) => {
             const paymentMethodId = charges.data[0]?.payment_method;
             const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId!);
 
-            console.log({customer, paymentIntent, paymentMethod});
+            console.log({ customer, paymentIntent, paymentMethod });
             const order = await createOrder(customer, paymentIntent, paymentMethod);
             response = { success: true, order };
 

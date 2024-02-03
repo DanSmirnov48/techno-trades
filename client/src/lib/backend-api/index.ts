@@ -288,6 +288,18 @@ export async function getOrders() {
   }
 }
 
+export const getOrdersBySessionId = async (sessionId: string) => {
+  try {
+    const response = await axios.get(`/api/orders/${sessionId}`);
+    if(response.status === 200){
+      return response.data.order as Order;
+    }
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    throw error;
+  }
+};
+
 export async function getMyOrders() {
   try {
     const response = await axios.get(`/api/orders/my-orders`);

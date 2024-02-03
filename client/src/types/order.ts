@@ -18,6 +18,7 @@ type OrderShippingAddress = {
 
 export type PaymentMethodDetails = {
     id: string;
+    sessionId: string;
     object: string;
     billing_details: {
         address: {

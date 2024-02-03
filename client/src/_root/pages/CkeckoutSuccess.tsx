@@ -1,10 +1,18 @@
 import OrderInvoice from "@/components/root/OrderInvoice";
-import { useGetMyOrders } from "@/lib/react-query/queries";
-import { useParams } from "react-router-dom";
+import { useCart } from "@/hooks/useCart";
+import { useGetOrderBySessionId } from "@/lib/react-query/queries";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const CkeckoutSuccess: React.FC = () => {
-  const { id } = useParams();
-  const { data: orders, isLoading: orderLoading, isError: orderError } = useGetMyOrders();
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const sessionId = params.get('session_id');
+
+  const { clearCart } = useCart();
+  const { data: order, isLoading: orderLoading, isError: orderError } = useGetOrderBySessionId(sessionId!);
+
+  useEffect(() => { clearCart() }, [order, clearCart]);
 
   if (orderLoading) {
     return <div>Loading...</div>;
@@ -14,16 +22,16 @@ const CkeckoutSuccess: React.FC = () => {
     return <div>Error loading order</div>;
   }
 
-  if (!orders) {
+  if (!order) {
     return <div>No order found</div>;
   }
 
-  console.log(orders)
+  console.log(order)
 
   return (
     <div className="flex flex-col flex-1 min-h-screen items-center font-inter">
       <div className="w-full px-8 md:px-52 py-28 my-20 max-w-screen-xl border rounded-2xl relative">
-        <OrderInvoice order={orders[orders.length - 1]} key={orders[orders.length - 1]._id} />
+        <OrderInvoice order={order} key={order._id} />
       </div>
     </div>
   );

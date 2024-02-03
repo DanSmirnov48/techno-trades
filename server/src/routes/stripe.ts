@@ -110,11 +110,11 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
             line_items: validLineItems,
             mode: "payment",
             customer: customer.id,
-            success_url: `${process.env.CLIENT_URL}/checkout-success`,
+            success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.CLIENT_URL}/cart`,
         });
 
-        res.send({ url: session.url });
+        res.send({ url: session.url, sessionsId: session.id });
     } catch (error) {
         console.error('Error creating checkout session:', error);
         res.status(500).send({ error: 'Internal Server Error' });
