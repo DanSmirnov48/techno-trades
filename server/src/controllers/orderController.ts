@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { config } from 'dotenv';
 import mongoose, { ObjectId } from 'mongoose';
-import {OrderModel, IOrder, GetCurrUserOrders, GetOrder} from '../models/order';
+import {OrderModel, IOrder, GetCurrUserOrders, GetOrder, UpdateOrderShippingStatusById} from '../models/order';
 import asyncHandler from '../middlewares/asyncHandler';
 import { IUser } from '../models/users';
 import express, { Request, Response } from "express";
@@ -16,8 +16,23 @@ interface CustomRequest extends Request {
 
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const orders = await GetOrder();
+        const orders = await GetOrder().populate({
+            path: 'user',
+            model: 'User',
+        });;
+        console.log(orders)
         return res.status(200).json({ "orders": orders });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+export const updateShippingStatus = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { orderId, status } = req.body
+        const order = UpdateOrderShippingStatusById(orderId, status);
+        return res.status(200).json({ "order": order });;
     } catch (error) {
         console.error("Error fetching orders:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -31,7 +46,7 @@ export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response
             res.status(400).json({ error: 'User not authenticated' });
             return;
         }
-        // @ts-ignore
+
         const orders = await GetCurrUserOrders(userId);
         console.log({orders})
         console.log(orders.map((o) => o.products))

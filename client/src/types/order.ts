@@ -1,4 +1,4 @@
-import { Product } from ".";
+import { IUser, Product } from ".";
 
 //----------------------------------------ORDER TYPE--------------------------------------------
 type OrderProduct = {
@@ -46,6 +46,7 @@ export type PaymentMethodDetails = {
 export type Order = {
     _id: string;
     userId: string;
+    user: IUser;
     customerId: string;
     customerEmail: string;
     paymentIntentId: string;

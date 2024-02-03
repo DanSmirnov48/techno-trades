@@ -278,6 +278,27 @@ export async function setProductDiscount(product: { id: string; discountedPrice?
 // ============================================================
 // ORDERS
 // ============================================================
+
+export async function getOrders() {
+  try {
+    const { data } = await axios.get(`/api/orders`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getMyOrders() {
+  try {
+    const response = await axios.get(`/api/orders/my-orders`);
+    if (response.status === 200) {
+      return response.data.orders as Order[];
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function createOrder(data: { orders: { productId: string; quantity: number }[]; userId: string }) {
   try {
     const { data: responseData } = await axios.post('/api/stripe/create-checkout-session', data);
@@ -292,23 +313,17 @@ export async function createOrder(data: { orders: { productId: string; quantity:
   }
 }
 
-export async function getMyOrders() {
+export async function updateShippingStatus(order: { orderId: string; status: string }) {
   try {
-    const response = await axios.get(`/api/orders/my-orders`);
-    if(response.status === 200){
-      return response.data.orders as Order[];
+    const res = await axios.post('/api/orders/update-shipping-status', order);
+    if (res.status === 200 && res.statusText === "OK") {
+      return res;
+    } else {
+      console.warn("Failed to add a new review for the product");
+      return false;
     }
   } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getOrders() {
-  try {
-    const { data } = await axios.get(`/api/orders`);
-    return data;
-  } catch (error) {
-    console.log(error);
+    console.error('Error during checkout:', error);
   }
 }
 
@@ -318,13 +333,13 @@ export async function getOrders() {
 export async function createReview(review: { productId: string; rating: number; title: string; comment: string }) {
   try {
     const res = await axios.post(`/api/products/${review.productId}/reviews`, review);
-    if(res.status === 201 && res.statusText === "Created"){
+    if (res.status === 201 && res.statusText === "Created") {
       return res;
-    }else{
+    } else {
       console.warn("Failed to add a new review for the product");
       return false;
     }
-    
+
   } catch (error) {
     console.error('Error during creating review:', error);
   }

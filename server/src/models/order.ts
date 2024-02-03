@@ -124,3 +124,17 @@ export const GetCurrUserOrders = async function (userId: Types.ObjectId) {
         throw new Error('Internal server error');
     }
 };
+
+export const UpdateOrderShippingStatusById = async (orderId: string, status: string) => {
+    try {
+        return await OrderModel.findByIdAndUpdate(
+            orderId,
+            { $set: { deliveryStatus: status } },
+            { new: true }
+        ).lean();
+
+    } catch (error) {
+        console.error("Error updating order shipping status:", error);
+        throw error;
+    }
+};

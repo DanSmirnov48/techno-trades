@@ -83,15 +83,17 @@ export const ProductReviewValidation = z.object({
 // USERS TABLE
 // ============================================================
 
-export const usersableSchema = z.object({
+export const usersTableSchema = z.object({
     _id: z.string(),
     firstName: z.string(),
     lastName: z.string(),
     email: z.string().email(),
     role: z.string(),
     photo: z.custom<UserImage>().optional().or(z.literal("")),
+    createdAt: z.string(),
+    updatedAt: z.string(),
 })
-export type UserType = z.infer<typeof usersableSchema>
+export type UserType = z.infer<typeof usersTableSchema>
 
 // ============================================================
 // ORDER TABLE
@@ -115,7 +117,7 @@ const shippingDetailsSchema = z.object({
 export const orderTableSchema = z.object({
     _id: z.string(),
     orderNumber: z.string(),
-    user: z.string(),
+    user: usersTableSchema,
     customerId: z.string(),
     customerEmail: z.string().email(),
     total: z.number(),
