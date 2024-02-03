@@ -89,6 +89,9 @@ export const DeleteProductById = (id: string) =>
 export const UpdateProductById = (id: string, values: Record<string, typeof ProductModel>) =>
     ProductModel.findByIdAndUpdate(id, values)
 
+export const UpdateProductStockById = (_id: string, countInStock: number) =>
+    ProductModel.findByIdAndUpdate(_id, { $set: { countInStock } }, { new: true });
+
 export const CreateProduct = async (values: Record<string, any>) => {
     const product = new ProductModel(values);
     product.slug = slugify(product.name, { lower: true });

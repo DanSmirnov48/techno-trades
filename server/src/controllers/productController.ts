@@ -6,6 +6,7 @@ import {
     GetproductByName,
     ProductModel,
     UpdateProductById,
+    UpdateProductStockById,
 } from "../models/products";
 import { ObjectId, Types } from "mongoose";
 import { filterAndSortProducts } from "../utils/filterAndSortProducts";
@@ -179,6 +180,82 @@ export const deleteProduct = asyncHandler(
         }
     }
 );
+
+export const updateMultipleProducts = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const updates = req.body;
+        const updatedProducts = await UpdateMultipleProductsStock(updates);
+
+        res.status(201).json({ message: "Products Updated", data: updatedProducts });
+    } catch (error) {
+        console.error("Error updating products:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+export const UpdateMultipleProductsStock = async (updates: { id: string; quantity: number }[]) => {
+    console.log("UpdateMultipleProductsStock Called");
+
+    const updatedProducts = await Promise.all(
+        updates.map(async ({ id, quantity }) => {
+
+            try {
+                const product = await ProductModel.findById(id);
+
+                if (!product) {
+                    console.error(`Product with ID ${id} not found.`);
+                    return null;
+                }
+
+                const currentStock = product.countInStock;
+
+                // Check if there is enough stock for the requested quantity
+                if (quantity > currentStock) {
+                    console.error(`Insufficient stock for product with ID ${id}. Requested quantity: ${quantity}, Current stock: ${currentStock}`);
+                    return null;
+                }
+
+                // Calculate the new stock after considering the quantity
+                const newStock = currentStock - quantity;
+
+                // Update the stock
+                return UpdateProductStockById(id, newStock);
+
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    );
+
+    console.log("updatedProducts:", updatedProducts);
+    return updatedProducts;
+};
+
+export const updateProductStock = async (req: Request, res: Response) => {
+    const { id, quantity } = req.body;
+
+    try {
+        // Get the current stock of the product
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            return res.status(404).json({ error: `Product with ID ${id} not found.` });
+        }
+
+        const currentStock = product.countInStock;
+
+        // Calculate the new stock after adding the quantity
+        const newStock = currentStock + quantity;
+
+        // Update the stock
+        const updatedProduct = await UpdateProductStockById(id, newStock);
+
+        return res.status(200).json({ message: "Stock increased successfully", data: updatedProduct });
+    } catch (error) {
+        console.error(`Error increasing stock for product with ID ${id}:`, error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 export const setProductDiscount = asyncHandler(
     async (req: Request, res: Response) => {

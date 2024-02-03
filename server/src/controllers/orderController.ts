@@ -5,6 +5,7 @@ import { OrderModel, GetCurrUserOrders, GetOrders, UpdateOrderShippingStatusById
 import asyncHandler from '../middlewares/asyncHandler';
 import { IUser } from '../models/users';
 import { Request, Response } from "express";
+import { UpdateMultipleProductsStock } from './productController';
 
 config()
 
@@ -53,7 +54,7 @@ export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response
             res.status(400).json({ error: 'User not authenticated' });
             return;
         }
-        
+
         const orders = await GetCurrUserOrders(userId);
         if (orders) {
             return res.status(200).json({ orders });
@@ -120,8 +121,13 @@ const createOrder = async (customer: any, data: any, payment: Stripe.Response<St
 
     try {
         const savedOrder = await newOrder.save();
-        console.log({ savedOrder })
         console.log("Order Created");
+
+        const productUpdates = items.map(({ productId, quantity }: { productId: string, quantity: number }) => ({
+            id: productId,
+            quantity,
+        }));
+        await UpdateMultipleProductsStock(productUpdates);
 
         return savedOrder;
     } catch (error) {
