@@ -42,6 +42,7 @@ const Explore = () => {
       })
     }
     handle()
+    currentPage > 0 && setCurrentPage(1)
     toast.info('Products refetched.')
     return
   }, [
@@ -56,16 +57,16 @@ const Explore = () => {
   ])
 
   return (
-    <div className="flex flex-col flex-1 items-center bg-[#F3F3F3]">
+    <div className="flex flex-col flex-1 items-center bg-[#F3F3F3] dark:bg-dark-2">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
-        <ProductSearch/>
+        <ProductSearch />
         <div className="flex flex-row min-h-[65rem]">
           <div className="basis-1/4">
             {isProductLoading ? <FilterLoader /> : <ProductFilters />}
           </div>
           <div className="flex flex-col basis-3/4 ml-5">
             {!filteredProductsLoading && <ProductSorting />}
-            {filteredProductsLoading ? <ProductLoader displayType={isChecked ? 'grid' : 'list'} showFilterLoader/> : (filteredProducts && totalProducts > 0) ? (
+            {filteredProductsLoading ? <ProductLoader displayType={isChecked ? 'grid' : 'list'} showFilterLoader /> : (filteredProducts && totalProducts > 0) ? (
               isChecked ? (
                 <GridProductList products={filteredProducts} />
               ) : (
@@ -80,7 +81,7 @@ const Explore = () => {
             )}
           </div>
         </div>
-        <div className="flex rounded-xl border-2 shadow-lg bg-white my-5">
+        <div className="flex rounded-xl border-2 shadow-lg bg-white dark:bg-dark-4 my-5">
           <Pagination>
             <PaginationContent
               totalPages={totalPages}

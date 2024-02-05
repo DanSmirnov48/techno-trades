@@ -12,7 +12,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
     <div className="space-y-3 py-2">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <div className="relative aspect-square h-24 w-h-24 min-w-fit overflow-hidden rounded">
+          <div className="flex items-center justify-center relative aspect-square w-24 h-24 min-w-fit overflow-hidden rounded bg-white">
             {url ? (
               <img
                 src={url}
@@ -30,7 +30,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
           </div>
 
           <div className="flex flex-col self-start">
-            <span className="line-clamp-1 text-sm font-medium mb-1">
+            <span className="line-clamp-1 text-sm font-medium mb-1 dark:text-white/90">
               {product.name}
             </span>
 
@@ -41,7 +41,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
             <div className="mt-4 text-xs text-muted-foreground">
               <button
                 onClick={() => removeItem(product._id!)}
-                className="flex items-center gap-0.5 text-rose-800"
+                className="flex items-center gap-0.5 text-rose-800 dark:text-rose-400"
               >
                 <X className="w-3 h-4" />
                 Remove

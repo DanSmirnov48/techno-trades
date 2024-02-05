@@ -6,9 +6,10 @@ import { Button } from "../ui/button";
 interface AddToFavoritesButtonProps {
   product: Product;
   variant: 'icon' | 'button';
+  theme?: 'light' | 'dark';
 }
 
-const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({ product, variant }) => {
+const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({ product, variant, theme = 'light' }) => {
   const { addFavorite, removeFavorite, favorites } = useFavorites();
   const isProductInFavorites = favorites.some((item) => item.product._id === product._id);
 
@@ -37,7 +38,7 @@ const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({ product, va
           onClick={handleButtonClick}
           className="m-4 cursor-pointer"
           size={24}
-          color={isProductInFavorites ? '#bc47ff' : 'black'}
+          color={isProductInFavorites ? '#bc47ff' : theme === "light" ? 'black' : "#999"}
           fill={isProductInFavorites ? '#bc47ff' : 'none'}
         />
       );

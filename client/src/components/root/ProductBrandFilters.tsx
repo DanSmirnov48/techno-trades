@@ -60,7 +60,7 @@ const ProductBrandFilter: React.FC = () => {
             onCheckedChange={() => toggleBrand(name)}
             aria-label={`Select ${name} brand`}
           />
-          <Label htmlFor="brand" className="ml-2 font-jost text-base">{`${name} (${count})`}</Label>
+          <Label htmlFor="brand" className="ml-2 font-jost text-base dark:text-light-2">{`${name} (${count})`}</Label>
         </div>
       ))}
     </>

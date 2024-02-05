@@ -50,7 +50,7 @@ const ProductSorting: React.FC = () => {
       <div className="flex flex-row gap-7">
         <>
           <Select onValueChange={(value) => setSort(value)} value={selectedSort}>
-            <SelectTrigger className="h-14 w-[300px] bg-white">
+            <SelectTrigger className="h-14 w-[300px] bg-background dark:bg-dark-4">
               <SelectValue placeholder={sortCategories[0].label} />
             </SelectTrigger>
 
@@ -70,7 +70,7 @@ const ProductSorting: React.FC = () => {
             onValueChange={(value) => setShowPerPage(+value)}
             value={selectedShowPerPage.toString()}
           >
-            <SelectTrigger className="h-14 w-[150px] bg-white">
+            <SelectTrigger className="h-14 w-[150px] bg-background dark:bg-dark-4">
               <SelectValue placeholder={showPerPage[0].label} />
             </SelectTrigger>
 
@@ -86,9 +86,9 @@ const ProductSorting: React.FC = () => {
           </Select>
         </>
       </div>
-        <div>
-         <label className='themeSwitcherTwo shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-lg bg-white p-2'>
-           <input
+      <div>
+        <label className='themeSwitcherTwo shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-lg bg-background dark:bg-dark-4 p-2'>
+          <input
             type='checkbox'
             className='sr-only'
             checked={isChecked}
@@ -96,14 +96,14 @@ const ProductSorting: React.FC = () => {
           />
           <span
             className={`flex items-center space-x-[6px] rounded-md py-2 px-[20px] text-base font-medium 
-            ${!isChecked ? 'text-primary bg-[#f4f7ff]' : 'text-body-color'}`}
+            ${!isChecked ? 'text-primary bg-[#f4f7ff] dark:bg-dark-2' : 'text-body-color'}`}
           >
             <Icons.list className="mr-2" />
             List
           </span>
           <span
             className={`flex items-center space-x-[6px] rounded-md py-2 px-[20px] text-base font-medium 
-            ${isChecked ? 'text-primary bg-[#f4f7ff]' : 'text-body-color'}`}
+            ${isChecked ? 'text-primary bg-[#f4f7ff] dark:bg-dark-2' : 'text-body-color'}`}
           >
             <Icons.grid className="mr-2" />
             Grid

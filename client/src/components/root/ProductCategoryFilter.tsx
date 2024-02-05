@@ -65,7 +65,7 @@ const ProductCategoryFilter = () => {
             checked={selectedCategories.includes(category)}
             onCheckedChange={() => toggleCategory(category)}
           />
-          <Label htmlFor={category} className="ml-2 capitalize font-jost text-base">
+          <Label htmlFor={category} className="ml-2 capitalize font-jost text-base dark:text-light-2">
             {`${category} (${categoryCounts[category] || 0})`}
           </Label>
         </div>

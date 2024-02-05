@@ -42,7 +42,7 @@ const Cart: React.FC<CartProps> = ({ triggerStyles, showText = false }) => {
     } else {
       return (
         <span className="relative inline-block mt-1">
-          <ShoppingCart aria-hidden="true" className="w-6 h-6 text-gray-700 fill-current" />
+          <ShoppingCart aria-hidden="true" className="w-6 h-6 text-gray-700 fill-current dark:text-light-2" />
           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1.5 text-sm font-bold leading-none text-dark-4 transform translate-x-1/2 -translate-y-1/2 bg-purple-400/70 rounded-full">
             {isMounted ? itemCount : 0}
           </span>
@@ -53,7 +53,7 @@ const Cart: React.FC<CartProps> = ({ triggerStyles, showText = false }) => {
 
   return (
     <Sheet>
-      <SheetTrigger className={cn("group mr-4 flex items-center p-2", triggerStyles)}>
+      <SheetTrigger className={cn("group flex items-center p-2", triggerStyles)}>
         {renderTriggerContent()}
       </SheetTrigger>
       <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">

@@ -140,7 +140,7 @@ type PaginationFirstProps = React.ComponentProps<typeof PaginationLink>;
 const PaginationFirst = ({ className, onClick, ...props }: PaginationFirstProps) => (
   <PaginationLink
     size="default"
-    className={cn("bg-gray-100", className)}
+    className={cn("", className)}
     onClick={onClick}
     {...props}
   >
@@ -154,7 +154,7 @@ type PaginationLastProps = React.ComponentProps<typeof PaginationLink>;
 const PaginationLast = ({ className, onClick, ...props }: PaginationLastProps) => (
   <PaginationLink
     size="default"
-    className={cn("bg-gray-100", className)}
+    className={cn("", className)}
     onClick={onClick}
     {...props}
   >

@@ -44,7 +44,7 @@ export function CartTableItem({ product, qty }: props) {
   function ProductDetails() {
     return (
       <div key={product._id} className="flex max-w-md">
-        <div className="relative h-32 w-32  border p-2 rounded-md">
+        <div className="relative h-32 w-32  border p-2 rounded-md bg-white">
           <img
             src={product.image[0].url}
             alt="product image"
@@ -53,8 +53,8 @@ export function CartTableItem({ product, qty }: props) {
         </div>
 
         <div className="ml-4 flex flex-1 flex-col sm:ml-6 justify-center gap-1">
-          <h3 className="text-lg text-black font-semibold">{product.name}</h3>
-          <p className="text-base font-extralight text-black">
+          <h3 className="text-lg text-dark-4 dark:text-white/90 font-semibold">{product.name}</h3>
+          <p className="text-base font-extralight text-dark-4 dark:text-white/90">
             {product?.isDiscounted ? (
               <>
                 <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>

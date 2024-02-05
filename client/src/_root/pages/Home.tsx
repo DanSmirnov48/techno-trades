@@ -19,7 +19,7 @@ const Home = () => {
             height: "600px",
           }}
         >
-          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4 text-dark-4 dark:text-white/80">
+          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4 text-dark-4 dark:text-light-2">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
               Unleash Innovation in Every Byte.
             </h1>
