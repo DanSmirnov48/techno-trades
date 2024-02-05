@@ -54,26 +54,26 @@ const SplideCarousel = () => {
                 <div className="p-10">
                     <SplideTrack>
                         {!isProductLoading && filteredProducts.map((product: Product) => (
-                            <SplideSlide key={product._id} className="splide__slide relative bg-white border-2 rounded-xl font-jost">
+                            <SplideSlide key={product._id} className="splide__slide relative bg-white dark:bg-dark-4 border-2 rounded-xl font-jost">
                                 <span className="absolute top-0 left-0 px-6 py-3 rounded-tl-xl rounded-br-xl bg-purple-100 text-lg font-bold text-purple-800 ring-1 ring-inset ring-purple-600/30">
                                     {calculateDiscountPercentage({ normalPrice: product.price, discountedPrice: product.discountedPrice })}%
                                 </span>
-                                <div className="flex w-full flex-col self-center mt-10">
-                                    <div className="select-none mx-3 flex h-60 items-top justify-center">
+                                <div className="flex w-full flex-col self-center mt-10 gap-10">
+                                    <div className="select-none flex items-center justify-center bg-white m-auto p-5 rounded-lg mt-5">
                                         <img className="w-44 h-44 object-scale-down" src={product.image[0].url} alt="post" />
                                     </div>
                                     <div className="flex flex-col px-5 pb-5 gap-4">
-                                        <h5 className="text-2xl font-medium tracking-tight text-dark-4">{product.name}</h5>
-                                        <div className="mb-5 flex items-center justify-between">
-                                            <span className="text-2xl font-semibold text-dark-4">
+                                        <h5 className="text-2xl font-medium tracking-tight text-dark-3 dark:text-white/80">{product.name}</h5>
+                                        <div className="mb-5 flex items-center justify-between text-dark-3 dark:text-white/80">
+                                            <span className="text-2xl font-semibold">
                                                 <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
-                                                <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
+                                                <span className="ml-3 text-base font-normal line-through">
                                                     {product && formatPrice(product.price, { currency: "GBP" })}
                                                 </span>
                                             </span>
                                         </div>
                                         <Link to={`/products/${product.slug}`}
-                                            className={cn(buttonVariants(), "w-full bg-dark-1 py-6 text-white/90 text-2xl hover:bg-dark-4")}
+                                            className={cn(buttonVariants(), "w-full bg-dark-4 dark:bg-dark-2 py-6 text-2xl dark:text-white/80")}
                                         >
                                             View Rroduct
                                         </Link>

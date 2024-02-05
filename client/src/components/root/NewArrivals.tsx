@@ -34,9 +34,9 @@ const NewArrivals: FC = () => {
     </>
   ) : (
 
-    <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] rounded-xl">
+    <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 rounded-xl">
       <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32 font-jost">
-        <h1 className="text-dark-3 text-3xl">New Arrivals</h1>
+        <h1 className="text-dark-3 dark:text-white/80 text-3xl">New Arrivals</h1>
 
         <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
           {newProducts.map((product) => (
@@ -51,8 +51,8 @@ const NewArrivals: FC = () => {
                     />
                   </div>
                   <div className="transform origin-center group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
-                    <h3 className="mt-6 text-sm text-gray-500 capitalize">{product.category}</h3>
-                    <p className="text-base font-semibold text-gray-900">{product.name}</p>
+                    <h3 className="mt-6 text-sm text-gray-500 dark:text-white/80 capitalize">{product.category}</h3>
+                    <p className="text-base font-semibold text-gray-900 dark:text-white/90">{product.name}</p>
                   </div>
                 </div>
               </div>

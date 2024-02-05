@@ -8,16 +8,19 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 import Navbar from "./components/Navbar.tsx";
 import Footer from "./components/Footer.tsx";
 import Banner from "./components/Banner.tsx";
+import { ThemeProvider } from "./components/ThemeProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Banner />
-          <Navbar />
-          <App />
-          <Footer />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Banner />
+            <Navbar />
+            <App />
+            <Footer />
+          </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>
     </QueryProvider>

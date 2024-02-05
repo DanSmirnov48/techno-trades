@@ -10,20 +10,20 @@ const Home = () => {
     return (
       <section className="relative overflow-hidden flex justify-center">
         <div
-          className="bg-[#F3F3F3] w-full max-h-884 flex items-center rounded-3xl"
+          className="bg-[#F3F3F3] dark:bg-dark-4 w-full max-h-884 flex items-center rounded-3xl"
           style={{
             backgroundImage: `url(/images/hero-1.png)`,
             backgroundSize: "cover",
             backgroundPosition: "revert",
             backgroundRepeat: "no-repeat",
-            height: "550px",
+            height: "600px",
           }}
         >
-          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4">
+          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4 text-dark-4 dark:text-white/80">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
               Unleash Innovation in Every Byte.
             </h1>
-            <p className="text-xl md:text-2xl lg:text-3xl mt-2 text-dark-3 font-base">
+            <p className="text-xl md:text-2xl lg:text-3xl mt-2 font-base">
               Explore a World of Cutting-Edge Tech
             </p>
             <Link
@@ -44,35 +44,34 @@ const Home = () => {
     return (
       <>
         <div className="flex flex-row justify-between items-center my-10 font-jost">
-          <h1 className="text-dark-3 text-3xl">Shop by Categories</h1>
+          <h1 className="text-dark-4 dark:text-white/80 text-3xl">Shop by Categories</h1>
           <Link to="/explore" className="text-lg">
             Show All
           </Link>
         </div>
         <ul className="w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {categories.map((status, index) => (
-            <li key={index}>
-              <div className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3]">
-                <div className="relative m-6 h-40 hidden md:flex transform group-hover:animate-pulse transition-transform">
-                  <img
-                    className="w-full h-full object-scale-down"
-                    src={status.image}
-                    alt="post"
-                  />
-                </div>
-
-                <Link to="/explore">
-                  <div
-                    className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-white transform transition duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-black/40"
-                    onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
-                  >
-                    <status.icon className="h-5 w-5 mr-3 text-muted-foreground md:hidden" />
-                    <h5 className="text-xl font-medium text-dark-4 font-jost">
-                      {status.label}
-                    </h5>
-                  </div>
-                </Link>
+            <li key={index} className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3] dark:bg-dark-4">
+              <div className="relative m-6 h-40 hidden md:flex transform group-hover:animate-pulse transition-transform">
+                <img
+                  className="w-full h-full object-scale-down"
+                  src={status.image}
+                  alt="post"
+                />
               </div>
+
+              <Link to="/explore">
+                <div
+                  className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-background dark:bg-dark-2 transform transition duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-white/40"
+                  onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
+                >
+                  <status.icon className="h-5 w-5 mr-3 text-black md:hidden" />
+                  <h5 className="text-xl font-medium text-dark-4 dark:text-white/80 font-jost">
+                    {status.label}
+                  </h5>
+                </div>
+              </Link>
+
             </li>
           ))}
         </ul>

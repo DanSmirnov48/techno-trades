@@ -47,7 +47,7 @@ const Promotion = () => {
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 gap-8">
       <div className="flex flex-col justify-center space-y-10 font-jost">
-        <h3 className="font-semibold text-4xl text-dark-1">
+        <h3 className="font-semibold text-4xl text-dark-1 dark:text-white/90">
           Deals of the Month
         </h3>
         <p className="leading-10 text-lg font-normal">
@@ -68,7 +68,7 @@ const Promotion = () => {
           to="/shop"
           className={cn(
             buttonVariants,
-            "text-lg bg-dark-1 rounded-md text-white py-4 px-8 max-w-xs flex justify-center items-center"
+            "text-lg bg-dark-1 dark:bg-dark-4 rounded-md text-white py-4 px-8 max-w-xs flex justify-center items-center"
           )}
         >
           Continue Shopping
