@@ -115,13 +115,13 @@ export function DataTableRowActions<TData>({
             className='text-red-400'
           >
             <Icons.delete className='mr-2 h-4 w-4' />
-            Delete Product
+            Archive Product
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       {dialogContent && <DialogContent className="max-w-screen-lg">{dialogContent}</DialogContent>}
       <DeleteDialog
-        payment={product}
+        product={product}
         isOpen={showDeleteDialog}
         showActionToggle={setShowDeleteDialog}
       />

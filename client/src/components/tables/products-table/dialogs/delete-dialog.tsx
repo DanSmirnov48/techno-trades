@@ -9,49 +9,50 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ProductType } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
-import { useDeleteProduct } from "@/lib/react-query/queries";
+import { useArchiveProduct } from "@/lib/react-query/queries";
 import { toast } from "sonner"
 import { deleteMediaFilesByKey } from "@/lib/backend-api";
 
 type DeleteProps = {
-  payment: ProductType;
+  product: ProductType;
   isOpen: boolean;
   showActionToggle: (open: boolean) => void;
 };
 
-export default function DeleteDialog({ payment, isOpen, showActionToggle }: DeleteProps) {
+export default function DeleteDialog({ product, isOpen, showActionToggle }: DeleteProps) {
 
-  const { mutateAsync: deleteProduct } = useDeleteProduct();
+  const { mutateAsync: archiveProduct } = useArchiveProduct();
 
   async function handleEvent() {
     showActionToggle(false);
 
-    await deleteProduct(payment._id);
+    await archiveProduct(product._id);
 
-    if (payment.image.length > 0) {
+    // if (product.image.length > 0) {
 
-      const imageKeys: string[] = payment.image.map((image) => image.key);
-      toast.promise(
-        () => new Promise<void>((resolve) => {
-          setTimeout(() => {
-            deleteMediaFilesByKey(imageKeys as []);
-            resolve();
-          }, 2000);
-        }),
-        {
-          loading: 'Deleting Files...',
-          success: () => 'Successfully Deleted.',
-          error: () => 'Error deleting files.',
-        }
-      );
-      // toast.promise(() => deleteMediaFilesByKey(imageKeys as []),
-      //   {
-      //     loading: 'Deleting Files...',
-      //     success: () => { return 'Successfully Deleted.' },
-      //     error: () => { return 'Error deleting files.' },
-      //   }
-      // );
-    }
+    //   const imageKeys: string[] = product.image.map((image) => image.key);
+    //   toast.promise(
+    //     () => new Promise<void>((resolve) => {
+    //       setTimeout(() => {
+    //         deleteMediaFilesByKey(imageKeys as []);
+    //         resolve();
+    //       }, 2000);
+    //     }),
+    //     {
+    //       loading: 'Deleting Files...',
+    //       success: () => 'Successfully Deleted.',
+    //       error: () => 'Error deleting files.',
+    //     }
+    //   );
+      
+    //   // toast.promise(() => deleteMediaFilesByKey(imageKeys as []),
+    //   //   {
+    //   //     loading: 'Deleting Files...',
+    //   //     success: () => { return 'Successfully Deleted.' },
+    //   //     error: () => { return 'Error deleting files.' },
+    //   //   }
+    //   // );
+    // }
   }
 
   return (
@@ -60,8 +61,8 @@ export default function DeleteDialog({ payment, isOpen, showActionToggle }: Dele
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. You are about to delete{" "}
-            <b>{payment.name}</b>
+            You are about to archive the{" "}
+            <b>{product.name}</b>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

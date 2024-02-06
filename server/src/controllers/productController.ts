@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middlewares/asyncHandler";
 import {
+    ArchiveProductById,
     CreateProduct,
     DeleteProductById,
     GetproductByName,
@@ -168,12 +169,23 @@ export const updateProduct = asyncHandler(
     }
 );
 
-export const deleteProduct = asyncHandler(
-    async (req: Request, res: Response) => {
+export const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
             const deleteProduct = await DeleteProductById(id);
             return res.json(deleteProduct);
+        } catch (error) {
+            console.log(error);
+            return res.sendStatus(400);
+        }
+    }
+);
+
+export const archiveProduct = asyncHandler(async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            await ArchiveProductById(id);
+            return res.status(200).json({ message: "Product Archived"}).end();
         } catch (error) {
             console.log(error);
             return res.sendStatus(400);

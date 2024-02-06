@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, deleteProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -157,10 +157,10 @@ export const useUpdateProduct = () => {
     });
 };
 
-export const useDeleteProduct = () => {
+export const useArchiveProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id: any) => deleteProduct(id),
+        mutationFn: (id: any) => archiveProduct(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_PRODUCTS],

@@ -12,7 +12,8 @@ import {
     searchProducts,
     createProductReview,
     updateProductStock,
-    updateMultipleProducts
+    updateMultipleProducts,
+    archiveProduct
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -40,7 +41,7 @@ router.route('/:id/reviews')
 router.route("/:id")
     .get(getProductById)
     .put(protect, restrictTo("admin"), updateProduct)
-    .delete(protect, restrictTo("admin"), deleteProduct);
+    .delete(protect, restrictTo("admin"), archiveProduct);
 
 router.route("/update-stock").post(updateProductStock);
 

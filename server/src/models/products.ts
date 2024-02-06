@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from 'mongoose';
+import mongoose, { Query, Schema, Types } from 'mongoose';
 import slugify from 'slugify'
 
 interface IReview {
@@ -28,6 +28,7 @@ export interface IProduct extends Document {
     countInStock: number;
     isDiscounted: boolean;
     discountedPrice?: number;
+    isArchived?: boolean;
     [key: string]: any;
 }
 
@@ -68,7 +69,13 @@ const ProductSchema = new Schema<IProduct>({
     countInStock: { type: Number, required: true, default: 0 },
     isDiscounted: { type: Boolean, required: true, default: false },
     discountedPrice: { type: Number },
+    isArchived: { type: Boolean, required: true, default: false },
 }, { timestamps: true });
+
+ProductSchema.pre(/^find/, function (this: Query<IProduct[], IProduct>, next) {
+    this.find({ isArchived: { $ne: true } });
+    next();
+});
 
 export const ProductModel = mongoose.model<IProduct>('Product', ProductSchema);
 
@@ -85,6 +92,9 @@ export const GetproductBySlug = (slug: string) => ProductModel.findOne({ slug })
 
 export const DeleteProductById = (id: string) =>
     ProductModel.findByIdAndDelete(id)
+
+export const ArchiveProductById = (id: string) =>
+    ProductModel.findByIdAndUpdate(id, { $set: { isArchived: true } });
 
 export const UpdateProductById = (id: string, values: Record<string, typeof ProductModel>) =>
     ProductModel.findByIdAndUpdate(id, values)

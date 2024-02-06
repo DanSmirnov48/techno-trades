@@ -255,7 +255,7 @@ export async function updateProduct(product: IUpdateProduct) {
   }
 }
 
-export async function deleteProduct(id: any) {
+export async function archiveProduct(id: any) {
   try {
     const { data } = await axios.delete(`/api/products/${id}`)
     return data
