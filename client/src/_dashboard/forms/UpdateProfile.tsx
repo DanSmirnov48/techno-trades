@@ -121,7 +121,7 @@ const UpdateProfile = () => {
 
   return (
     <Card className="px-10 max-w-[800px]">
-      <CardHeader className="font-semibold text-3xl text-dark-4 mb-4">
+      <CardHeader className="font-semibold text-3xl text-dark-4 dark:text-white/80 mb-4">
         Profile Update
       </CardHeader>
 
@@ -148,7 +148,7 @@ const UpdateProfile = () => {
                           />
                           <AvatarFallback className="text-3xl font-semibold">{user.firstName.slice(0, 1)}{user.lastName.slice(0, 1)}</AvatarFallback>
                         </Avatar>
-                        <p className="small-regular md:bbase-semibold">Change profile photo</p>
+                        <p className="small-regular md:base-semibold text-dark-4 dark:text-muted-foreground">Change profile photo</p>
                       </div>
                     </div>
                   </FormControl>

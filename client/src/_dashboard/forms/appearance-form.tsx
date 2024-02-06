@@ -16,36 +16,41 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 import { ChevronDownIcon } from "lucide-react"
 import { toast } from "sonner"
-
-const appearanceFormSchema = z.object({
-  theme: z.enum(["light", "dark"], {
-    required_error: "Please select a theme.",
-  }),
-  font: z.enum(["inter", "manrope", "system"], {
-    invalid_type_error: "Select a font",
-    required_error: "Please select a font.",
-  }),
-})
-
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
-
-// This can come from your database or API.
-const defaultValues: Partial<AppearanceFormValues> = {
-  theme: "light",
-}
+import { useTheme } from "next-themes"
 
 export function AppearanceForm() {
+  const { setTheme, theme } = useTheme()
+
+  const appearanceFormSchema = z.object({
+    theme: z.enum(["light", "dark"], {
+      required_error: "Please select a theme.",
+    }),
+    font: z.enum(["inter", "manrope", "system"], {
+      invalid_type_error: "Select a font",
+      required_error: "Please select a font.",
+    }),
+  })
+
+  type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
+
+  const defaultValues: Partial<AppearanceFormValues> = {
+    theme: theme as "light" | "dark",
+  }
+
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues,
   })
 
   function onSubmit(data: AppearanceFormValues) {
-    toast.info('You submitted the following values:',
-      {description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+    setTheme(data.theme)
+    toast.info('Appearance updated:',
+      {
+        description: (
+          <>
+            <p>Theme  has been changed to "{data.theme}"</p>
+            <p>Font has been changed to "{data.font}"</p>
+          </>
         ),
       })
   }

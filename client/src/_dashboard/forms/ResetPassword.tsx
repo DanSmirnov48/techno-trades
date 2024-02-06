@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { UpdatePasswordValidation } from "@/lib/validation";
 import { useUpdateMyPassword } from "@/lib/react-query/queries";
 import { toast } from "sonner";
@@ -44,11 +43,11 @@ const ResetPassword = () => {
     })
     let res = await updateMyPassword(user)
     console.log(res)
-    if(res && res.status === 401 && res.error.error === 'Wrong Password'){
+    if (res && res.status === 401 && res.error.error === 'Wrong Password') {
       toast.error('Incorrect Password Provided')
       return
     }
-    if(res && res.status === 200 && res.statusText === 'OK'){
+    if (res && res.status === 200 && res.statusText === 'OK') {
       console.log(res.data.data.user._id)
       toast.success('Your Profile was successfully updated')
       form.reset()
@@ -56,9 +55,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <Card className="px-10 max-w-[800px]">
-      <CardHeader className="font-semibold text-3xl text-dark-4 mb-4">
-        password1234
+    <Card className="px-10 max-w-[800px] text-dark-4 dark:text-white/80">
+      <CardHeader className="font-semibold text-3xl mb-4">
+        Update your Password
       </CardHeader>
 
       <CardContent>

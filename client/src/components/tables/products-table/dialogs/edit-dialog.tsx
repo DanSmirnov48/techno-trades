@@ -50,20 +50,20 @@ export default function EditDialog({ product, setOpen }: EditProps) {
   });
 
   const handleSubmit = async (value: z.infer<typeof ProductCreateValidation>) => {
-    const updatedProduct = await updateProduct({
+    // const updatedProduct = await updateProduct({
     // const updatedProduct = ({
-      _id: product._id,
-      ...value,
-      userId: user._id,
-    })
-    console.log(updatedProduct)
-    setOpen?.(false);
-    if(updatedProduct && updatedProduct.status === 200 && updatedProduct.data.message === "Product Updated"){
-      toast.success('Product updated successfully')
-    }
-    if((updatedProduct && updatedProduct.status === 500) || isUpdatingError){
-      toast.error('Error while updating Product')
-    }
+    //   _id: product._id,
+    //   ...value,
+    //   userId: user._id,
+    // })
+    console.log("updatedProduct")
+    // setOpen?.(false);
+    // if(updatedProduct && updatedProduct.status === 200 && updatedProduct.data.message === "Product Updated"){
+    //   toast.success('Product updated successfully')
+    // }
+    // if((updatedProduct && updatedProduct.status === 500) || isUpdatingError){
+    //   toast.error('Error while updating Product')
+    // }
   }
 
   return (

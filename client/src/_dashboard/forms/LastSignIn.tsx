@@ -14,12 +14,12 @@ const LastSignIn = () => {
   const lastSignIn = Cookies.get('lastSignInTime');
   const { user } = useUserContext();
   return (
-    <Card className="my-4 p-1 max-w-[800px]">
-      <CardHeader className="text-left bg-white w-full rounded-lg">
+    <Card className="my-4 p-1 max-w-[800px] text-dark-4 dark:text-muted-foreground">
+      <CardHeader className="text-left w-full rounded-lg">
         <CardTitle className="font-extralight text-lg leading-loose">
-          Last Sign In was on: <span className="font-medium text-2xl text-dark-4 tracking-wide">{lastSignIn && formatDate(lastSignIn)}</span>
+          Last Sign In was on: <span className="font-medium text-2xl tracking-wide">{lastSignIn && formatDate(lastSignIn)}</span>
         </CardTitle>
-        <CardDescription className="text-xl font-light text-dark-4 tracking-wide">
+        <CardDescription className="text-xl font-light tracking-wide">
           If this wasn't you, please
           <Link
             className="underline ml-2"

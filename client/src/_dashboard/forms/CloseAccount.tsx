@@ -21,9 +21,9 @@ const CloseAccount = () => {
   };
 
   return (
-    <Card className="mt-4 p-1 max-w-[800px] bg-red-100">
-      <CardHeader className="text-left bg-white w-full rounded-lg">
-        <CardTitle className="font-semibold text-2xl text-dark-4">
+    <Card className="mt-4 p-1 max-w-[800px] bg-red-100 dark:bg-red-300 text-dark-4 dark:text-muted-foreground">
+      <CardHeader className="text-left bg-light-1 dark:bg-background w-full rounded-lg">
+        <CardTitle className="font-semibold text-2xl ">
           Deactivate Your Account
         </CardTitle>
         <CardDescription>
