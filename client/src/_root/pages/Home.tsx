@@ -10,7 +10,7 @@ const Home = () => {
     return (
       <section className="relative overflow-hidden flex justify-center">
         <div
-          className="bg-[#F3F3F3] dark:bg-dark-4 w-full max-h-884 flex items-center rounded-3xl"
+          className="bg-[#F3F3F3] dark:bg-dark-4 duration-700 ease-in-out w-full max-h-884 flex items-center rounded-3xl"
           style={{
             backgroundImage: `url(/images/hero-1.png)`,
             backgroundSize: "cover",
@@ -19,7 +19,7 @@ const Home = () => {
             height: "600px",
           }}
         >
-          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4 text-dark-4 dark:text-light-2">
+          <div className="flex flex-col justify-center px-6 md:px-20 lg:px-30 xl:px-40 w-full max-w-[60%] gap-4 text-dark-4 dark:text-light-2 duration-500 ease-linear">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
               Unleash Innovation in Every Byte.
             </h1>
@@ -28,7 +28,7 @@ const Home = () => {
             </p>
             <Link
               to="/explore"
-              className={buttonVariants({ className: "text-sm w-36" })}
+              className={buttonVariants({ className: "text-sm w-36 duration-700 ease-in-out" })}
             >
               Shop Now
             </Link>
@@ -51,7 +51,7 @@ const Home = () => {
         </div>
         <ul className="w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {categories.map((status, index) => (
-            <li key={index} className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3] dark:bg-dark-4">
+            <li key={index} className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3] dark:bg-dark-4 duration-700 ease-in-out">
               <div className="relative m-6 h-40 hidden md:flex transform group-hover:animate-pulse transition-transform">
                 <img
                   className="w-full h-full object-scale-down"
@@ -62,7 +62,7 @@ const Home = () => {
 
               <Link to="/explore">
                 <div
-                  className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-background dark:bg-dark-2 transform transition duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-white/40"
+                  className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-background dark:bg-dark-2 transform transition duration-700 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-white/40"
                   onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
                 >
                   <status.icon className="h-5 w-5 mr-3 text-black md:hidden" />
@@ -80,7 +80,7 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen items-center">
+    <div className="flex flex-col flex-1 min-h-screen items-center bg-light-1 dark:bg-dark-2 transform transition duration-700 ease-in-out">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         {Hero()}
         <div className="my-32" />

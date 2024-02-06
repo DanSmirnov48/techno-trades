@@ -100,7 +100,7 @@ const ProductReviewForm = ({ product }: ReviewFormProps) => {
           )}
         />
 
-        <Button type="submit" className="max-w-[15rem] bg-dark-2" disabled={!isAuthenticated}>
+        <Button type="submit" className="max-w-[15rem] text-lg font-medium" disabled={!isAuthenticated}>
           Post
         </Button>
       </form>

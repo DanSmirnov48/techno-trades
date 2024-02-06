@@ -33,7 +33,7 @@ const ProductSearch: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className='h-16 px-10 bg-background dark:bg-dark-4 dark:placeholder:text-light-2/80'
+                className='h-16 px-10 bg-background dark:bg-dark-4 dark:placeholder:text-light-2/80 transform transition duration-500 ease-in-out'
             />
             {searchResults.length > 0 &&
                 <ul className="w-full bg-white border-2 rounded-b-xl py-2 text-sm text-gray-700 dark:text-gray-200 z-40 shadow-2xl">

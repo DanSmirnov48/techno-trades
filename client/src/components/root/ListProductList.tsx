@@ -26,7 +26,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
             : 'relative border rounded-xl shadow-md '}`}
           >
             {product.isDiscounted && <span className='absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]' />}
-            <div className={`grid grid-flow-col gap-4 relative bg-light-1 dark:bg-dark-4 rounded-xl p-4 shadow-lg ring-1 ring-inset ring-dark-4/20 card-shine-effect ${product.isDiscounted && 'backdrop-blur-3xl'}`}>
+            <div className={`grid grid-flow-col gap-4 relative bg-light-1 dark:bg-dark-4 transform transition duration-500 ease-in-out rounded-xl p-4 shadow-lg ring-1 ring-inset ring-dark-4/20 card-shine-effect ${product.isDiscounted && 'backdrop-blur-3xl'}`}>
               {isProductAddedWithinNDays({ product, nDays: 14 }) &&
                 <img src="/images/new.png" alt={product.name} className="absolute z-30 w-[100px] h-[100px] select-none" />
               }
@@ -81,7 +81,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
                   {product?.isDiscounted ? (
                     <>
                       <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
-                      <span className="ml-3 text-base font-normal text-dark-4 line-through dark:text-light-2/80">
+                      <span className="ml-3 text-base font-normal text-dark-4 line-through dark:text-light-2/80 transform transition duration-500 ease-in-out">
                         {product && formatPrice(product.price, { currency: "GBP" })}
                       </span>
                     </>
@@ -110,7 +110,7 @@ const ListProductList = ({ products }: ListProductListProps) => {
                   <div className="flex items-center my-0.5"><Icons.store /> <h1 className="ml-2">Free collection (subject to availability)</h1></div>
                 </div>
                 <Link to={`/products/${product.slug}`}
-                  className={cn(buttonVariants(), "w-full bg-dark-1 py-6 text-light-1 text-base hover:bg-dark-3")}
+                  className={cn(buttonVariants(), "w-full bg-dark-2 py-6 text-light-1 text-base hover:bg-dark-3")}
                 >
                   View Rroduct
                 </Link>

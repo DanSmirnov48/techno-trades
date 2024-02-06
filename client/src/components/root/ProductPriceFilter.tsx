@@ -22,7 +22,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
   return (
     <div className="flex flex-row mx-0 my-1 justify-start items-center">
       <Checkbox id="price" className="mr-1" onCheckedChange={handleCheckboxChange} checked={isChecked} />
-      <Label htmlFor="price" className="font-jost text-base ml-2 dark:text-light-2">{`£${min} to £${max} (${productCount})`}</Label>
+      <Label htmlFor="price" className="font-jost text-base ml-2 dark:text-light-2 transform transition duration-500 ease-in-out">{`£${min} to £${max} (${productCount})`}</Label>
     </div>
   );
 };

@@ -14,7 +14,7 @@ import {
 
 const ProductFilters: React.FC = () => {
   return (
-    <div className="bg-background dark:bg-dark-4 h-full rounded-2xl shadow-xl">
+    <div className="bg-background dark:bg-dark-4 h-full rounded-2xl shadow-xl transform transition duration-500 ease-in-out">
       <h1 className="text-left text-2xl font-semibold py-4 px-8 text-dark-4 dark:text-white/80">
         Filters
       </h1>

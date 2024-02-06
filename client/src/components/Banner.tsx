@@ -15,7 +15,7 @@ export default function Banner() {
         setIsBannerVisible(false);
     };
     return (
-        <div className={`relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 dark:bg-dark-4 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 ${isBannerVisible ? 'block' : 'hidden'}`}>
+        <div className={`relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 dark:bg-dark-4 transform transition duration-700 ease-in-out" px-6 py-2.5 sm:px-3.5 sm:before:flex-1 ${isBannerVisible ? 'block' : 'hidden'}`}>
             <div
                 className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
                 aria-hidden="true"
@@ -41,7 +41,7 @@ export default function Banner() {
                 />
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <p className="text-sm leading-6 text-gray-900 dark:text-light-2">
+                <p className="text-sm leading-6 text-gray-900 dark:text-light-2 transform transition duration-300 ease-in-out">
                     <strong className="font-semibold">Winter Sales</strong>
                     <svg viewBox="0 0 2 2" className="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true">
                         <circle cx={1} cy={1} r={1} />
@@ -51,7 +51,7 @@ export default function Banner() {
                 <Button
                     onClick={() => { navigate("/explore"); setSort("deals") }}
                     size={'sm'}
-                    className={cn("rounded-full text-sm px-4")}
+                    className={cn("rounded-full text-sm px-4 transform transition duration-300 ease-in-out")}
                 >
                     Shop Now
                 </Button>
@@ -59,7 +59,7 @@ export default function Banner() {
             <div className="flex flex-1 justify-end">
                 <button type="button" className="-m-3 p-3 focus-visible:outline-offset-[-4px]" onClick={handleBannerClose}>
                     <span className="sr-only">Dismiss</span>
-                    <X className="h-5 w-5 text-gray-900 dark:text-light-2" aria-hidden="true" />
+                    <X className="h-5 w-5 text-gray-900 dark:text-light-2 transform transition duration-300 ease-in-out" aria-hidden="true" />
                 </button>
             </div>
         </div>

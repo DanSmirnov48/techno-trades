@@ -6,7 +6,6 @@ import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-que
 import { useEffect, useState } from "react";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
 import ProductSearch from "@/components/root/ProductSearch";
-import { toast } from "sonner";
 
 const Explore = () => {
 
@@ -43,7 +42,6 @@ const Explore = () => {
     }
     handle()
     currentPage > 0 && setCurrentPage(1)
-    toast.info('Products refetched.')
     return
   }, [
     hideOutOfStock,
@@ -57,7 +55,7 @@ const Explore = () => {
   ])
 
   return (
-    <div className="flex flex-col flex-1 items-center bg-[#F3F3F3] dark:bg-dark-2">
+    <div className="flex flex-col flex-1 items-center bg-[#F3F3F3] dark:bg-dark-2 transform transition duration-500 ease-in-out">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         <ProductSearch />
         <div className="flex flex-row min-h-[65rem]">
@@ -81,7 +79,7 @@ const Explore = () => {
             )}
           </div>
         </div>
-        <div className="flex rounded-xl border-2 shadow-lg bg-white dark:bg-dark-4 my-5">
+        <div className="flex rounded-xl border-2 shadow-lg bg-white dark:bg-dark-4 my-5 transform transition duration-500 ease-in-out">
           <Pagination>
             <PaginationContent
               totalPages={totalPages}

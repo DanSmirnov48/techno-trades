@@ -34,7 +34,7 @@ const NewArrivals: FC = () => {
     </>
   ) : (
 
-    <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 rounded-xl">
+    <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 transform transition duration-700 ease-in-out rounded-xl">
       <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32 font-jost">
         <h1 className="text-dark-3 dark:text-white/80 text-3xl">New Arrivals</h1>
 
@@ -42,7 +42,7 @@ const NewArrivals: FC = () => {
           {newProducts.map((product) => (
             <Link to={`/products/${product.slug}`} key={product._id}>
               <div className="group relative">
-                <div className="transform group-hover:-translate-y-3 transition-transform duration-300 ease-out">
+                <div className="transform group-hover:-translate-y-3 transition-transform duration-700 ease-out">
                   <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
                     <img
                       src={product.image[0].url}

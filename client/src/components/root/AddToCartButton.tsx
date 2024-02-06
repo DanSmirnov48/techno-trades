@@ -27,7 +27,7 @@ const AddToCartButton = ({ product }: { product: Product }) => {
           onClick={handleClick}
           disabled={product.countInStock === 0}
           size="lg"
-          className={cn('w-full bg-dark-1 py-6 text-white text-base hover:bg-dark-4')}
+          className={cn('w-full dark:bg-dark-2 py-6 text-white text-base hover:bg-dark-4')}
         >
           {product.countInStock === 0 ? "Out of Stock" : "Add to Cart"}
           <ShoppingCart

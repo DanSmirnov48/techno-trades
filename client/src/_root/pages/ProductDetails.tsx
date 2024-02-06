@@ -7,8 +7,8 @@ import { AddToCartButton, AddToFavoritesButton } from "@/components/root";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Fullscreen } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { ArrowLeft, Fullscreen, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import ReviewsSection from "@/components/root/ReviewsSection";
 import ProductReviewForm from "@/components/root/ProductReviewForm";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
@@ -37,22 +37,19 @@ const ProductDetails = () => {
     return (
       <div className="w-full px-4 mb-8 md:w-1/2 md:mb-0">
         <div className="sticky top-0 overflow-hidden">
-          <div className="relative mb-6 lg:mb-10 lg:h-96 border-2 rounded-xl">
+          <div onClick={() => setOpen(true)} className="relative mb-6 lg:mb-10 lg:h-96 border-2 rounded-xl bg-white cursor-pointer">
             <img
               className="object-contain w-full lg:h-full p-3"
               src={mainImage?.url}
               alt={mainImage?.name}
             />
-            <Fullscreen
-              className="absolute top-5 right-5 w-8 h-8 cursor-pointer"
-              onClick={() => setOpen(true)}
-            />
+            <Fullscreen className="absolute top-5 right-5 w-8 h-8 dark:text-dark-4" />
           </div>
           <div className="flex-wrap hidden -mx-2 md:flex">
             {product?.image.map((image) => (
               <div key={image._id} className="w-1/2 p-2 sm:w-1/4">
                 <a
-                  className="block border rounded-xl p-2 border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
+                  className="block border-2 rounded-xl bg-white p-2 border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
                   onClick={() => setMainImage(image)}
                 >
                   <img
@@ -92,7 +89,7 @@ const ProductDetails = () => {
           }
         </div>
 
-        <h2 className="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-gray-700 md:text-2xl dark:text-gray-300">
+        <h2 className="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide md:text-2xl">
           {product?.name}
         </h2>
         <div className="flex flex-wrap items-center mb-6">
@@ -102,15 +99,8 @@ const ProductDetails = () => {
             className="mr-2 max-w-[100px]"
             itemStyles={ratingStyle}
           />
-
-          <Link
-            to={"/"}
-            className="mb-4 text-xs underline hover:text-blue-600 dark:text-gray-400 dark:hover:text-gray-300 lg:mb-0"
-          >
-            View {product?.brand} page
-          </Link>
         </div>
-        <p className="inline-block text-2xl font-semibold text-gray-700 dark:text-gray-400 ">
+        <p className="inline-block text-2xl font-semibold">
           {product?.isDiscounted ? (
             <>
               <span>{product && formatPrice(product.discountedPrice!, { currency: "GBP" })}</span>
@@ -129,12 +119,12 @@ const ProductDetails = () => {
   function spectsSection() {
     return (
       <div className="mb-6">
-        <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
+        <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-300">
           System Specs :
         </h2>
-        <div className="bg-gray-100 dark:bg-gray-700 rounded-xl">
+        <div className="bg-gray-100 dark:bg-dark-4 rounded-xl">
           <div className="p-3 lg:p-5 ">
-            <div className="p-2 rounded-xl lg:p-6 dark:bg-gray-800 bg-gray-50">
+            <div className="p-2 rounded-xl lg:p-6 dark:bg-dark-3 bg-gray-50">
               <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
                 <div className="w-full mb-4 md:w-2/5">
                   <div className="flex ">
@@ -252,10 +242,10 @@ const ProductDetails = () => {
       <h1>loading</h1>
     </>
   ) : (
-    <section className="mx-auto w-full max-w-screen-2xl px-2.5 md:px-20 py-10 dark:bg-gray-800">
+    <section className="mx-auto w-full max-w-screen-2xl px-2.5 md:px-20 py-10">
       <div className="max-w-full px-4 mx-auto">
         <Button
-          className={cn("mb-10 text-sm bg-dark-1")}
+          className={cn("mb-10 text-sm")}
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="mr-2 w-6 h-6" />
@@ -271,7 +261,7 @@ const ProductDetails = () => {
               <div className="mt-2" />
               {product && <AddToFavoritesButton product={product} variant="button" />}
               <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-w-screen-lg flex justify-center select-none">
+                <DialogContent className="max-w-screen-lg flex justify-center select-none bg-white">
                   <Carousel className="w-full max-w-4xl">
                     <CarouselContent>
                       {product?.image.map((_, index) => (
@@ -282,7 +272,7 @@ const ProductDetails = () => {
                           onMouseUp={(e) => e.currentTarget.style.cursor = "grab"}
                           onMouseLeave={(e) => e.currentTarget.style.cursor = "grab"}
                         >
-                          <img className="object-contain max-w-2xl h-full m-auto" src={product.image[index].url} />
+                          <img className="object-contain" src={product.image[index].url} />
                         </CarouselItem>
                       ))}
                     </CarouselContent>
@@ -296,16 +286,16 @@ const ProductDetails = () => {
         </div>
         <section>
           <div className="flex flex-row justify-between items-center my-4 font-jost mt-[10rem]">
-            <h1 className="text-dark-3 text-3xl">You might also like</h1>
+            <h1 className="text-dark-3 dark:text-white/80 text-3xl">You might also like</h1>
           </div>
 
-          <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] rounded-xl">
+          <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 rounded-xl">
             <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-12 font-jost">
               <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
                 {relatedProducts.map((product) => (
                   <Link to={`/products/${product.slug}`} key={product._id}>
                     <div className="group relative">
-                      <div className="transform group-hover:-translate-y-3 transition-transform duration-300 ease-out">
+                      <div className="transform group-hover:-translate-y-3 transition-transform duration-500 ease-out">
                         <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
                           <img
                             src={product.image[0].url}
@@ -313,9 +303,9 @@ const ProductDetails = () => {
                             className="h-full w-full object-contain object-center p-5"
                           />
                         </div>
-                        <div className="transform origin-center group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
-                          <h3 className="mt-6 text-sm text-gray-500 capitalize">{product.category}</h3>
-                          <p className="text-base font-semibold text-gray-900">{product.name}</p>
+                        <div className="transform origin-center text-dark-4 dark:text-white/80 group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
+                          <h3 className="mt-6 text-sm  capitalize">{product.category}</h3>
+                          <p className="text-base font-semibold">{product.name}</p>
                         </div>
                       </div>
                     </div>

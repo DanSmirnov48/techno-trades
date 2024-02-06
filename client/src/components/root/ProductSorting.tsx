@@ -46,11 +46,11 @@ const ProductSorting: React.FC = () => {
   // }, [location.search, setSort, setShowPerPage]);
 
   return (
-    <div className="flex justify-between mb-3">
+    <div className="flex justify-between mb-3 transform transition duration-500 ease-in-out">
       <div className="flex flex-row gap-7">
         <>
           <Select onValueChange={(value) => setSort(value)} value={selectedSort}>
-            <SelectTrigger className="h-14 w-[300px] bg-background dark:bg-dark-4">
+            <SelectTrigger className="h-14 w-[300px] bg-background dark:bg-dark-4 transform transition duration-500 ease-in-out">
               <SelectValue placeholder={sortCategories[0].label} />
             </SelectTrigger>
 
@@ -70,7 +70,7 @@ const ProductSorting: React.FC = () => {
             onValueChange={(value) => setShowPerPage(+value)}
             value={selectedShowPerPage.toString()}
           >
-            <SelectTrigger className="h-14 w-[150px] bg-background dark:bg-dark-4">
+            <SelectTrigger className="h-14 w-[150px] bg-background dark:bg-dark-4 transform transition duration-500 ease-in-out">
               <SelectValue placeholder={showPerPage[0].label} />
             </SelectTrigger>
 
@@ -87,7 +87,7 @@ const ProductSorting: React.FC = () => {
         </>
       </div>
       <div>
-        <label className='themeSwitcherTwo shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-lg bg-background dark:bg-dark-4 p-2'>
+        <label className='themeSwitcherTwo shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-lg bg-background dark:bg-dark-4 p-2 transform transition duration-500 ease-in-out'>
           <input
             type='checkbox'
             className='sr-only'

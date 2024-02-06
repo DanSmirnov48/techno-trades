@@ -34,7 +34,7 @@ const renderRatingFilters = (products: Product[]) => {
           className="mr-1"
         />
         <Rating value={value} readOnly itemStyles={ratingStyle} style={{ maxWidth: 120 }} />
-        <Label htmlFor={`rating-${value}`} className="font-jost text-base ml-2 dark:text-light-2">{`${value} or more (${count})`}</Label>
+        <Label htmlFor={`rating-${value}`} className="font-jost text-base ml-2 dark:text-light-2 transform transition duration-500 ease-in-out">{`${value} or more (${count})`}</Label>
       </div>
     );
   };

@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-[#F3F3F3] dark:bg-dark-3">
+    <footer className="bg-[#F3F3F3] dark:bg-dark-3 transform transition duration-500 ease-in-out">
       <div className="mx-auto max-w-screen-xl space-y-8 px-4 py-16 sm:px-6 lg:space-y-16 lg:px-8">
         <div className="grid grid-cols-1 gap-8 border-t border-gray-100 pt-8 sm:grid-cols-2 lg:grid-cols-4 lg:pt-16">
           <div>
