@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export type UserRole = 'user' | 'admin';
 
@@ -8,6 +10,7 @@ export type ProtectedRouteProps = {
     outlet: JSX.Element;
     allowedRoles?: UserRole[];
     currentRole: UserRole;
+    loading: boolean
 };
 
 export function ProtectedRoute({
@@ -16,15 +19,32 @@ export function ProtectedRoute({
     outlet,
     allowedRoles = [],
     currentRole,
+    loading
 }: ProtectedRouteProps) {
 
-    const hasRequiredRole = allowedRoles.includes(currentRole);
-    if (isAuthenticated && hasRequiredRole) {
-        return outlet;
-    } else if (!isAuthenticated) {
-        return <Navigate to={{ pathname: redirectPath }} />;
+    const accessToken = Cookies.get('accessToken');
+    const [hasLoaded, setHasLoaded] = useState<boolean | undefined>(undefined)
+    const [userFound, setUserFound] = useState<boolean | undefined>(undefined)
+
+    useEffect(() => {
+        if (loading === false && !!currentRole && isAuthenticated) {
+            setHasLoaded(true)
+            setUserFound(true)
+        } else if (loading === false && isAuthenticated === false) {
+            setHasLoaded(true)
+            setUserFound(false)
+        }
+    }, [loading, currentRole, isAuthenticated]);
+
+    if (hasLoaded && userFound && accessToken) {
+        const hasRequiredRole = allowedRoles.includes(currentRole);
+        if (hasRequiredRole) {
+            return outlet;
+        } else {
+            return <Navigate to={{ pathname: redirectPath }} />;
+        }
     }
-    else {
+    if (!hasLoaded && !userFound && !accessToken) {
         return <Navigate to="/" />;
     }
 }

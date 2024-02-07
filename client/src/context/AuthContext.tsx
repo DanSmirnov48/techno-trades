@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   Dispatch,
   ReactNode,
@@ -60,7 +59,6 @@ interface IContextType {
 const AuthContext = createContext<IContextType>(INITIAL_STATE);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

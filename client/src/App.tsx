@@ -10,12 +10,13 @@ import ProtectedRoute, { ProtectedRouteProps, UserRole } from "./components/Prot
 import { useUserContext } from "./context/AuthContext";
 
 export default function App() {
-  const { isAuthenticated, user } = useUserContext();
+  const { isAuthenticated, user, isLoading } = useUserContext();
 
   const defaultProtectedRouteProps: Omit<ProtectedRouteProps, 'outlet'> = {
     isAuthenticated: isAuthenticated,
     redirectPath: '/sign-in',
     currentRole: user.role as UserRole,
+    loading: isLoading
   };
 
   return (

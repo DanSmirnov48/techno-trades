@@ -14,8 +14,8 @@ export type IUser = {
     email: string;
     photo: UserImage;
     role: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 };
 
 export type INewUser = {
