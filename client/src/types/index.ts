@@ -111,6 +111,8 @@ export interface NavItem {
 export type SidebarNavItem = {
     title: string
     for: "all" | "admin"
+    label: string,
+    variant: "default" | "ghost"
     disabled?: boolean
     external?: boolean
     icon?: keyof typeof Icons
