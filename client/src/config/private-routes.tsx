@@ -1,0 +1,63 @@
+import { JSX } from 'react';
+import { UserRole } from '@/components/ProtectedRoute';
+import { Dashboard, Account, Orders, Notifications, Appearance, Favourites, Tables, ProductCreateForm } from '@/_dashboard/pages';
+
+export interface dashboardRoutesProps {
+  path: string;
+  outlet: JSX.Element;
+  allowedRoles: UserRole[];
+  additionalProps: Record<string, any>;
+}
+
+const dashboardRoutes: dashboardRoutesProps[] = [
+  {
+    path: '/dashboard',
+    outlet: <Dashboard />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/account/:id',
+    outlet: <Account />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/my-orders/:id',
+    outlet: <Orders />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/notifications/:id',
+    outlet: <Notifications />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/appearance/:id',
+    outlet: <Appearance />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/favourites/:id',
+    outlet: <Favourites />,
+    allowedRoles: ['admin', 'user'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/data-tables',
+    outlet: <Tables />,
+    allowedRoles: ['admin'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/product',
+    outlet: <ProductCreateForm />,
+    allowedRoles: ['admin'],
+    additionalProps: {},
+  },
+];
+
+export default dashboardRoutes;
