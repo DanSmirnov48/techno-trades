@@ -4,15 +4,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import React from "react";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Nav } from "@/components/dashboard/side-nav-with-tooltip";
 import { dashboardConfig } from "@/config/dashboard";
+import useDashboardStore from "@/hooks/useDashboard";
 
 export const DashboardLayout = () => {
-  const [isCollapsed, setIsCollapsed] = React.useState(false)
-  const [sizes, setSizes] = React.useState<number[]>([25, 75])
+  const { isCollapsed, defaultSizes, setCollapsed, setDefaultSizes } = useDashboardStore();
 
   return (
     <div className="flex min-h-screen flex-col w-full">
@@ -20,23 +19,23 @@ export const DashboardLayout = () => {
         <TooltipProvider delayDuration={0}>
           <ResizablePanelGroup
             direction="horizontal"
-            onLayout={(sizes: number[]) => setSizes(sizes)}
-            className="h-full max-h-[1400px] items-stretch"
+            onLayout={(sizes: number[]) => setDefaultSizes(sizes)}
+            className="h-full items-stretch"
           >
             <ResizablePanel
-              defaultSize={sizes[0]}
+              defaultSize={defaultSizes[0]}
               collapsedSize={7}
               collapsible={true}
               minSize={15}
               maxSize={25}
-              onCollapse={() => setIsCollapsed(true)}
-              onExpand={() => setIsCollapsed(false)}
-              className={cn(isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
+              onCollapse={() => setCollapsed(true)}
+              onExpand={() => setCollapsed(false)}
+              className={cn(isCollapsed && "min-w-[50px] transition-all duration-500 ease-in-out")}
             >
               <Nav isCollapsed={isCollapsed} links={dashboardConfig.sidebarNav} />
             </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={sizes[1]}>
+            <ResizableHandle withHandle className="w-[3px] bg-dark-4/20 dark:bg-light-3/50" />
+            <ResizablePanel defaultSize={defaultSizes[1]}>
               <main className="flex w-full flex-col overflow-hidden">
                 <Outlet />
               </main>

@@ -23,7 +23,7 @@ export function Nav({ isCollapsed, links, className, ...props }: NavProps) {
         <div
             data-collapsed={isCollapsed}
             className={cn(
-                "group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2",
+                "group flex flex-col gap-4 py-8 data-[collapsed=true]:py-10",
                 className
             )}
             {...props}
@@ -49,7 +49,7 @@ export function Nav({ isCollapsed, links, className, ...props }: NavProps) {
                                     >
                                         <span
                                             className={cn(
-                                                "group flex items-center rounded-md px-3 py-2 text-sm mr-2 font-medium hover:bg-accent hover:text-accent-foreground",
+                                                "group flex items-center rounded-md px-3 py-2 dark:text-muted-foreground text-sm mr-2 font-medium hover:bg-accent hover:text-accent-foreground",
                                                 isActive ? "bg-accent" : "transparent",
                                                 link.disabled && "cursor-not-allowed opacity-60"
                                             )}
@@ -86,7 +86,7 @@ export function Nav({ isCollapsed, links, className, ...props }: NavProps) {
                                 >
                                     <span
                                         className={cn(
-                                            "group flex items-center rounded-md px-3 py-2 text-base font-jost font-medium hover:bg-accent hover:text-accent-foreground",
+                                            "group flex items-center rounded-md px-3 py-2 text-base dark:text-muted-foreground font-jost font-medium hover:bg-accent hover:text-accent-foreground",
                                             isActive ? "bg-accent font-semibold" : "transparent",
                                             link.disabled && "cursor-not-allowed opacity-60"
                                         )}
