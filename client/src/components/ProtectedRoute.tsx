@@ -9,6 +9,7 @@ export type ProtectedRouteProps = {
     redirectPath: string;
     outlet: JSX.Element;
     allowedRoles?: UserRole[];
+    userId: string;
     currentRole: UserRole;
     loading: boolean
 };
@@ -18,6 +19,7 @@ export function ProtectedRoute({
     redirectPath,
     outlet,
     allowedRoles = [],
+    userId,
     currentRole,
     loading
 }: ProtectedRouteProps) {
@@ -40,12 +42,14 @@ export function ProtectedRoute({
         const hasRequiredRole = allowedRoles.includes(currentRole);
         if (hasRequiredRole) {
             return outlet;
+        } else if (redirectPath === "/dashboard/account/:id") {
+            return <Navigate to={{ pathname: `/dashboard/account/${userId}` }} />;
         } else {
             return <Navigate to={{ pathname: redirectPath }} />;
         }
     }
     if (!hasLoaded && !userFound && !accessToken) {
-        return <Navigate to="/" />;
+        return <Navigate to="/sign-in" replace/>;
     }
 }
 

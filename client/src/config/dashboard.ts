@@ -52,6 +52,15 @@ export const dashboardConfig: DashboardConfig = {
       items: [],
     },
     {
+      title: "Dashbaord",
+      label: "",
+      for: "admin",
+      href: "/dashboard",
+      icon: "dashboard",
+      variant: "ghost",
+      items: [],
+    },
+    {
       title: "Data Table",
       label: "",
       for: "admin",

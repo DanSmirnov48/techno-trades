@@ -6,15 +6,20 @@ export interface dashboardRoutesProps {
   path: string;
   outlet: JSX.Element;
   allowedRoles: UserRole[];
-  additionalProps: Record<string, any>;
+  additionalProps: {
+    redirectPath?: string;
+    [key: string]: any;
+  };
 }
 
 const dashboardRoutes: dashboardRoutesProps[] = [
   {
     path: '/dashboard',
     outlet: <Dashboard />,
-    allowedRoles: ['admin', 'user'],
-    additionalProps: {},
+    allowedRoles: ['admin'],
+    additionalProps: {
+      redirectPath: '/dashboard/account/:id',
+    },
   },
   {
     path: '/dashboard/account/:id',

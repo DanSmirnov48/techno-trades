@@ -1,11 +1,12 @@
 import { JSX } from 'react';
-import { ProtectedRouteProps } from '@/components/ProtectedRoute';
+import { ProtectedRouteProps, UserRole } from '@/components/ProtectedRoute';
 import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, ProductDetails } from '@/_root/pages';
 
 export interface PublicRoute {
   path: string;
   outlet: JSX.Element;
   isProtected?: boolean;
+  allowedRoles?: UserRole[];
   protectedRouteProps?: ProtectedRouteProps;
 }
 
@@ -21,12 +22,12 @@ const publicRoutes: PublicRoute[] = [
   {
     path: '/cart',
     outlet: <Cart />,
-    isProtected: true,
   },
   {
     path: '/checkout-success',
     outlet: <CkeckoutSuccess />,
     isProtected: true,
+    allowedRoles: ['admin', 'user'],
   },
   {
     path: '/deals',

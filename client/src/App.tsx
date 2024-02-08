@@ -13,6 +13,7 @@ export default function App() {
   const defaultProtectedRouteProps: Omit<ProtectedRouteProps, 'outlet'> = {
     isAuthenticated: isAuthenticated,
     redirectPath: '/sign-in',
+    userId: user._id,
     currentRole: user.role as UserRole,
     loading: isLoading
   };
@@ -37,6 +38,7 @@ export default function App() {
                     {...defaultProtectedRouteProps}
                     {...route.protectedRouteProps}
                     outlet={route.outlet}
+                    allowedRoles={route.allowedRoles}
                   />
                 ) : (
                   route.outlet
