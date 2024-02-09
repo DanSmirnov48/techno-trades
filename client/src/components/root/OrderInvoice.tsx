@@ -8,21 +8,48 @@ type Props = {
 };
 
 const OrderInvoice = ({ order, className }: Props) => {
+
+  const getStatusMessage = (deliveryStatus: Order['deliveryStatus']): string => {
+    switch (deliveryStatus) {
+      case 'pending':
+        return "Order Proccessing";
+      case 'shipped':
+        return "It's on the way!";
+      case 'delivered':
+        return 'Order delivered.';
+      default:
+        return '';
+    }
+  };
+
+  const getOrderStatusMessage = (deliveryStatus: Order['deliveryStatus'], orderNumber: Order['orderNumber']): string => {
+    switch (deliveryStatus) {
+      case 'pending':
+        return `Your order #${orderNumber} is currently being processed.`;
+      case 'shipped':
+        return `Your order #${orderNumber} has been shipped and will be with you soon.`;
+      case 'delivered':
+        return `Your order #${orderNumber} has been delivered.`;
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className={cn("font-jost", className)}>
-      <div className="max-w-xl">
+      <div className="max-w-2xl">
         <h1 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
           Thank you!
         </h1>
         <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-          It's on the way!
+          {getStatusMessage(order.deliveryStatus)}
         </p>
-        <p className="mt-2 text-base text-gray-500">
-          Your order #{order.orderNumber} has shipped and will be with you soon.
+        <p className="mt-2 text-base text-gray-500 dark:text-light-2/80">
+          {getOrderStatusMessage(order.deliveryStatus, order.orderNumber)}
         </p>
 
         <dl className="mt-12 text-sm font-medium">
-          <dt className="text-gray-900">Tracking number</dt>
+          <dt className="text-gray-900 dark:text-light-2/80">Tracking number</dt>
           <dd className="text-indigo-600 mt-2">51547878755545848512</dd>
         </dl>
       </div>
@@ -43,22 +70,22 @@ const OrderInvoice = ({ order, className }: Props) => {
               />
               <div className="flex-auto flex flex-col">
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium text-gray-900 dark:text-light-2">
                     <a href="#">{product.name}</a>
                   </h4>
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-2 text-sm text-gray-600 dark:text-light-2/70">
                     {truncateText({ text: product.description, maxLength: 30 })}
                   </p>
                 </div>
                 <div className="mt-6 flex-1 flex items-end">
                   <dl className="flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
                     <div className="flex">
-                      <dt className="font-medium text-gray-900">Quantity</dt>
-                      <dd className="ml-2 text-gray-700">{quantity}</dd>
+                      <dt className="font-medium text-gray-900 dark:text-light-2/80">Quantity</dt>
+                      <dd className="ml-2 text-gray-700 dark:text-light-2">{quantity}</dd>
                     </div>
                     <div className="pl-4 flex sm:pl-6">
-                      <dt className="font-medium text-gray-900">Price</dt>
-                      <dd className="ml-2 text-gray-700">
+                      <dt className="font-medium text-gray-900 dark:text-light-2">Price</dt>
+                      <dd className="ml-2 text-gray-700 dark:text-light-2/80">
                         {formatPrice(price, { currency: "GBP" })}
                       </dd>
                     </div>
@@ -75,8 +102,8 @@ const OrderInvoice = ({ order, className }: Props) => {
           <h4 className="sr-only">Addresses</h4>
           <dl className="grid grid-cols-2 gap-x-6 text-sm py-10">
             <div>
-              <dt className="font-medium text-gray-900">Shipping address</dt>
-              <dd className="mt-2 text-gray-700">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Shipping address</dt>
+              <dd className="mt-2 text-gray-700 dark:text-light-2/70">
                 <address className="not-italic">
                   <span className="block">
                     {order.paymentIntentDetails.billing_details.name}
@@ -93,8 +120,8 @@ const OrderInvoice = ({ order, className }: Props) => {
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-gray-900">Billing address</dt>
-              <dd className="mt-2 text-gray-700">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Billing address</dt>
+              <dd className="mt-2 text-gray-700 dark:text-light-2/70">
                 <address className="not-italic">
                   <span className="block">
                     {order.paymentIntentDetails.billing_details.name}
@@ -123,8 +150,8 @@ const OrderInvoice = ({ order, className }: Props) => {
           <h4 className="sr-only">Payment</h4>
           <dl className="grid grid-cols-2 gap-x-6 border-t border-gray-200 text-sm py-10">
             <div>
-              <dt className="font-medium text-gray-900">Payment method</dt>
-              <dd className="mt-2 text-gray-700">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Payment method</dt>
+              <dd className="mt-2 text-gray-700 dark:text-light-2/80">
                 <div className="flex flex-row gap-1 my-1">
                   <Icons.visa className="w-12 border p-1 bg-black/10" />
                   <p>
@@ -141,8 +168,8 @@ const OrderInvoice = ({ order, className }: Props) => {
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-gray-900">Shipping method</dt>
-              <dd className="flex flex-col mt-2 text-gray-700 gap-1">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Shipping method</dt>
+              <dd className="flex flex-col mt-2 text-gray-700 dark:text-light-2/70 gap-1">
                 <p>DHL</p>
                 <p>Takes up to 3 working days</p>
               </dd>
@@ -153,22 +180,22 @@ const OrderInvoice = ({ order, className }: Props) => {
 
           <dl className="space-y-6 border-t border-gray-200 text-sm pt-10">
             <div className="flex justify-between">
-              <dt className="font-medium text-gray-900">Subtotal</dt>
-              <dd className="text-gray-700">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Subtotal</dt>
+              <dd className="text-gray-700 dark:text-light-2/80">
                 {formatPrice(order.subtotal / 100, { currency: "GBP" })}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="font-medium text-gray-900">Shipping</dt>
-              <dd className="text-gray-900">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Shipping</dt>
+              <dd className="text-gray-900 dark:text-light-2/80">
                 {formatPrice(order.shippingCost.amount_total / 100, {
                   currency: "GBP",
                 })}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="font-medium text-gray-900">Total</dt>
-              <dd className="text-gray-900">
+              <dt className="font-medium text-gray-900 dark:text-light-1">Total</dt>
+              <dd className="text-gray-900 dark:text-light-2/80">
                 {formatPrice(order.total / 100, { currency: "GBP" })}
               </dd>
             </div>

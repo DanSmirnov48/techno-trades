@@ -5,17 +5,28 @@ import { useGetMyOrders } from "@/lib/react-query/queries";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn, formatDate, formatPrice, truncateText } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
+import { cn, formatDate, formatPrice } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import OrderInvoice from "@/components/root/OrderInvoice";
+import { Order } from "@/types/order";
+import { useNavigate } from "react-router-dom";
+import PDFExportComponent from "@/components/ExportToPDF";
 
 export default function DashboardOrders() {
   const { data: orders, isLoading, isError } = useGetMyOrders();
+
+  const [orderDetails, setOrderDetails] = useState<Order>();
+  const [open, setOpen] = useState<boolean>(false);
+  const navigate = useNavigate()
 
   function showOrders() {
     return (
@@ -38,9 +49,9 @@ export default function DashboardOrders() {
           <div className="">
             {orders.map((order) => (
               <Card key={order._id} className="mb-5">
-                <CardHeader className="w-full rounded-t-lg bg-black/5">
+                <CardHeader className="w-full rounded-t-lg bg-black/5 dark:bg-light-3/20">
                   <CardTitle>
-                    <div className="flex flex-row justify-between text-base font-normal text-dark-4">
+                    <div className="flex flex-row justify-between text-base font-normal text-dark-4 dark:text-muted-foreground">
                       <div className="flex flex-row gap-14">
                         <div className="flex flex-col">
                           <p>ORDER PLACED</p>
@@ -58,7 +69,10 @@ export default function DashboardOrders() {
                       <div className="flex flex-row">
                         <div className="flex flex-col gap-1">
                           <p>ORDER # {order.orderNumber}</p>
-                          <Button className={cn("text-blue-800/80 text-left p-0 m-0 w-fit h-5")} variant={"link"}>View order details </Button>
+                          <div className="flex flex-row gap-5 justify-end items-center">
+                            <Button onClick={() => { setOpen(true); setOrderDetails(order) }} className={cn("text-blue-800/80 dark:text-blue-500 text-left p-0 m-0 w-fit h-5")} variant={"link"}>View order details </Button>
+                            <PDFExportComponent invoiceComponent={<OrderInvoice order={order} />} orderName={order.orderNumber} />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -69,33 +83,43 @@ export default function DashboardOrders() {
                     <h3 className="sr-only">Items</h3>
                     {order.products.map(({ _id, product, quantity }) => {
                       return (
-                        <div key={_id} className="py-10 border-b border-gray-200 flex space-x-6">
+                        <div key={_id} className="py-10 border-b border-gray-200 dark:border-light-3/40 flex space-x-6">
                           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 w-full">
                             <div className="flex gap-4 lg:col-span-2">
                               <img
-                                className="flex-none w-20 h-20 object-center object-scale-down p-2 bg-white border-2 rounded-lg sm:w-28 sm:h-28"
+                                className="flex-none w-20 h-20 object-center object-scale-down p-2 bg-white border-2 rounded-lg sm:w-36 sm:h-36"
                                 src={product.image[0].url || ""}
                                 alt={product.name}
                               />
                               <div className="flex-auto flex flex-col">
-                                <h4 className="font-medium text-gray-900">{product.name}</h4>
+                                <h4 className="font-medium text-muted-foreground">{product.name}</h4>
                                 <div className="mt-6 flex-1 flex items-end">
                                   <dl className="flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
                                     <div className="flex">
-                                      <dt className="font-medium text-gray-900">Quantity</dt>
-                                      <dd className="ml-2 text-gray-700">{quantity}</dd>
+                                      <dt className="font-medium text-muted-foreground">Quantity</dt>
+                                      <dd className="ml-2 text-gray-700 dark:text-light-2/90">{quantity}</dd>
                                     </div>
                                     <div className="pl-4 flex sm:pl-6">
-                                      <dt className="font-medium text-gray-900">Price</dt>
-                                      <dd className="ml-2 text-gray-700">
-                                        {formatPrice(product.price, {currency: "GBP"})}
+                                      <dt className="font-medium text-muted-foreground">Price</dt>
+                                      <dd className="ml-2 text-gray-700 dark:text-light-2/90">
+                                        {formatPrice(product.price, { currency: "GBP" })}
                                       </dd>
                                     </div>
                                   </dl>
                                 </div>
                               </div>
                             </div>
-                            <div className="rounded-lg bg-gray-200"></div>
+                            <div className="flex flex-col gap-2 w-full">
+                              <Button
+                                variant="secondary"
+                                onClick={() => navigate(`/products/${product.slug}`)}
+                                className="w-full"
+                              >
+                                Leave Review
+                              </Button>
+                              <Button variant={"secondary"} onClick={() => { console.log() }} className="w-full">Request Refound</Button>
+                              <Button variant={"secondary"} onClick={() => { console.log() }} className="w-full">Contact Support</Button>
+                            </div>
                           </div>
                         </div>
                       );
@@ -104,6 +128,11 @@ export default function DashboardOrders() {
                 </CardContent>
               </Card>
             ))}
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="max-w-screen-lg min-h-fit">
+                {orderDetails && <OrderInvoice order={orderDetails} className="m-[5rem]" />}
+              </DialogContent>
+            </Dialog>
           </div>
         )}
       </>
