@@ -33,10 +33,6 @@ export function Nav({ isCollapsed, links, className, ...props }: NavProps) {
                     const Icon = link.icon ? Icons[link.icon] : ChevronLeftIcon;
                     const isActive = link.href && location.pathname.includes(link.href);
 
-                    if (link.for === 'admin' && !isAdmin) {
-                        return null;
-                    }
-
                     return isCollapsed ? (
                         <Tooltip key={index} delayDuration={0}>
                             <TooltipTrigger asChild>

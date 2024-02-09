@@ -58,7 +58,7 @@ const dashboardRoutes: dashboardRoutesProps[] = [
     additionalProps: {},
   },
   {
-    path: '/dashboard/product',
+    path: '/dashboard/new-product',
     outlet: <ProductCreateForm />,
     allowedRoles: ['admin'],
     additionalProps: {},

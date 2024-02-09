@@ -38,7 +38,7 @@ export default function DashboardAccount() {
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
-          <TabsTrigger value="address">Address</TabsTrigger>
+          <TabsTrigger disabled value="address">Address</TabsTrigger>
         </TabsList>
         <TabsContent value="account">
           <LastSignIn />
@@ -49,7 +49,6 @@ export default function DashboardAccount() {
           <ResetPassword />
         </TabsContent>
         <TabsContent value="address">
-
         </TabsContent>
       </Tabs>
     </Shell>

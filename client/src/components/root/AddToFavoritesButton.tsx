@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Product } from "@/types/index";
 import { Button } from "../ui/button";
+import { TooltipProvider, TooltipTrigger, TooltipContent, Tooltip } from "../ui/tooltip";
 
 interface AddToFavoritesButtonProps {
   product: Product;
@@ -20,7 +21,7 @@ const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({ product, va
       return (
         <Button
           size={"lg"}
-          className="w-full bg-dark-1 py-6 text-white text-base"
+          className="w-full bg-dark-1 dark:bg-dark-4 py-6 text-white text-base"
           onClick={handleButtonClick}
         >
           {isProductInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
@@ -34,13 +35,22 @@ const AddToFavoritesButton: React.FC<AddToFavoritesButtonProps> = ({ product, va
       );
     } else {
       return (
-        <Heart
-          onClick={handleButtonClick}
-          className="m-4 cursor-pointer"
-          size={24}
-          color={isProductInFavorites ? '#bc47ff' : theme === "light" ? 'black' : "#999"}
-          fill={isProductInFavorites ? '#bc47ff' : 'none'}
-        />
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger>
+              <Heart
+                onClick={handleButtonClick}
+                className="m-4 cursor-pointer"
+                size={24}
+                color={isProductInFavorites ? '#bc47ff' : theme === "light" ? 'black' : "#999"}
+                fill={isProductInFavorites ? '#bc47ff' : 'none'}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Add to Favourite</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
     }
   };

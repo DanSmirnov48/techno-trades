@@ -152,7 +152,7 @@ const ProductCreateForm = () => {
         >
           <input {...getInputProps()} className="cursor-pointer" />
           <div className="flex justify-center items-center flex-col p-7 h-80 lg:h-[200px]">
-            <h3 className="base-medium text-dark-4 text-lg mb-2 mt-6">Drag or Drop photos here</h3>
+            <h3 className="base-medium text-dark-4 dark:text-light-2/90 text-lg mb-2 mt-6">Drag or Drop photos here</h3>
             <p className="text-light-4 small-regular mb-6">PNG, JPEG, JPG</p>
 
             <Button
@@ -172,9 +172,9 @@ const ProductCreateForm = () => {
                 <img
                   src={fileUrl}
                   alt={`image-${index}`}
-                  className="h-48 lg:h-[200px] w-full rounded-lg object-scale-down border-4 border-dashed p-5"
+                  className="h-48 lg:h-[200px] w-full rounded-lg object-scale-down bg-white border-4 border-dashed p-5"
                 />
-                <X className="absolute top-2 right-2 cursor-pointer" onClick={() => handleRemoveFile(index)} />
+                <X className="absolute top-2 right-2 cursor-pointer text-dark-4" onClick={() => handleRemoveFile(index)} />
               </div>
             ))}
           </div>
@@ -188,8 +188,8 @@ const ProductCreateForm = () => {
       type="button"
       onClick={() => setDiscount(Number(value))}
       className={cn(
-        `border h-16 hover:bg-neutral-200 border-gray-200 p-4 rounded-lg min-w-[100px] w-full text-center text-dark-4 
-        ${discount === +value ? 'bg-gray-300' : 'bg-white'}`
+        `border h-16 hover:bg-neutral-200 border-gray-200 p-4 rounded-lg min-w-[100px] w-full text-center text-dark-4 dark:text-light-2/90
+        ${discount === +value ? 'bg-gray-300 dark:bg-light-3/80' : 'bg-white dark:bg-dark-3'}`
       )}
     >
       <div className="flex gap-1">
@@ -335,7 +335,7 @@ const ProductCreateForm = () => {
               control={form.control}
               name="discountedPrice"
               render={({ field }) => (
-                <FormItem className="flex flex-col items-start justify-start bg-neutral-100 rounded-lg border p-4">
+                <FormItem className="flex flex-col items-start justify-start bg-neutral-100 dark:bg-dark-4 rounded-lg border p-4">
                   <FormControl>
                     <div className="flex flex-col w-full  mx-auto gap-5 my-5">
                       <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
@@ -364,7 +364,7 @@ const ProductCreateForm = () => {
                         value={discount}
                         onChange={(e) => setDiscount(Number(e.target.value.slice(0, 2)))}
                       />
-                      <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
+                      <div className="flex flex-row justify-around items-start gap-3 text-lg p-4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-dark-3/50 dark:text-gray-300 dark:border-gray-600" role="alert">
                         <span className="sr-only">Info</span>
                         <h1>Current Price: <span className="font-semibold">{formatPrice(form.getValues("price"), { currency: "GBP" })}</span></h1>
                         {!!discount && <h1>Discount of: <span className="text-red-600 font-semibold">{formatPrice(form.getValues("price") * discount / 100, { currency: "GBP" })}</span></h1>}

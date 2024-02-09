@@ -1,7 +1,7 @@
-import { type SidebarNavItem } from "@/types"
+import { type SidebarNavItem } from "@/types";
 
 export interface DashboardConfig {
-  sidebarNav: SidebarNavItem[]
+  sidebarNav: SidebarNavItem[];
 }
 
 export const dashboardConfig: DashboardConfig = {
@@ -67,13 +67,26 @@ export const dashboardConfig: DashboardConfig = {
       href: "/dashboard/data-tables",
       icon: "table",
       variant: "ghost",
-      items: [],
+      items: [
+        {
+          title: "Products",
+          href: "/dashboard/data-tables?tab=products",
+        },
+        {
+          title: "Orders",
+          href: "/dashboard/data-tables?tab=orders",
+        },
+        {
+          title: "Users",
+          href: "/dashboard/data-tables?tab=users",
+        },
+      ],
     },
     {
       title: "Create Product",
       label: "",
       for: "admin",
-      href: "/dashboard/product",
+      href: "/dashboard/new-product",
       icon: "add",
       variant: "default",
       items: [],
