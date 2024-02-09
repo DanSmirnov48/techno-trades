@@ -1,8 +1,7 @@
-
-# Full-Stack MERN E-Commerce
-
-A web application running on Node Backend server with TypeScript and React Vite on the Frontend. The data is being stored in the MongoDB.
-
+<div style="width: 1440px; height: 500px; text-align: center; overflow: hidden; border-radius: 100px;">
+    <h1 style="color: #ffffff; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Full-Stack MERN E-Commerce</h1>
+    <img src="https://github.com/DanSmirnov48/techno-trades/blob/main/images/banner.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 100px;">
+</div>
 
 ## Installation
 
