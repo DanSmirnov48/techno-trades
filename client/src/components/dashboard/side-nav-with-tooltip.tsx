@@ -1,15 +1,11 @@
-import { ChevronLeftIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Link, useLocation } from "react-router-dom";
-import { SidebarNavItem } from "@/types";
-import { Icons } from "../icons";
-import { useUserContext } from "@/context/AuthContext";
 import React from "react";
+import { cn } from "@/lib/utils";
+import { Icons } from '../shared';
+import { SidebarNavItem } from "@/types";
+import { ChevronLeftIcon } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useUserContext } from "@/context/AuthContext";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface NavProps extends React.HTMLAttributes<HTMLDivElement> {
     isCollapsed: boolean;

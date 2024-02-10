@@ -39,7 +39,7 @@ export async function signInAccount(user: { email: string; password: string }) {
 
 export async function getUserSession() {
   try {
-    const response = await axios.get('/api/users/me');
+    const response = await axios.get('/api/users/validate');
     return response;
   } catch (error) {
     console.log(error);

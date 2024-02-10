@@ -1,8 +1,8 @@
-import { useStockFiltering } from "@/hooks/store";
+import { useEffect } from "react";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useStockFiltering } from "@/hooks/store";
 
 const HideOutOfStock = () => {
   const location = useLocation();

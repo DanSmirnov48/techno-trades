@@ -1,12 +1,12 @@
 import { Product } from "@/types";
-import { Checkbox } from "../ui/checkbox";
-import { useGetProducts } from "@/lib/react-query/queries";
-import { Rating } from "@smastrom/react-rating";
-import "@smastrom/react-rating/style.css";
-import { ratingStyle } from "@/lib/utils";
-import { useRatingFilterStore } from "@/hooks/store";
 import { useEffect } from "react";
 import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
+import "@smastrom/react-rating/style.css";
+import { ratingStyle } from "@/lib/utils";
+import { Rating } from "@smastrom/react-rating";
+import { useRatingFilterStore } from "@/hooks/store";
+import { useGetProducts } from "@/lib/react-query/queries";
 
 const renderRatingFilters = (products: Product[]) => {
   interface RatingFilterProps {
@@ -73,7 +73,7 @@ const renderRatingFilters = (products: Product[]) => {
   );
 };
 
-export const ProductRatingFilter: React.FC = () => {
+const ProductRatingFilter: React.FC = () => {
   const { data } = useGetProducts();
   useEffect(() => {
     useRatingFilterStore.getState().removeAllRatings();
@@ -81,3 +81,5 @@ export const ProductRatingFilter: React.FC = () => {
 
   return renderRatingFilters(data?.data.products || []);
 };
+
+export default ProductRatingFilter

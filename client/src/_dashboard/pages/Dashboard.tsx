@@ -1,21 +1,14 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { takeRight } from 'lodash'
 import { Button } from "@/components/ui/button"
-import { RecentSales } from "@/components/dashboard/recent-sales"
+import { useGetOrders } from "@/lib/react-query/queries"
 import { Overview } from "@/components/dashboard/overview"
+import { RecentSales } from "@/components/dashboard/recent-sales"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Dashboard() {
+  const { data: orders, isLoading: loadingOrders } = useGetOrders()
+
   return (
     <>
       <div className="hidden flex-col md:flex">
@@ -160,7 +153,7 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentSales />
+                    {!loadingOrders && <RecentSales orders={takeRight(orders.orders, 5)} />}
                   </CardContent>
                 </Card>
               </div>

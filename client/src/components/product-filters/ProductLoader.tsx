@@ -1,11 +1,12 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProductLoaderProps {
   displayType: 'grid' | 'list';
   showFilterLoader?: boolean;
 }
-export function ProductLoader({ displayType, showFilterLoader = false }: ProductLoaderProps) {
+
+const ProductLoader = ({ displayType, showFilterLoader = false }: ProductLoaderProps) => {
 
   const renderProductLoader = (index: number) => {
     if (displayType === 'grid') {
@@ -84,3 +85,5 @@ export function ProductLoader({ displayType, showFilterLoader = false }: Product
     </>
   );
 }
+
+export default ProductLoader

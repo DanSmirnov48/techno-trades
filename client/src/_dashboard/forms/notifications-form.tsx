@@ -1,9 +1,12 @@
-import {Link} from "react-router-dom"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { toast } from "sonner"
+import {Link} from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Form,
   FormControl,
@@ -13,10 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
-
 
 const notificationsFormSchema = z.object({
   type: z.enum(["all", "mentions", "none"], {

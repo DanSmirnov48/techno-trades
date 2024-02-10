@@ -1,4 +1,4 @@
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"

@@ -1,9 +1,14 @@
+import { Product } from "@/types";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
-import { Product } from "@/types";
 import { ImageIcon, X } from "lucide-react";
 
-const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
+type CartItemProps = {
+  product: Product;
+  qty: number;
+};
+
+const CartItem = ({ product, qty }: CartItemProps) => {
 
   const { url } = product.image[0];
   const { removeItem } = useCart();
@@ -37,7 +42,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
             <span className="line-clamp-1 text-xs capitalize text-muted-foreground">
               Quantity: {qty.toString()}
             </span>
-            
+
             <div className="mt-4 text-xs text-muted-foreground">
               <button
                 onClick={() => removeItem(product._id!)}
@@ -52,7 +57,7 @@ const CartItem = ({ product, qty }: { product: Product, qty: Number }) => {
 
         <div className="flex flex-col space-y-1 font-medium">
           <span className="ml-auto line-clamp-1 text-sm">
-            {formatPrice(product.isDiscounted ? product.discountedPrice! : product.price, {currency: 'GBP'})}
+            {formatPrice(product.isDiscounted ? product.discountedPrice! : product.price, { currency: 'GBP' })}
           </span>
         </div>
       </div>

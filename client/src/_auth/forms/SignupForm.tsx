@@ -1,25 +1,17 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { SignupValidation } from "@/lib/validation";
 import { z } from "zod";
-import { Link, useNavigate } from "react-router-dom";
-import { Loader, Loader2 } from "lucide-react";
-import { Icons } from "@/components/icons";
-import { useCreateUserAccount } from "@/lib/react-query/queries";
-import { cn } from "@/lib/utils";
-import { IUser } from "@/types";
-import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { IUser } from "@/types";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Icons } from "@/components/shared";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { SignupValidation } from "@/lib/validation";
+import { Link, useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserContext } from "@/context/AuthContext";
+import { useCreateUserAccount } from "@/lib/react-query/queries";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {
   data?: any;

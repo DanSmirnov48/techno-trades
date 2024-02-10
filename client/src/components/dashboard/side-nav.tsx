@@ -1,9 +1,9 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { ChevronLeftIcon } from "lucide-react";
-import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { Icons } from "@/components/shared";
 import type { SidebarNavItem } from "@/types";
+import { ChevronLeftIcon } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {

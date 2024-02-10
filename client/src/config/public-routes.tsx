@@ -1,6 +1,6 @@
 import { JSX } from 'react';
-import { ProtectedRouteProps, UserRole } from '@/components/ProtectedRoute';
 import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, ProductDetails } from '@/_root/pages';
+import { ProtectedRouteProps, UserRole } from '@/components/root/ProtectedRoute';
 
 export interface PublicRoute {
   path: string;

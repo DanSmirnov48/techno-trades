@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import { buttonVariants } from "./ui/button";
-import { LogIn } from "lucide-react";
+import { Cart } from ".";
 import { UserNav } from "./UserNav";
-import { useUserContext } from "@/context/AuthContext";
-import Cart from "./root/Cart";
+import { LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { buttonVariants } from "../ui/button";
+import { useUserContext } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { isAuthenticated } = useUserContext();

@@ -1,7 +1,7 @@
 import { Heart } from "lucide-react";
-import { useFavorites } from "@/hooks/useFavorites";
-import { Product } from "@/types/index";
 import { Button } from "../ui/button";
+import { Product } from "@/types/index";
+import { useFavorites } from "@/hooks/useFavorites";
 import { TooltipProvider, TooltipTrigger, TooltipContent, Tooltip } from "../ui/tooltip";
 
 interface AddToFavoritesButtonProps {

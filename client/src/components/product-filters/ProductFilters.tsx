@@ -1,16 +1,6 @@
 import { Separator } from "../ui/separator";
-import HideOutOfStock from "./HideOutOfStock";
-import ProductBrandFilters from "./ProductBrandFilters";
-import { ProductPriceFilter } from "./ProductPriceFilter";
-import { ProductRatingFilter } from "./ProductRatingFilter";
-import AppliedFilters from "./AppliedFilters";
-import ProductCategoryFilter from "./ProductCategoryFilter";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { AppliedFilters, HideOutOfStock, ProductBrandFilters, ProductCategoryFilter, ProductPriceFilter, ProductRatingFilter } from ".";
 
 const ProductFilters: React.FC = () => {
   return (

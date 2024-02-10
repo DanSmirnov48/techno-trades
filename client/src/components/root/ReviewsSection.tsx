@@ -1,8 +1,8 @@
-import { Rating } from "@smastrom/react-rating";
+import { Product, Review } from "@/types";
 import "@smastrom/react-rating/style.css";
+import { Rating } from "@smastrom/react-rating";
 import { Progress } from "@/components/ui/progress";
 import { formatDate, ratingStyle } from "@/lib/utils";
-import { Product, Review } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type ReviewFormProps = {
@@ -99,7 +99,7 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
                   <AvatarFallback>{review.user.firstName.slice(0, 1)}{review.user.lastName.slice(0, 1)}</AvatarFallback>
                 </Avatar>
                 <div className="font-medium dark:text-white">
-                  <p>{review.name}<span className="block text-sm text-gray-500 dark:text-gray-400">Joined on {formatDate(review.user.createdAt.toString(), "year-month")}</span></p>
+                  <p>{review.name}<span className="block text-sm text-gray-500 dark:text-gray-400">Joined on {formatDate(review.user.createdAt ? review.user.createdAt.toString() : Date.now(), "year-month")}</span></p>
                 </div>
               </div>
               <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse">

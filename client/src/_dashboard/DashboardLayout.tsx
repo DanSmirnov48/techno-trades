@@ -1,16 +1,12 @@
-import { Outlet } from "react-router-dom";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
 import { cn } from "@/lib/utils";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Nav } from "@/components/dashboard/side-nav-with-tooltip";
+import { Outlet } from "react-router-dom";
 import { dashboardConfig } from "@/config/dashboard";
 import useDashboardStore from "@/hooks/useDashboard";
 import { Separator } from "@/components/ui/separator";
 import { useUserContext } from "@/context/AuthContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Nav } from "@/components/dashboard/side-nav-with-tooltip";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 
 export const DashboardLayout = () => {
   const { user } = useUserContext();
@@ -38,7 +34,7 @@ export const DashboardLayout = () => {
               onExpand={() => setCollapsed(false)}
               className={cn(isCollapsed && "min-w-[50px] transition-all duration-500 ease-in-out")}
             >
-              <Nav isCollapsed={isCollapsed} links={userLinks} className="pb-6"/>
+              <Nav isCollapsed={isCollapsed} links={userLinks} className="pb-6" />
               {user.role === "admin" &&
                 <>
                   <Separator />

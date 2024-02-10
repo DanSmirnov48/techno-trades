@@ -1,17 +1,17 @@
-import { useGetProductBySlug, useGetProducts } from "@/lib/react-query/queries";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
-import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
-import { AddToCartButton, AddToFavoritesButton } from "@/components/root";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
+import { Rating } from "@smastrom/react-rating";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Fullscreen, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { ArrowLeft, Fullscreen } from "lucide-react";
 import ReviewsSection from "@/components/root/ReviewsSection";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductReviewForm from "@/components/root/ProductReviewForm";
+import { AddToCartButton, AddToFavoritesButton } from "@/components/shared";
+import { useGetProductBySlug, useGetProducts } from "@/lib/react-query/queries";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
 
 const ProductDetails = () => {
   const { slug } = useParams();

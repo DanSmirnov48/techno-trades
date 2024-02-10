@@ -1,4 +1,4 @@
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command"

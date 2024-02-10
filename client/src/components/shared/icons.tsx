@@ -31,7 +31,6 @@ import {
   ChevronRight,
   ChevronsRight,
   SlidersHorizontal,
-
   MoreVertical,
   Package,
   Trash,
@@ -42,9 +41,7 @@ import {
   Heart,
   XSquare,
   Bell,
-
   EyeOff,
-
   Smartphone,
   Camera,
   Computer,
@@ -60,7 +57,6 @@ import {
   List,
 
 } from "lucide-react";
-
 
 export type Icon = LucideIcon;
 
@@ -115,7 +111,6 @@ export const Icons = {
   discount: Percent,
   grid: LayoutGrid,
   list: List,
-
   //product Catergories
   smartphone: Smartphone,
   camera: Camera,

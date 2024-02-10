@@ -1,7 +1,6 @@
+import { Icons } from "../shared"
 import { useTheme } from "next-themes"
-
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
 
 export function ThemeToggle() {
     const { setTheme, theme } = useTheme()

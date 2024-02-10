@@ -1,42 +1,28 @@
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { ProductCreateValidation } from "@/lib/validation";
-import { ProductImage } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { categories } from "@/components/tables/products-table/filters";
-import { useCallback, useState } from "react";
-import { useDropzone } from "@uploadthing/react/hooks";
-import { generateClientDropzoneAccept } from "uploadthing/client";
-import { FileWithPath } from "@uploadthing/react";
-import { useUploadThing } from "@/uploadthing";
-import { cn, convertFileToUrl, formatPrice } from "@/lib/utils";
-import { AlertCircle, Loader2, X } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { useCreateProduct } from "@/lib/react-query/queries";
-import { useNavigate } from "react-router-dom";
-import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { Switch } from "@/components/ui/switch";
+import { ProductImage } from "@/types";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { useCallback, useState } from "react";
 import { Label } from "@/components/ui/label";
+import { useUploadThing } from "@/uploadthing";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { FileWithPath } from "@uploadthing/react";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2, X } from "lucide-react";
+import { useUserContext } from "@/context/AuthContext";
+import { useDropzone } from "@uploadthing/react/hooks";
+import { ProductCreateValidation } from "@/lib/validation";
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { cn, convertFileToUrl, formatPrice } from "@/lib/utils";
+import { useCreateProduct } from "@/lib/react-query/queries";
+import { categories } from "@/components/tables/products-table/filters";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ProductCreateForm = () => {
   const [files, setFiles] = useState<FileWithPath[]>([]);

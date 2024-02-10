@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { UserRole } from '@/components/ProtectedRoute';
+import { UserRole } from '@/components/root/ProtectedRoute';
 import { Dashboard, Account, Orders, Notifications, Appearance, Favourites, Tables, ProductCreateForm } from '@/_dashboard/pages';
 
 export interface dashboardRoutesProps {

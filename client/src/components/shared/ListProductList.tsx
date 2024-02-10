@@ -1,15 +1,15 @@
+import { Icons } from ".";
+import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
-import AddToCartButton from "./AddToCartButton";
-import AddToFavoritesButton from "./AddToFavoritesButton";
-import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
-import { buttonVariants } from "../ui/button";
-import { Icons } from "../icons";
-import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
+import { buttonVariants } from "../ui/button";
+import { Rating } from "@smastrom/react-rating";
+import AddToCartButton from "./AddToCartButton";
 import { Card, CardContent } from "@/components/ui/card"
+import AddToFavoritesButton from "./AddToFavoritesButton";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-import { useTheme } from "next-themes";
+import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
 
 type ListProductListProps = {
   products: Product[];

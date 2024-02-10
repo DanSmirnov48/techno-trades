@@ -1,5 +1,5 @@
-import { Header } from "@/components/dashboard/header";
 import { Shell } from "@/components/dashboard/shell";
+import { Header } from "@/components/dashboard/header";
 import ProductCreateForm from "../forms/ProductCreateForm";
 
 export default function DashboardAccount() {

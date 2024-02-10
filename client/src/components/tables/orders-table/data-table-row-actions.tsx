@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Icons } from "@/components/icons";
+import { Icons } from "@/components/shared";
 import { useState } from "react";
 import { orderTableSchema } from "@/lib/validation";
 

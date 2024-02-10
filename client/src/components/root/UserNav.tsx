@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button, buttonVariants } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button, buttonVariants } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import {
   Laptop,
   LayoutDashboard,
@@ -26,18 +26,15 @@ import {
 import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
 import { useSignOutAccount } from "@/lib/react-query/queries";
 import { Link, useNavigate } from "react-router-dom";
-import { Icons } from "./icons";
+import { Icons } from "../shared";
 
 export function UserNav() {
   const { mutate: signOut } = useSignOutAccount();
-  const { user, setUser, isAuthenticated, setIsAuthenticated, isAdmin } =
-    useUserContext();
+  const { user, setUser, setIsAuthenticated, isAdmin } = useUserContext();
   const { setTheme } = useTheme();
   const navigate = useNavigate();
 
-  const handleSignOut = async (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleSignOut = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     signOut();
     setIsAuthenticated(false);
@@ -55,7 +52,7 @@ export function UserNav() {
               alt={user.email}
               className="object-cover"
             />
-            <AvatarFallback>{user.firstName.slice(0,1)}{user.lastName.slice(0,1)}</AvatarFallback>
+            <AvatarFallback>{user.firstName.slice(0, 1)}{user.lastName.slice(0, 1)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

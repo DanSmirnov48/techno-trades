@@ -1,7 +1,7 @@
-import { useGetProducts } from "@/lib/react-query/queries";
 import { Product } from "@/types";
-import { FC, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { useGetProducts } from "@/lib/react-query/queries";
 
 const NewArrivals: FC = () => {
   const [newProducts, setNewProducts] = useState<Product[]>([]);

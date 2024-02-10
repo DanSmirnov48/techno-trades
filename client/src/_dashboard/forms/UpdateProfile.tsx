@@ -1,35 +1,24 @@
 import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ProfileUpdateValidation } from "@/lib/validation";
-import { useUserContext } from "@/context/AuthContext";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useCallback, useState } from "react";
-import { useDropzone } from "@uploadthing/react/hooks";
-import { generateClientDropzoneAccept } from "uploadthing/client";
-import { FileWithPath } from "@uploadthing/react";
-import { useUploadThing } from "@/uploadthing";
-import { convertFileToUrl } from "@/lib/utils";
-import { useUpdateMyAccount } from "@/lib/react-query/queries";
-import { Progress } from "@/components/ui/progress"
-import { Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { deleteMediaFilesByKey } from "@/lib/backend-api";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { useCallback, useState } from "react";
+import { convertFileToUrl } from "@/lib/utils";
+import { useUploadThing } from "@/uploadthing";
+import { Button } from "@/components/ui/button";
+import { FileWithPath } from "@uploadthing/react";
+import { Progress } from "@/components/ui/progress"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserContext } from "@/context/AuthContext";
+import { useDropzone } from "@uploadthing/react/hooks";
+import { ProfileUpdateValidation } from "@/lib/validation";
+import { deleteMediaFilesByKey } from "@/lib/backend-api";
+import { useUpdateMyAccount } from "@/lib/react-query/queries";
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const UpdateProfile = () => {
   const { user, checkAuthUser } = useUserContext();
@@ -86,8 +75,8 @@ const UpdateProfile = () => {
         (user.photo && user.photo.url) && toast.promise(() => deleteMediaFilesByKey([user.photo.key]),
           {
             loading: 'Removing your old file...',
-            success: () => { return 'Removed old file'},
-            error: () => {return 'Error deleting files.'},
+            success: () => { return 'Removed old file' },
+            error: () => { return 'Error deleting files.' },
           }
         );
         // (user.photo && user.photo.url) && await deleteMediaFilesByKey([user.photo.key])

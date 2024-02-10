@@ -1,9 +1,9 @@
-import { useGetProducts } from "@/lib/react-query/queries";
-import { useState, useEffect } from "react";
-import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
-import { usePriceFilterStore } from "@/hooks/store";
+import { Checkbox } from "../ui/checkbox";
+import { useState, useEffect } from "react";
 import { priceRanges } from "@/constants/idnex";
+import { usePriceFilterStore } from "@/hooks/store";
+import { useGetProducts } from "@/lib/react-query/queries";
 
 interface PriceFilterProps {
   min: number;
@@ -27,7 +27,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
   );
 };
 
-export const ProductPriceFilter: React.FC = () => {
+const ProductPriceFilter: React.FC = () => {
   const { selectedRanges, addSelectedRange, removeSelectedRange } = usePriceFilterStore();
   const [productsCountByRange, setProductsCountByRange] = useState<{ [key: string]: number }>({});
   const { data } = useGetProducts();
@@ -64,3 +64,5 @@ export const ProductPriceFilter: React.FC = () => {
     </>
   );
 };
+
+export default ProductPriceFilter

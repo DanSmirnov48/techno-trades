@@ -1,8 +1,8 @@
+import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "../ui/button";
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
 
 const Promotion = () => {
   const [time, setTime] = useState({

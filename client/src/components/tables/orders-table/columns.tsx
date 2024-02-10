@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { OrderType } from "@/lib/validation"
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
 import { PaymentMethodDetails } from "@/types/order"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { DataTableRowActions } from "./data-table-row-actions"
 
 export const columns: ColumnDef<OrderType>[] = [

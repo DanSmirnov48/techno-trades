@@ -1,7 +1,7 @@
-import { GridProductList } from "@/components/root";
-import { ProductLoader } from "@/components/root/ProductLoader";
-import { useGetProducts } from "@/lib/react-query/queries";
 import { Product } from "@/types";
+import { GridProductList } from "@/components/shared";
+import { useGetProducts } from "@/lib/react-query/queries";
+import { ProductLoader } from "@/components/product-filters";
 
 const Deals = () => {
   const { data, isPending: isProductLoading } = useGetProducts();

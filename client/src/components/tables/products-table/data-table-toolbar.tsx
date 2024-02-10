@@ -4,7 +4,7 @@ import { DataTableViewOptions } from "../shared/data-table-view-options"
 import { DataTableFacetedFilter } from "../shared/data-table-faceted-filter"
 import { categories } from "./filters"
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>

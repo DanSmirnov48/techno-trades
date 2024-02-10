@@ -1,14 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import DeleteAccountDialog from "./delete-account-dialog";
 import { Button } from "@/components/ui/button";
+import DeleteAccountDialog from "./delete-account-dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CloseAccount = () => {
   const [open, setOpen] = useState<boolean>(false);

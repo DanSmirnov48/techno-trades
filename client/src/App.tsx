@@ -3,9 +3,9 @@ import RootLayout from "./_root/RootLayout";
 import AuthLayout from "./_auth/AuthLayout";
 import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
-import ProtectedRoute, { ProtectedRouteProps, UserRole } from "./components/ProtectedRoute";
 import { useUserContext } from "./context/AuthContext";
 import { authRoutes, dashboardRoutes, publicRoutes } from "./config";
+import ProtectedRoute, { ProtectedRouteProps, UserRole } from "./components/root/ProtectedRoute";
 
 export default function App() {
   const { isAuthenticated, user, isLoading } = useUserContext();

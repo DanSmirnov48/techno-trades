@@ -1,6 +1,6 @@
-import { cn, formatPrice, truncateText } from "@/lib/utils";
+import { Icons } from "./icons";
 import { Order } from "@/types/order";
-import { Icons } from "../icons";
+import { cn, formatPrice, truncateText } from "@/lib/utils";
 
 type Props = {
   order: Order;

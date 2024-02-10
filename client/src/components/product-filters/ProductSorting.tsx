@@ -1,16 +1,9 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Icons } from "../icons";
+import { Icons } from "../shared";
 import { useSorting } from "@/hooks/store";
+import { useLocation, useNavigate } from "react-router-dom";
 import { showPerPage, sortCategories } from "@/constants/idnex";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const ProductSorting: React.FC = () => {
   const location = useLocation();

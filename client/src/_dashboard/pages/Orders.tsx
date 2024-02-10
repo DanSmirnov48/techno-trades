@@ -1,25 +1,17 @@
-import { CardSkeleton } from "@/components/dashboard/card-skeleton";
-import { Header } from "@/components/dashboard/header";
-import { Shell } from "@/components/dashboard/shell";
-import { useGetMyOrders } from "@/lib/react-query/queries";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
-import { cn, formatDate, formatPrice } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import OrderInvoice from "@/components/root/OrderInvoice";
 import { Order } from "@/types/order";
 import { useNavigate } from "react-router-dom";
-import PDFExportComponent from "@/components/ExportToPDF";
+import { Button } from "@/components/ui/button";
+import { OrderInvoice } from "@/components/shared";
+import { Shell } from "@/components/dashboard/shell";
+import { Separator } from "@/components/ui/separator";
+import { Header } from "@/components/dashboard/header";
+import { cn, formatDate, formatPrice } from "@/lib/utils";
+import { useGetMyOrders } from "@/lib/react-query/queries";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import PDFExportComponent from "@/components/shared/ExportToPDF";
+import { CardSkeleton } from "@/components/dashboard/card-skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function DashboardOrders() {
   const { data: orders, isLoading, isError } = useGetMyOrders();
@@ -83,7 +75,7 @@ export default function DashboardOrders() {
                     <h3 className="sr-only">Items</h3>
                     {order.products.map(({ _id, product, quantity }) => {
                       return (
-                        <div key={_id} className="py-10 border-b border-gray-200 dark:border-light-3/40 flex space-x-6">
+                        <div key={_id} className="py-10 flex space-x-6">
                           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 w-full">
                             <div className="flex gap-4 lg:col-span-2">
                               <img

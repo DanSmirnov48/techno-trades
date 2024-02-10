@@ -1,13 +1,8 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useUserContext } from "@/context/AuthContext";
-import { formatDate } from "@/lib/utils";
 import Cookies from 'js-cookie';
 import { Link } from "react-router-dom";
+import { formatDate } from "@/lib/utils";
+import { useUserContext } from "@/context/AuthContext";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const LastSignIn = () => {
 

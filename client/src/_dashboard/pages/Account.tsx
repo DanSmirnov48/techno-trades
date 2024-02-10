@@ -1,13 +1,13 @@
-import { Header } from "@/components/dashboard/header";
-import { Shell } from "@/components/dashboard/shell";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState, useEffect } from "react";
+import LastSignIn from "../forms/LastSignIn";
+import CloseAccount from "../forms/CloseAccount";
 import UpdateProfile from "../forms/UpdateProfile";
 import ResetPassword from "../forms/ResetPassword";
-import CloseAccount from "../forms/CloseAccount";
-import LastSignIn from "../forms/LastSignIn";
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Shell } from "@/components/dashboard/shell";
 import { useUserContext } from "@/context/AuthContext";
+import { Header } from "@/components/dashboard/header";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardAccount() {
   const location = useLocation();

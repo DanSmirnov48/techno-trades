@@ -3,7 +3,7 @@ import { Table } from "@tanstack/react-table"
 import { DataTableViewOptions } from "../shared/data-table-view-options"
 import { DataTableFacetedFilter } from "../shared/data-table-faceted-filter"
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { userRoles } from "./filters"
 
 interface DataTableToolbarProps<TData> {

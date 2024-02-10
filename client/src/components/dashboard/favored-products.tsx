@@ -1,7 +1,7 @@
-import { buttonVariants } from "@/components/ui/button";
-import { useFavorites } from "@/hooks/useFavorites";
 import { Link } from "react-router-dom";
-import { GridProductList } from "../root";
+import { GridProductList } from "../shared";
+import { useFavorites } from "@/hooks/useFavorites";
+import { buttonVariants } from "@/components/ui/button";
 
 const FavoredProducts = () => {
   const { favorites } = useFavorites();

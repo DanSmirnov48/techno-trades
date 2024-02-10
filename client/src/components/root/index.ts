@@ -1,14 +1,15 @@
-export { default as NewArrivals } from './NewArrivals'
-export { default as Promotion } from './Promotion'
-
-export { default as AddToCartButton } from './AddToCartButton'
-export { default as AddToFavoritesButton } from './AddToFavoritesButton'
-
+export { UserNav } from './UserNav'
 export { default as Cart } from './Cart'
+export { ThemeToggle } from './ThemeToggle'
+export { default as Banner } from './Banner'
+export { default as Footer } from './Footer'
+export { default as Navbar } from './Navbar'
+export { ThemeProvider } from './ThemeProvider'
 export { default as CartItem } from './CartItem'
-
-export { default as GridProductList } from './GridProductList'
-export { default as ListProductList } from './ListProductList'
-
-export { default as ProductFilters } from './ProductFilters'
-export { default as ProductSorting } from './ProductSorting'
+export { default as Promotion } from './Promotion'
+export { default as NewArrivals } from './NewArrivals'
+export { default as CartTableItem } from './CartTableItem'
+export { default as ProtectedRoute } from './ProtectedRoute'
+export { default as ReviewsSection } from './ReviewsSection'
+export { default as SplideCarousel } from './SplideCarousel'
+export { default as ProductReviewForm } from './ProductReviewForm'

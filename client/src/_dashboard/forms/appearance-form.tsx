@@ -1,8 +1,12 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
+import { useForm } from "react-hook-form"
+import { ChevronDownIcon } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Form,
   FormControl,
@@ -12,11 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
-import { ChevronDownIcon } from "lucide-react"
-import { toast } from "sonner"
-import { useTheme } from "next-themes"
 
 export function AppearanceForm() {
   const { setTheme, theme } = useTheme()

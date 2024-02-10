@@ -1,9 +1,9 @@
-import { useCategoryFilter } from "@/hooks/store";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
-import { useGetProducts } from "@/lib/react-query/queries";
 import { useEffect } from "react";
+import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
+import { useCategoryFilter } from "@/hooks/store";
 import { categoriesValues } from "@/constants/idnex";
+import { useGetProducts } from "@/lib/react-query/queries";
 
 const ProductCategoryFilter = () => {
   const { selectedCategories, toggleCategory, setCategories } = useCategoryFilter();

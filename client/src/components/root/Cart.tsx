@@ -1,20 +1,13 @@
+import CartItem from "./CartItem";
+import { Link } from "react-router-dom";
+import { useCart } from "@/hooks/useCart";
 import { ShoppingCart } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet";
 import { useEffect, useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { cn, formatPrice } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { buttonVariants } from "../ui/button";
-import { useCart } from "@/hooks/useCart";
-import CartItem from "./CartItem";
+import { ScrollArea } from "../ui/scroll-area";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 
 interface CartProps {
   triggerStyles?: string;

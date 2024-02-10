@@ -1,25 +1,14 @@
 import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { UpdatePasswordValidation } from "@/lib/validation";
-import { useUpdateMyPassword } from "@/lib/react-query/queries";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UpdatePasswordValidation } from "@/lib/validation";
+import { useUpdateMyPassword } from "@/lib/react-query/queries";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const ResetPassword = () => {
 

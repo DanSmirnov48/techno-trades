@@ -1,4 +1,11 @@
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { INITIAL_USER, useUserContext } from "@/context/AuthContext";
+import { useDeactivateMyAccount, useSignOutAccount } from "@/lib/react-query/queries";
 import {
   Form,
   FormControl,
@@ -7,13 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDeactivateMyAccount, useSignOutAccount } from "@/lib/react-query/queries";
-import { INITIAL_USER, useUserContext } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 interface AddressDialogProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

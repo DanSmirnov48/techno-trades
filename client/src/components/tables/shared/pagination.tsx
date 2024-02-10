@@ -1,4 +1,4 @@
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table } from "@tanstack/react-table"

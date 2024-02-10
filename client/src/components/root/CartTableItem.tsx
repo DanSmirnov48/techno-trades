@@ -1,16 +1,17 @@
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Product } from "@/types";
-import { Minus, Plus, Trash } from "lucide-react";
 import { useState } from "react";
+import { Product } from "@/types";
 import { Button } from "../ui/button";
 import { useCart } from "@/hooks/useCart";
 import { cn, formatPrice } from "@/lib/utils";
+import { Minus, Plus, Trash } from "lucide-react";
+import { TableCell, TableRow } from "@/components/ui/table";
 
-type props = {
+type CartTableItemProps = {
   product: Product;
   qty: number;
 };
-export function CartTableItem({ product, qty }: props) {
+
+const CartTableItem = ({ product, qty }: CartTableItemProps) => {
   let currentProductPrice = product.isDiscounted ? product.discountedPrice! : product.price
   const { removeItem, updateQuantity } = useCart();
   const [quantity, setQuantity] = useState(qty);
@@ -117,3 +118,5 @@ export function CartTableItem({ product, qty }: props) {
     </>
   );
 }
+
+export default CartTableItem

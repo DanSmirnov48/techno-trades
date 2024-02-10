@@ -1,26 +1,18 @@
 import * as z from "zod";
+import { toast } from "sonner";
+import { IUser } from "@/types";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Icons } from "@/components/shared";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SigninValidation } from "@/lib/validation";
-import { Icons, } from "@/components/icons";
-import { useSignInAccount } from "@/lib/react-query/queries";
-import { IUser } from "@/types";
-import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
-import { toast } from "sonner";
+import { useSignInAccount } from "@/lib/react-query/queries";
+import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {
   data?: any;
@@ -59,7 +51,6 @@ const SigninForm = () => {
       const session: AuthResponse = await signInAccount(user);
       if (session.error && session.error.error === "Incorrect email or password") {
         setError(session.error.error)
-        // toast.error('Incorrect email or password')
       }
       const isUser = await checkAuthUser();
       if (session.data && session.data.status === "success" && isUser) {
@@ -118,7 +109,7 @@ const SigninForm = () => {
                 <FormItem>
                   <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)}/>
+                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,7 +129,7 @@ const SigninForm = () => {
                   </div>
                   <div className="relative">
                     <FormControl className="flex-grow pr-10">
-                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)}/>
+                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)} />
                     </FormControl>
                     <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
                       {type === 'password' ? <Eye /> : <EyeOff />}

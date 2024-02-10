@@ -1,9 +1,9 @@
+import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
 import { Product } from "@/types/index";
 import AddToCartButton from "./AddToCartButton";
 import AddToFavoritesButton from "./AddToFavoritesButton";
 import { calculateDiscountPercentage, formatPrice } from "@/lib/utils";
-import { useTheme } from "next-themes";
 
 type GridProductListProps = {
   products: Product[];

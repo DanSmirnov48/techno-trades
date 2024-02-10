@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input"
 import { Table } from "@tanstack/react-table"
 import { deliveryStatuses, paymentStatuses } from "./filters"
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/shared";
 import { DataTableFacetedFilter } from "../shared/data-table-faceted-filter"
 import { DataTableViewOptions } from "../shared/data-table-view-options"
 

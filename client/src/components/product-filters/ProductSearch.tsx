@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Product } from '@/types';
 import { Input } from '../ui/input';
 import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 const ProductSearch: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');

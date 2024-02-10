@@ -1,9 +1,9 @@
-import { Button, buttonVariants } from "../ui/button";
-import { useCart } from "@/hooks/useCart";
-import { Product } from "@/types/index";
+import Cart from "../root/Cart";
 import { cn } from "@/lib/utils";
-import Cart from "./Cart";
+import { Product } from "@/types/index";
+import { useCart } from "@/hooks/useCart";
 import { ShoppingCart } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
 
 const AddToCartButton = ({ product }: { product: Product }) => {
   const { items, addItem } = useCart();

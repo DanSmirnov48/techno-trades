@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export type UserRole = 'user' | 'admin';
 

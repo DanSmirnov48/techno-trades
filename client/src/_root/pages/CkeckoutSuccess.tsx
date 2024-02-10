@@ -1,8 +1,8 @@
-import OrderInvoice from "@/components/root/OrderInvoice";
-import { useCart } from "@/hooks/useCart";
-import { useGetOrderBySessionId } from "@/lib/react-query/queries";
 import { useEffect } from "react";
+import { useCart } from "@/hooks/useCart";
 import { useLocation } from "react-router-dom";
+import { OrderInvoice } from "@/components/shared";
+import { useGetOrderBySessionId } from "@/lib/react-query/queries";
 
 const CkeckoutSuccess: React.FC = () => {
   const { search } = useLocation();

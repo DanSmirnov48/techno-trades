@@ -1,20 +1,13 @@
-import { CartTableItem } from "@/components/root/CartTableItem";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCart";
-import { cn, formatPrice } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Link } from "react-router-dom";
+import { useCart } from "@/hooks/useCart";
+import { useEffect, useState } from "react";
+import { cn, formatPrice } from "@/lib/utils";
+import { CartTableItem } from "@/components/root";
 import { useUserContext } from "@/context/AuthContext";
-import { size } from "lodash";
 import { useCreateOrder } from "@/lib/react-query/queries";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Cart = () => {
   const delivery = Number(49.99);
@@ -195,5 +188,5 @@ const Cart = () => {
     </div>
   );
 };
-export default Cart;
 
+export default Cart;
