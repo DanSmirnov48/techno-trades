@@ -340,7 +340,7 @@ const ProductCreateForm = () => {
                           <StatBox label="%" value="50" />
                         </ul>
                       </div>
-
+                      <br />
                       <Label htmlFor="inputs">Or enter manually:</Label>
                       <Input
                         id="input"

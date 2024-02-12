@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { categories } from '@/components/tables/products-table/filters'
-import { NewArrivals, Promotion } from "@/components/root";
-import { buttonVariants } from "@/components/ui/button";
 import { useCategoryFilter } from "@/hooks/store";
+import { buttonVariants } from "@/components/ui/button";
+import { NewArrivals, Promotion } from "@/components/root";
 import SplideCarousel from "@/components/root/SplideCarousel";
+import { categories } from '@/components/tables/products-table/filters'
 
 const Home = () => {
   function Hero() {
@@ -83,9 +83,9 @@ const Home = () => {
     <div className="flex flex-col flex-1 min-h-screen items-center bg-light-1 dark:bg-dark-2 transform transition duration-700 ease-in-out">
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         {Hero()}
-        <div className="my-32" />
+        <div className="my-20" />
         {SplideCarousel()}
-        <div className="my-32" />
+        <div className="my-20" />
         {ShopCategories()}
         <div className="my-32" />
         <NewArrivals />
