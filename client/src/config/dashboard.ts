@@ -91,5 +91,14 @@ export const dashboardConfig: DashboardConfig = {
       variant: "default",
       items: [],
     },
+    {
+      title: "Categories",
+      label: "",
+      for: "admin",
+      href: "/dashboard/categories",
+      icon: "categories",
+      variant: "default",
+      items: [],
+    },
   ],
 }

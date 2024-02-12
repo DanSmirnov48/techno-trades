@@ -1,6 +1,6 @@
 import { JSX } from 'react';
 import { UserRole } from '@/components/root/ProtectedRoute';
-import { Dashboard, Account, Orders, Notifications, Appearance, Favourites, Tables, ProductCreateForm } from '@/_dashboard/pages';
+import { Dashboard, Account, Orders, Notifications, Appearance, Favourites, Tables, ProductCreateForm, Categories } from '@/_dashboard/pages';
 
 export interface dashboardRoutesProps {
   path: string;
@@ -60,6 +60,12 @@ const dashboardRoutes: dashboardRoutesProps[] = [
   {
     path: '/dashboard/new-product',
     outlet: <ProductCreateForm />,
+    allowedRoles: ['admin'],
+    additionalProps: {},
+  },
+  {
+    path: '/dashboard/categories',
+    outlet: <Categories />,
     allowedRoles: ['admin'],
     additionalProps: {},
   },
