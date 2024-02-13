@@ -14,6 +14,7 @@ import stripe from "./routes/stripe";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
 import orderRouter from "./routes/orderRouter";
+import AppError from "./utils/appError";
 
 config()
 connectDB()
@@ -25,7 +26,7 @@ app.use(compression())
 app.use(cookieParser())
 app.use(mongoSanitize());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.CLIENT_URL,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   credentials: true
@@ -45,6 +46,10 @@ app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/media', mediaRoutes)
 app.use("/api/uploadthing", createUploadthingExpressHandler({ router: uploadRouter }));
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
 const PORT = process.env.PORT || 8080;
 

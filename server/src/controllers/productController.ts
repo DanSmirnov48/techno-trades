@@ -72,11 +72,11 @@ export const searchProducts = asyncHandler(async (req: Request, res: Response) =
     const { q } = req.query;
 
     try {
-      const results = await ProductModel.find({ name: { $regex: new RegExp(q as string, 'i') } }).limit(10);
-      res.json({ results });
+        const results = await ProductModel.find({ name: { $regex: new RegExp(q as string, 'i') } }).limit(10);
+        res.json({ results });
     } catch (error) {
-      console.error('Error searching for products:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error searching for products:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -137,10 +137,9 @@ export const createProduct = asyncHandler(
             });
 
             if (!createdProduct) {
-                res.status(500).json({ error: "Product creation failed" });
+                return res.status(500).json({ error: "Product creation failed" });
             }
-            res
-                .status(201)
+            return res.status(201)
                 .json({ message: "Created Product", data: createdProduct })
                 .end();
         } catch (error) {
@@ -158,8 +157,7 @@ export const updateProduct = asyncHandler(
             if (!updatedProduct) {
                 res.status(500).json({ error: "Product update failed" });
             }
-            res
-                .status(200)
+            return res.status(200)
                 .json({ message: "Product Updated", data: updatedProduct })
                 .end();
         } catch (error) {
@@ -170,27 +168,27 @@ export const updateProduct = asyncHandler(
 );
 
 export const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
-        try {
-            const { id } = req.params;
-            const deleteProduct = await DeleteProductById(id);
-            return res.json(deleteProduct);
-        } catch (error) {
-            console.log(error);
-            return res.sendStatus(400);
-        }
+    try {
+        const { id } = req.params;
+        const deleteProduct = await DeleteProductById(id);
+        return res.json(deleteProduct);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
     }
+}
 );
 
 export const archiveProduct = asyncHandler(async (req: Request, res: Response) => {
-        try {
-            const { id } = req.params;
-            await ArchiveProductById(id);
-            return res.status(200).json({ message: "Product Archived"}).end();
-        } catch (error) {
-            console.log(error);
-            return res.sendStatus(400);
-        }
+    try {
+        const { id } = req.params;
+        await ArchiveProductById(id);
+        return res.status(200).json({ message: "Product Archived" }).end();
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
     }
+}
 );
 
 export const updateMultipleProducts = asyncHandler(async (req: Request, res: Response) => {
@@ -198,7 +196,7 @@ export const updateMultipleProducts = asyncHandler(async (req: Request, res: Res
         const updates = req.body;
         const updatedProducts = await UpdateMultipleProductsStock(updates);
 
-        res.status(201).json({ message: "Products Updated", data: updatedProducts });
+        return res.status(201).json({ message: "Products Updated", data: updatedProducts });
     } catch (error) {
         console.error("Error updating products:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -206,8 +204,6 @@ export const updateMultipleProducts = asyncHandler(async (req: Request, res: Res
 });
 
 export const UpdateMultipleProductsStock = async (updates: { id: string; quantity: number }[]) => {
-    console.log("UpdateMultipleProductsStock Called");
-
     const updatedProducts = await Promise.all(
         updates.map(async ({ id, quantity }) => {
 
@@ -223,8 +219,7 @@ export const UpdateMultipleProductsStock = async (updates: { id: string; quantit
 
                 // Check if there is enough stock for the requested quantity
                 if (quantity > currentStock) {
-                    console.error(`Insufficient stock for product with ID ${id}. Requested quantity: ${quantity}, Current stock: ${currentStock}`);
-                    return null;
+                    throw new Error(`Insufficient stock for product: ${id}. Requested quantity: ${quantity}, Current stock: ${currentStock}`);
                 }
 
                 // Calculate the new stock after considering the quantity
@@ -233,13 +228,12 @@ export const UpdateMultipleProductsStock = async (updates: { id: string; quantit
                 // Update the stock
                 return UpdateProductStockById(id, newStock);
 
-            } catch (error) {
-                console.log(error)
+            } catch (error: any) {
+                throw new Error(error.message);
             }
         })
     );
 
-    console.log("updatedProducts:", updatedProducts);
     return updatedProducts;
 };
 
@@ -264,13 +258,12 @@ export const updateProductStock = async (req: Request, res: Response) => {
 
         return res.status(200).json({ message: "Stock increased successfully", data: updatedProduct });
     } catch (error) {
-        console.error(`Error increasing stock for product with ID ${id}:`, error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
+        throw new Error(`Error increasing stock for product with ID ${id}`);
     }
 };
 
-export const setProductDiscount = asyncHandler(
-    async (req: Request, res: Response) => {
+export const setProductDiscount = asyncHandler(async (req: Request, res: Response) => {
         const { isDiscounted, discountedPrice } = req.body;
 
         try {
@@ -302,19 +295,17 @@ export const setProductDiscount = asyncHandler(
             // Save the updated product
             const updatedProduct = await product.save();
 
-            res
-                .status(200)
+            return res.status(200)
                 .json({ message: "Product Updated", data: updatedProduct })
                 .end();
         } catch (error) {
             console.log("Error while trying to update product", error);
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ error: "Internal server error" });
         }
     }
 );
 
-export const createProductReview = asyncHandler(
-    async (req: CustomRequest, res: Response) => {
+export const createProductReview = asyncHandler(async (req: CustomRequest, res: Response) => {
         const { rating, title, comment } = req.body
         const { id } = req.params
         const user = req.user
@@ -328,7 +319,7 @@ export const createProductReview = asyncHandler(
                 .find(r => r.user.toString() === user._id.toString())
 
             if (alreadyReviewed) {
-                res.status(400).json({ error: "Product already reviewed" });
+                return res.status(400).json({ error: "Product already reviewed" });
             }
 
             const review = {
@@ -346,7 +337,7 @@ export const createProductReview = asyncHandler(
                 curr.rating + acc, 0) / product.reviews.length
 
             await product.save()
-            res.status(201).json({ message: 'Review Added' })
+            return res.status(201).json({ message: 'Review Added' })
         } else {
             res.status(404)
             throw new Error('Product not found')

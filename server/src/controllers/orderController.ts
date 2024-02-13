@@ -18,8 +18,12 @@ interface CustomRequest extends Request {
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
     try {
         const orders = await GetOrders()
-        console.log(orders)
-        return res.status(200).json({ "orders": orders });
+        if (orders) {
+            return res.status(200).json({ "orders": orders });
+        } else {
+            res.status(404);
+            throw new Error("Order not found");
+        }
     } catch (error) {
         console.error("Error fetching orders:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -51,8 +55,7 @@ export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response
     try {
         const userId = req.user?._id;
         if (!userId) {
-            res.status(400).json({ error: 'User not authenticated' });
-            return;
+            return res.status(400).json({ error: 'User not authenticated' });
         }
 
         const orders = await GetCurrUserOrders(userId);
@@ -137,7 +140,7 @@ const createOrder = async (customer: any, data: any, payment: Stripe.Response<St
 };
 
 function generateOrderNumber(): string {
-    const prefix = "PROSHOP";
+    const prefix = "TECHNOTRADES";
     const randomDigits = Math.floor(Math.random() * 100000000);
     const orderNumber = `${prefix}${randomDigits.toString().padStart(8, '0')}`;
     return orderNumber;

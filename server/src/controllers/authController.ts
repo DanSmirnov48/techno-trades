@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { promisify } from 'util';
-import jwt from 'jsonwebtoken'
+import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
@@ -9,6 +9,12 @@ import { sendEmail } from '../utils/email';
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
     user?: IUser;
+}
+
+interface DecodedToken {
+    id: string;
+    iat: number;
+    exp: number;
 }
 
 const isTokenValid = (decodedToken: { exp?: number, iat?: number }): boolean => {
@@ -34,6 +40,19 @@ const signToken = (id: string, secret: string, expiresIn: string | number) => {
         expiresIn
     });
 };
+
+const verifyAsync = promisify<string, Secret, VerifyOptions, DecodedToken>(jwt.verify);
+
+const verifyToken = async (token: string, secret: Secret): Promise<DecodedToken> => {
+    return await verifyAsync(token, secret, {});
+}
+
+const isTokenAboutToExpire = (decodedToken: DecodedToken, thresholdMillis: number = 7200000): boolean => {
+    const expirationDate = new Date(decodedToken.exp * 1000);
+    const currentTime = new Date();
+    const timeUntilExpiration = expirationDate.getTime() - currentTime.getTime();
+    return timeUntilExpiration < thresholdMillis;
+}
 
 const createSendToken = (user: IUser, statusCode: number, req: Request, res: Response, includeRefreshToken: boolean = true) => {
     // Create Access Token
@@ -144,13 +163,11 @@ export const protect = asyncHandler(async (req: CustomRequest, res: Response, ne
     }
 
     // 2) Verification token
-    const decoded = await promisify<string, string>(jwt.verify)(token, process.env.JWT_SECRET!);
-    console.log('Decoded token:', decoded);
-    console.log('token:', token);
+    const decodedToken: DecodedToken = await verifyToken(token, process.env.JWT_SECRET!);
+    console.log('Decoded token:', decodedToken);
 
     // 3) Check if user still exists
-    // @ts-ignore
-    const currentUser = await User.findById(decoded.id);
+    const currentUser = await User.findById(decodedToken.id);
     if (!currentUser) {
         return next(
             new Error('The user belonging to this token does no longer exist.')
@@ -244,13 +261,12 @@ export const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: R
 
     try {
         // Verify the refresh token
-        const decodedRefreshToken = await promisify<string, string>(jwt.verify)(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+        const decodedRefreshToken: DecodedToken = await verifyToken(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
 
         // Check if the refresh token is still valid
-        //@ts-ignore
         if (isTokenValid(decodedRefreshToken)) {
             // Generate a new access token
-            //@ts-ignore
+
             const newAccessToken = signToken(decodedRefreshToken.id, process.env.JWT_SECRET!, process.env.JWT_EXPIRES_IN!);
 
             // Set the new access token in the response header
@@ -276,7 +292,7 @@ export const validateAccessToken = async (req: CustomRequest, res: Response, nex
         }
 
         // Verify the access token
-        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
+        const decoded: DecodedToken = await verifyToken(accessToken, process.env.JWT_SECRET!);
 
         // Assume User.findById is a function to retrieve a user by ID
         const user = await User.findById(decoded.id);

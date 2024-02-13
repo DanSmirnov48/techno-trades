@@ -60,7 +60,7 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params
     const user = await User.findById(id).select('-password')
     if (user) {
-        res.json(user)
+        return res.json(user)
     } else {
         res.status(404)
         throw new Error('User not found')

@@ -1,5 +1,4 @@
 import { config } from "dotenv";
-import asyncHandler from "../src/middlewares/asyncHandler";
 import { createUploadthing, type FileRouter, UTApi } from "uploadthing/server";
 
 config()
