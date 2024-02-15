@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "strict": true,
     "baseUrl": "src",
     "outDir": "dist",
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "*": ["*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
