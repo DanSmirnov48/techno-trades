@@ -15,41 +15,53 @@ import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
 import orderRouter from "./routes/orderRouter";
 import AppError from "./utils/appError";
+import path from 'path'
+import { corsOptions, helmetOptions } from "./config/site";
 
 config()
 connectDB()
 
 const app: Application = express();
 
-app.use(helmet());
-app.use(compression())
-app.use(cookieParser())
+process.on("uncaughtException", (err) => {
+  console.log(err);
+  console.log(`Error : ${err.message}`);
+  console.log(`Shutting down the server due to Uncaught Exception`);
+  process.exit(1);
+})
+
+app.use(compression());
+app.use(cookieParser());
 app.use(mongoSanitize());
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  credentials: true
-}))
+app.use(cors(corsOptions));
+app.use(helmet(helmetOptions));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 const server = http.createServer(app)
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Healthy");
-});
-
 app.use("/api/stripe", stripe);
 app.use(express.json())
-app.use('/api/orders', orderRouter)
-app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/media', mediaRoutes)
+app.use('/api/orders', orderRouter)
+app.use('/api/products', productRoutes)
 app.use("/api/uploadthing", createUploadthingExpressHandler({ router: uploadRouter }));
 
-app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
+__dirname = path.resolve()
+if (process.env.NODE_ENV === 'PRODUCTION') {
+  app.use(express.static(path.join(__dirname, './client/dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/dist/index.html'));
+  })
+} else {
+  app.get("/", (req: Request, res: Response) => {
+    res.send("Healthy");
+  })
+  app.all('*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  })
+}
 
 const PORT = process.env.PORT || 8080;
 

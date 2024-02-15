@@ -111,7 +111,7 @@ const createSendToken = (user: IUser, statusCode: number, req: Request, res: Res
 };
 
 export const signup = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const newUser = await User.create({
+    await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -119,7 +119,7 @@ export const signup = asyncHandler(async (req: Request, res: Response, next: Nex
         passwordConfirm: req.body.passwordConfirm
     });
 
-    createSendToken(newUser, 201, req, res);
+    return res.status(200).json({ status: 'success' }).end();
 });
 
 export const logIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -142,6 +142,7 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
 export const logout = (req: Request, res: Response) => {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
+    res.clearCookie("lastSignInTime");
     res.status(200).json({ status: 'success' });
     res.end()
 };
