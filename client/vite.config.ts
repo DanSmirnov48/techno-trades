@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://techno-trades-b8640249eefb.herokuapp.com',
         changeOrigin: true,
         secure: false,
       }
