@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/shared";
 import { cn, formatPrice } from "@/lib/utils";
 import { CartTableItem } from "@/components/root";
 import { useUserContext } from "@/context/AuthContext";
@@ -143,11 +144,12 @@ const Cart = () => {
               {isAuthenticated ? (
                 <Button
                   disabled={items.length === 0}
-                  className="w-full bg-dark-1 dark:text-white/90 text-lg"
+                  className="w-full bg-dark-1 py-7 dark:text-white/90 text-lg"
                   size="lg"
                   onClick={checkOutHandler}
                 >
-                  Checkout
+                  <Icons.visa className="w-16 bg-light-2 rounded-md p-1.5 mr-2" />
+                  Stripe Checkout 
                 </Button>
               ) : (
                 <Link

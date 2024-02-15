@@ -1,30 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
 import { UserType } from "@/lib/validation"
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
 import { UserImage } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { formatDate } from "@/lib/utils"
+import { first } from 'lodash'
 
 export const columns: ColumnDef<UserType>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "photo",
     header: "Photo",
@@ -40,11 +22,11 @@ export const columns: ColumnDef<UserType>[] = [
               alt="AR"
               className="object-cover"
             />
-            <AvatarFallback>{firstName.slice(0, 1)}{lastName.slice(0, 1)}</AvatarFallback>
+            <AvatarFallback>{first(firstName)}{first(lastName)}</AvatarFallback>
           </Avatar>
           :
           <Avatar>
-            <AvatarFallback>{firstName.slice(0, 1)}{lastName.slice(0, 1)}</AvatarFallback>
+            <AvatarFallback>{first(firstName)}{first(lastName)}</AvatarFallback>
           </Avatar>
       )
     },
@@ -60,6 +42,20 @@ export const columns: ColumnDef<UserType>[] = [
   {
     accessorKey: "email",
     header: "Email",
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Member Since" />
+    ),
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt") as string
+      return (
+        <div className="flex space-x-2 ml-2">
+          <span>{formatDate(createdAt, "short")}</span>
+        </div>
+      )
+    },
   },
   {
     accessorKey: "role",

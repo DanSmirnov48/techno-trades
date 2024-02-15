@@ -34,6 +34,7 @@ export default function ViewDialog({ payment }: ViewProps) {
             {entries.map(([key, value], index) => (
               <TableRow key={index}>
                 <TableCell>{key}</TableCell>
+                {/* @ts-ignore */}
                 <TableCell>{value ? value : ""}</TableCell>
               </TableRow>
             ))}
