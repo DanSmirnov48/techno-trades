@@ -23,7 +23,7 @@ interface AuthResponse {
 const SigninForm = () => {
 
   const navigate = useNavigate();
-  const { checkAuthUser } = useUserContext();
+  const { checkAuthUser, setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
 
   const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | undefined>();
@@ -49,12 +49,15 @@ const SigninForm = () => {
   const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
     try {
       const session: AuthResponse = await signInAccount(user);
+
       if (session.error && session.error.error === "Incorrect email or password") {
         setError(session.error.error)
       }
-      const isUser = await checkAuthUser();
-      if (session.data && session.data.status === "success" && isUser) {
+      if (session.data && session.data.status === "success") {
         const user = session.data.data.user as IUser
+        setUser(user)
+        setIsAuthenticated(true)
+        user.role === 'admin' && setIsAdmin(true);
         toast.success(`Nice to see you back ${user.firstName}`)
         navigate("/");
       }
@@ -109,7 +112,7 @@ const SigninForm = () => {
                 <FormItem>
                   <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)} />
+                    <Input type="email" placeholder="Email" className="block w-full px-4 py-2 h-12" {...field} onFocus={() => setError(undefined)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,7 +132,7 @@ const SigninForm = () => {
                   </div>
                   <div className="relative">
                     <FormControl className="flex-grow pr-10">
-                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" {...field} onFocus={() => setError(undefined)} />
+                      <Input type={type} maxLength={35} placeholder="Password" className="block w-full px-4 py-2 h-12" {...field} onFocus={() => setError(undefined)} />
                     </FormControl>
                     <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
                       {type === 'password' ? <Eye /> : <EyeOff />}
@@ -142,7 +145,7 @@ const SigninForm = () => {
             />
           </div>
           <div className="mt-6">
-            <Button type="submit" disabled={loadingUser} className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+            <Button type="submit" disabled={loadingUser} className="w-full px-6 py-3 text-lg font-medium tracking-wide text-white dark:text-dark-4 capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
               {loadingUser ? <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> : <>log in</>}
             </Button>
           </div>

@@ -41,9 +41,11 @@ export async function getUserSession() {
   try {
     const response = await axios.get('/api/users/validate');
     return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
+  } catch (error: any) {
+    if (error.response.data === 'Unauthorized' && error.response.status === 401) {
+      console.log('Unauthorized')
+    }
+    return undefined
   }
 }
 
@@ -291,7 +293,7 @@ export async function getOrders() {
 export const getOrdersBySessionId = async (sessionId: string) => {
   try {
     const response = await axios.get(`/api/orders/${sessionId}`);
-    if(response.status === 200){
+    if (response.status === 200) {
       return response.data.order as Order;
     }
   } catch (error) {

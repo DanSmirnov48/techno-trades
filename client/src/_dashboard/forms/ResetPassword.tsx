@@ -31,13 +31,13 @@ const ResetPassword = () => {
       passwordConfirm: value.newPasswordConfirm
     })
     let res = await updateMyPassword(user)
-    console.log(res)
-    if (res && res.status === 401 && res.error.error === 'Wrong Password') {
+    //@ts-ignore
+    if (res && res.status === 401 && res.error === 'Wrong Password') {
       toast.error('Incorrect Password Provided')
       return
     }
+    //@ts-ignore
     if (res && res.status === 200 && res.statusText === 'OK') {
-      console.log(res.data.data.user._id)
       toast.success('Your Profile was successfully updated')
       form.reset()
     }

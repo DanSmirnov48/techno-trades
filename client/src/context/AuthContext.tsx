@@ -43,6 +43,7 @@ const INITIAL_STATE = {
   isAdmin: false,
   setUser: () => { },
   setIsAuthenticated: () => { },
+  setIsAdmin: () => { },
   checkAuthUser: async () => false as boolean,
 };
 
@@ -53,6 +54,7 @@ interface IContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  setIsAdmin: Dispatch<SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 };
 
@@ -70,7 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
-      const { data, status }: AuthResponse = await getSession();
+      const session: AuthResponse | undefined = await getSession();
+      if (session === undefined) {
+        return false;
+      }
+      const { data, status } = session;
       if (data && status === 200 && !validating) {
         setUser({
           _id: data.data.user._id,
@@ -87,8 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log(data, status)
         return false;
       }
-    } catch (error) {
-      console.error('Error in checkAuthUser:', error);
+    } catch (error: any) {
+      if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
+        console.log('Unauthorized')
+      }
       return false;
     } finally {
       setIsLoading(false);
@@ -106,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated,
     isAdmin,
     setIsAuthenticated,
+    setIsAdmin,
     checkAuthUser,
   };
 

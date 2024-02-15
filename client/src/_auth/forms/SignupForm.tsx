@@ -1,28 +1,36 @@
 import { z } from "zod";
 import { toast } from "sonner";
-import { IUser } from "@/types";
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/components/shared";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { SignupValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUserContext } from "@/context/AuthContext";
 import { useCreateUserAccount } from "@/lib/react-query/queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {
   data?: any;
   error?: any;
-  status?: any;
+  status?: number;
+  statusTest?: string;
 }
 
 const SignupForm = () => {
 
   const navigate = useNavigate();
-  const { checkAuthUser } = useUserContext();
+  const [type, setType] = useState<'password' | 'text'>('password');
+
+  const handleToggle = () => {
+    if (type === 'password') {
+      setType('text');
+    } else {
+      setType('password');
+    }
+  };
 
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -40,12 +48,10 @@ const SignupForm = () => {
   const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
     try {
       const account: AuthResponse = await createAccount(user);
-      
-      const isUser = await checkAuthUser();
-      if (account.data && account.data.status === "success" && isUser) {
-        const user = account.data.data.user as IUser
-        toast.success(`Welcome, ${user.firstName}. Happy shopping!`)
-        navigate("/");
+
+      if (account.status === 200 && account.data.status === 'success') {
+        toast.success(`Your Account Created Successfully!`);
+        navigate("/sign-in");
       }
     } catch (error) {
       toast.error('Unknown Error', {
@@ -104,7 +110,7 @@ const SignupForm = () => {
                     <Input
                       type="text"
                       placeholder="John"
-                      className=""
+                      className="block w-full px-4 py-2 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -123,7 +129,7 @@ const SignupForm = () => {
                     <Input
                       type="text"
                       placeholder="Doe"
-                      className=""
+                      className="block w-full px-4 py-2 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -142,7 +148,7 @@ const SignupForm = () => {
                     <Input
                       type="email"
                       placeholder="johndoe@email.com"
-                      className=""
+                      className="block w-full px-4 py-2 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -157,14 +163,14 @@ const SignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="shad-form_label">Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      className=""
-                      {...field}
-                    />
-                  </FormControl>
+                  <div className="relative">
+                    <FormControl className="flex-grow pr-10">
+                      <Input type={type} maxLength={50} placeholder="Password" className="block w-full px-4 py-2 h-12" {...field} />
+                    </FormControl>
+                    <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
+                      {type === 'password' ? <Eye /> : <EyeOff />}
+                    </span>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -175,21 +181,21 @@ const SignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="shad-form_label">Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Confirm Password"
-                      className=""
-                      {...field}
-                    />
-                  </FormControl>
+                  <div className="relative">
+                    <FormControl className="flex-grow pr-10">
+                      <Input type={type} maxLength={50} placeholder="Confirm Password" className="block w-full px-4 py-2 h-12" {...field} />
+                    </FormControl>
+                    <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
+                      {type === 'password' ? <Eye /> : <EyeOff />}
+                    </span>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             <div className="mt-6">
-              <Button type="submit" disabled={loadingUser} className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+              <Button type="submit" disabled={loadingUser} className="w-full px-6 py-3 text-lg font-medium tracking-wide text-white dark:text-dark-4 capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
                 {loadingUser ? <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> : <>Sign Up</>}
               </Button>
             </div>
