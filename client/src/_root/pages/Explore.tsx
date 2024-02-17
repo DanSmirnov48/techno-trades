@@ -56,10 +56,10 @@ const Explore = () => {
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         <ProductSearch />
         <div className="flex flex-row min-h-[65rem]">
-          <div className="basis-1/4">
+          <div className="basis-1/4 hidden xl:block">
             {isProductLoading ? <FilterLoader /> : <ProductFilters />}
           </div>
-          <div className="flex flex-col basis-3/4 ml-5">
+          <div className="flex flex-col xl:basis-3/4 lg:basis-full xl:ml-5">
             {!filteredProductsLoading && <ProductSorting />}
             {filteredProductsLoading ? <ProductLoader displayType={isChecked ? 'grid' : 'list'} showFilterLoader /> : (filteredProducts && totalProducts > 0) ? (
               isChecked ? (

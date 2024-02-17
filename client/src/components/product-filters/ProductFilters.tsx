@@ -16,14 +16,6 @@ const ProductFilters: React.FC = () => {
       </div>
 
       <Accordion type="multiple" className="w-full" defaultValue={["price", "category", "brands", "rating"]}>
-        {/* <Accordion type="multiple" className="w-full" defaultValue={["applied-filters", "price", "category", "brands", "rating"]}>
-        <AccordionItem value="applied-filters">
-            <AccordionTrigger>Applied Filters</AccordionTrigger>
-            <AccordionContent>
-              <AppliedFilters />
-            </AccordionContent>
-          </AccordionItem> */}
-
         <AccordionItem value="price">
           <AccordionTrigger>Price</AccordionTrigger>
           <AccordionContent>

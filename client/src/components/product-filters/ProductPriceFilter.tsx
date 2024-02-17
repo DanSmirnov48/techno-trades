@@ -1,19 +1,16 @@
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
-import { useState, useEffect } from "react";
 import { priceRanges } from "@/constants/idnex";
 import { usePriceFilterStore } from "@/hooks/store";
-import { useGetProducts } from "@/lib/react-query/queries";
 
 interface PriceFilterProps {
   min: number;
   max: number;
   onChange: (selectedRange: { min: number; max: number } | null) => void;
   isChecked: boolean;
-  productCount: number;
 }
 
-const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked, productCount }) => {
+const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked }) => {
   const handleCheckboxChange = () => {
     const newRange = isChecked ? null : { min, max };
     onChange(newRange);
@@ -22,15 +19,15 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ min, max, onChange, isChecked
   return (
     <div className="flex flex-row mx-0 my-1 justify-start items-center">
       <Checkbox id="price" className="mr-1" onCheckedChange={handleCheckboxChange} checked={isChecked} />
-      <Label htmlFor="price" className="font-jost text-base ml-2 dark:text-light-2 transform transition duration-500 ease-in-out">{`£${min} to £${max} (${productCount})`}</Label>
+      <Label htmlFor="price" className="font-jost text-base ml-2 dark:text-light-2 transform transition duration-500 ease-in-out">{`£${min} to £${max}`}</Label>
     </div>
   );
 };
 
 const ProductPriceFilter: React.FC = () => {
   const { selectedRanges, addSelectedRange, removeSelectedRange } = usePriceFilterStore();
-  const [productsCountByRange, setProductsCountByRange] = useState<{ [key: string]: number }>({});
-  const { data } = useGetProducts();
+
+  selectedRanges.length > 0 && console.log(selectedRanges[0].min + " - " + selectedRanges[selectedRanges.length - 1].max);
 
   const handlePriceFilterChange = (newRange: { min: number; max: number } | null, min: number, max: number) => {
     if (newRange) {
@@ -39,15 +36,6 @@ const ProductPriceFilter: React.FC = () => {
       removeSelectedRange(min, max);
     }
   };
-
-  useEffect(() => {
-    const countByRange: { [key: string]: number } = {};
-    priceRanges.forEach(({ min, max }) => {
-      const count = data?.data.products.filter((product: { price: number; }) => product.price >= min && product.price <= max).length || 0;
-      countByRange[`${min}-${max}`] = count;
-    });
-    setProductsCountByRange(countByRange);
-  }, [data?.data.products]);
 
   return (
     <>
@@ -58,7 +46,6 @@ const ProductPriceFilter: React.FC = () => {
           max={max}
           onChange={(newRange) => handlePriceFilterChange(newRange, min, max)}
           isChecked={selectedRanges.some((range) => range.min === min && range.max === max)}
-          productCount={productsCountByRange[`${min}-${max}`] || 0}
         />
       ))}
     </>

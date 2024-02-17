@@ -8,4 +8,5 @@ export { default as ProductSorting } from "./ProductSorting";
 export { default as ProductPriceFilter } from "./ProductPriceFilter";
 export { default as ProductRatingFilter } from "./ProductRatingFilter";
 export { default as ProductBrandFilters } from "./ProductBrandFilters";
+export { default as MobileProductFilters } from "./MobileProductFilters";
 export { default as ProductCategoryFilter } from "./ProductCategoryFilter";
