@@ -1,42 +1,15 @@
-import { useEffect } from "react";
 import { Icons } from "../shared";
 import { useSorting } from "@/hooks/store";
-import { useLocation, useNavigate } from "react-router-dom";
 import { showPerPage, sortCategories } from "@/constants/idnex";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { MobileProductFilters } from ".";
 
 const ProductSorting: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const {
     isChecked, setSort,
     selectedSort, toggleCheckbox,
     selectedShowPerPage, setShowPerPage,
   } = useSorting();
-
-  // // Update URL search params when sorting options change
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   params.set('sort', selectedSort);
-  //   params.set('show', selectedShowPerPage);
-  //   navigate({ search: `?${params.toString()}` });
-  // }, [location.search, navigate, selectedSort, selectedShowPerPage]);
-
-  // // Parse URL search params on component mount
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search);
-  //   const sortParam = params.get('sort');
-  //   const showParam = params.get('show');
-
-  //   if (sortParam && sortCategories.some((category) => category.value === sortParam)) {
-  //     setSort(sortParam);
-  //   }
-
-  //   if (showParam && showPerPage.some((option) => option.value === showParam)) {
-  //     setShowPerPage(showParam);
-  //   }
-  // }, [location.search, setSort, setShowPerPage]);
 
   return (
     <div className="flex justify-between mb-3 transform transition duration-500 ease-in-out">
@@ -79,7 +52,7 @@ const ProductSorting: React.FC = () => {
           </Select>
         </>
       </div>
-      <div>
+      <div className="hidden xl:block">
         <label className='themeSwitcherTwo shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-lg bg-background dark:bg-dark-4 p-2 transform transition duration-500 ease-in-out'>
           <input
             type='checkbox'
@@ -103,6 +76,7 @@ const ProductSorting: React.FC = () => {
           </span>
         </label>
       </div>
+      <MobileProductFilters />
     </div>
   );
 };
