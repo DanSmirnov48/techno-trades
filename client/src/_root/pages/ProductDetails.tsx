@@ -1,9 +1,13 @@
+import { take } from "lodash";
 import "@smastrom/react-rating/style.css";
 import { useEffect, useState } from "react";
 import { Product, ProductImage } from "@/types";
 import { Rating } from "@smastrom/react-rating";
 import { Button } from "@/components/ui/button";
+import { Shell } from "@/components/dashboard/shell";
 import { ArrowLeft, Fullscreen } from "lucide-react";
+import { useUserContext } from "@/context/AuthContext";
+import { Card, CardContent } from "@/components/ui/card";
 import ReviewsSection from "@/components/root/ReviewsSection";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -16,6 +20,7 @@ import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays
 const ProductDetails = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useUserContext();
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const { data: product, isLoading: productLoading } = useGetProductBySlug(slug);
   const { data: allProducts, isLoading: allProductsLoading } = useGetProducts();
@@ -238,92 +243,110 @@ const ProductDetails = () => {
   }
 
   return productLoading ? (
-    <>
-      <h1>loading</h1>
-    </>
+    <Shell className="items-start mt-[10rem]">
+      <div role="status" className="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center">
+        <div className="flex items-center justify-center w-full h-80 bg-gray-300 rounded sm:w-[50rem] dark:bg-gray-700">
+          <svg className="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+          </svg>
+        </div>
+        <div className="w-full">
+          <div className="h-5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[440px] mb-2.5"></div>
+          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[460px] mb-2.5"></div>
+          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+        </div>
+        <span className="sr-only">Loading...</span>
+      </div>
+    </Shell>
   ) : (
-    <section className="mx-auto w-full max-w-screen-2xl px-2.5 md:px-20 py-10">
-      <div className="max-w-full px-4 mx-auto">
-        <Button
-          className={cn("mb-10 text-sm")}
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="mr-2 w-6 h-6" />
-          Back
-        </Button>
-        <div className="flex flex-wrap mb-24 -mx-4 ">
-          {imageSection()}
-          <div className="w-full px-4 md:w-1/2">
-            <div className="lg:pl-20 font-jost">
-              {infoSection()}
-              {spectsSection()}
-              {product && <AddToCartButton product={product} />}
-              <div className="mt-2" />
-              {product && <AddToFavoritesButton product={product} variant="button" />}
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-w-screen-lg flex justify-center select-none bg-white">
-                  <Carousel className="w-full max-w-4xl">
-                    <CarouselContent>
-                      {product?.image.map((_, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="flex aspect-square items-center justify-center p-6 cursor-grab"
-                          onMouseDown={(e) => e.currentTarget.style.cursor = "grabbing"}
-                          onMouseUp={(e) => e.currentTarget.style.cursor = "grab"}
-                          onMouseLeave={(e) => e.currentTarget.style.cursor = "grab"}
-                        >
-                          <img className="object-contain" src={product.image[index].url} />
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </DialogContent>
-              </Dialog>
-            </div>
+    <Shell>
+      <Button
+        className={cn("mb-10 text-sm max-w-[10rem]")}
+        size={"lg"}
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="mr-2 w-6 h-6" />
+        Back
+      </Button>
+      <div className="flex flex-wrap mb-24 -mx-4 ">
+        {imageSection()}
+        <div className="w-full px-4 md:w-1/2">
+          <div className="lg:pl-20 font-jost">
+            {infoSection()}
+            {spectsSection()}
+            {product && <AddToCartButton product={product} />}
+            <div className="mt-2" />
+            {product && <AddToFavoritesButton product={product} variant="button" />}
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="max-w-screen-lg flex justify-center select-none bg-white">
+                <Carousel className="w-full max-w-4xl">
+                  <CarouselContent>
+                    {product?.image.map((_, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="flex aspect-square items-center justify-center p-6 cursor-grab"
+                        onMouseDown={(e) => e.currentTarget.style.cursor = "grabbing"}
+                        onMouseUp={(e) => e.currentTarget.style.cursor = "grab"}
+                        onMouseLeave={(e) => e.currentTarget.style.cursor = "grab"}
+                      >
+                        <img className="object-contain" src={product.image[index].url} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-        <section>
-          <div className="flex flex-row justify-between items-center my-4 font-jost mt-[10rem]">
-            <h1 className="text-dark-3 dark:text-white/80 text-3xl">You might also like</h1>
-          </div>
+        <Card className="w-full m-4 p-5 mt-[5rem]">
+          <CardContent className="text-xl">
+            {product?.description}
+          </CardContent>
+        </Card>
+      </div>
+      <section>
+        <div className="flex flex-row justify-between items-center my-4 font-jost">
+          <h1 className="text-dark-3 dark:text-white/80 text-3xl">You might also like</h1>
+        </div>
 
-          <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 rounded-xl">
-            <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-12 font-jost">
-              <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-                {relatedProducts.map((product) => (
-                  <Link to={`/products/${product.slug}`} key={product._id}>
-                    <div className="group relative">
-                      <div className="transform group-hover:-translate-y-3 transition-transform duration-500 ease-out">
-                        <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
-                          <img
-                            src={product.image[0].url}
-                            alt={product.name}
-                            className="h-full w-full object-contain object-center p-5"
-                          />
-                        </div>
-                        <div className="transform origin-center text-dark-4 dark:text-white/80 group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
-                          <h3 className="mt-6 text-sm  capitalize">{product.category}</h3>
-                          <p className="text-base font-semibold">{product.name}</p>
-                        </div>
+        <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8 bg-[#F3F3F3] dark:bg-dark-4 rounded-xl">
+          <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-12 font-jost">
+            <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+              {take(relatedProducts, 3).map((product) => (
+                <Link to={`/products/${product.slug}`} key={product._id}>
+                  <div className="group relative">
+                    <div className="transform group-hover:-translate-y-3 transition-transform duration-500 ease-out">
+                      <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
+                        <img
+                          src={product.image[0].url}
+                          alt={product.name}
+                          className="h-full w-full object-contain object-center p-5"
+                        />
+                      </div>
+                      <div className="transform origin-center text-dark-4 dark:text-white/80 group-hover:scale-125 group-hover:translate-x-14 transition-transform duration-700 ease-out">
+                        <h3 className="mt-6 text-sm  capitalize">{product.category}</h3>
+                        <p className="text-base font-semibold">{product.name}</p>
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
-
-        <div className="container p-0 my-20">
-          {product && <ProductReviewForm product={product} />}
         </div>
-        <div className="container p-0 my-20">
-          <ReviewsSection product={product!} />
-        </div>
-      </div>
-    </section>
+      </section>
+      <br />
+      {isAuthenticated && product && (
+        <ProductReviewForm product={product} />
+      )}
+      <br />
+      <ReviewsSection product={product!} />
+    </Shell>
   );
 };
 
