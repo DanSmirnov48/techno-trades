@@ -8,7 +8,7 @@ const ProductCategoryFilter = () => {
 
   return (
     <>
-      {categoriesValues.map((category, index) => (
+      {categoriesValues.sort().map((category, index) => (
         <div
           key={index}
           className="flex flex-row mx-0 my-1 justify-start items-center"

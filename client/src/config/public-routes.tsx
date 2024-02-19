@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, ProductDetails } from '@/_root/pages';
+import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, PopularBrands, ProductDetails } from '@/_root/pages';
 import { ProtectedRouteProps, UserRole } from '@/components/root/ProtectedRoute';
 
 export interface PublicRoute {
@@ -32,6 +32,10 @@ const publicRoutes: PublicRoute[] = [
   {
     path: '/deals',
     outlet: <Deals />,
+  },
+  {
+    path: '/popular-brands',
+    outlet: <PopularBrands />,
   },
   {
     path: '/products/:slug',
