@@ -1,11 +1,46 @@
 import { Link } from "react-router-dom";
 import { useCategoryFilter } from "@/hooks/store";
+import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from "@/components/ui/button";
 import { NewArrivals, Promotion } from "@/components/root";
 import SplideCarousel from "@/components/root/SplideCarousel";
-import { categories } from '@/components/tables/products-table/filters'
+import { Tag, CalendarDays, Recycle, Store } from "lucide-react";
+import { categories } from "@/components/tables/products-table/filters";
 
 const Home = () => {
+  function banner() {
+    const gradientStyle = {
+      background:
+        "linear-gradient(to right, #FFFFFF 0%, #f1f1f1 25%, #d4d4d490 35%, #d4d4d490 65%, #f1f1f1 75%, #FFFFFF 100%)",
+    };
+
+    return (
+      <section className="w-full" style={gradientStyle}>
+        <Shell className="flex justify-around h-16 text-sm font-medium">
+          <div className="flex flex-row w-full h-16 items-center">
+            <Tag className="w-14" />
+            <span>You won't get it cheaper. Full stop.</span>
+          </div>
+          <div className="flex flex-row w-full h-16 items-center">
+            <CalendarDays className="w-14 mr-2" />
+            <span>Spread the cost(29.9% APR representative variable)</span>
+          </div>
+          <div className="flex flex-row w-full h-16 items-center">
+            <Recycle className="w-14 mr-2" />
+            <span>
+              Recycle your old tech &amp; get £5 off your next purchase.
+              T&amp;Cs apply.
+            </span>
+          </div>
+          <div className="flex flex-row w-full h-16 items-center">
+            <Store className="w-14" />
+            <span>Free order &amp; collect in an hour</span>
+          </div>
+        </Shell>
+      </section>
+    );
+  }
+
   function Hero() {
     return (
       <section className="relative overflow-hidden flex justify-center">
@@ -28,7 +63,9 @@ const Home = () => {
             </p>
             <Link
               to="/explore"
-              className={buttonVariants({ className: "text-sm w-36 duration-700 ease-in-out" })}
+              className={buttonVariants({
+                className: "text-sm w-36 duration-700 ease-in-out",
+              })}
             >
               Shop Now
             </Link>
@@ -44,14 +81,19 @@ const Home = () => {
     return (
       <>
         <div className="flex flex-row justify-between items-center my-10 font-jost">
-          <h1 className="text-dark-4 dark:text-white/80 text-3xl">Shop by Categories</h1>
+          <h1 className="text-dark-4 dark:text-white/80 text-3xl">
+            Shop by Categories
+          </h1>
           <Link to="/explore" className="text-lg">
             Show All
           </Link>
         </div>
         <ul className="w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {categories.map((status, index) => (
-            <li key={index} className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3] dark:bg-dark-4 duration-700 ease-in-out">
+            <li
+              key={index}
+              className="group flex w-full flex-col self-center overflow-hidden rounded-lg bg-[#F3F3F3] dark:bg-dark-4 duration-700 ease-in-out"
+            >
               <div className="relative m-6 h-40 hidden md:flex transform group-hover:animate-pulse transition-transform">
                 <img
                   className="w-full h-full object-scale-down"
@@ -63,7 +105,10 @@ const Home = () => {
               <Link to="/explore">
                 <div
                   className="flex m-6 h-16 overflow-hidden items-center justify-center rounded-xl bg-background dark:bg-dark-2 transform transition duration-700 ease-in-out hover:shadow-2xl hover:-translate-y-3 hover:border-2 dark:hover:shadow-white/40"
-                  onClick={() => { removeAllCategories(); toggleCategory(status.value) }}
+                  onClick={() => {
+                    removeAllCategories();
+                    toggleCategory(status.value);
+                  }}
                 >
                   <status.icon className="h-5 w-5 mr-3 text-black md:hidden" />
                   <h5 className="text-xl font-medium text-dark-4 dark:text-white/80 font-jost">
@@ -71,7 +116,6 @@ const Home = () => {
                   </h5>
                 </div>
               </Link>
-
             </li>
           ))}
         </ul>
@@ -81,6 +125,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen items-center bg-light-1 dark:bg-dark-2 transform transition duration-700 ease-in-out">
+      {banner()}
       <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
         {Hero()}
         <div className="my-20" />
