@@ -20,7 +20,7 @@ export const helmetOptions = {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
             styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-            imgSrc: ["'self'", 'data:', 'https://utfs.io', 'https://images.unsplash.com'],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https://utfs.io', 'https://images.unsplash.com'],
         },
     },
 };
