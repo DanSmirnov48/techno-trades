@@ -19,11 +19,40 @@ interface CustomRequest extends Request {
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const products = await ProductModel.find();
+        const products = await ProductModel.getAllProducts();
         return res.status(200).json({ size: products.length, products });
     } catch (error) {
         console.log(error);
         return res.sendStatus(400);
+    }
+});
+
+export const getArchivedProducts = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const products = await ProductModel.getArchivedProducts();
+        return res.status(200).json({ size: products.length, products });
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+});
+
+export const unarchiveProduct = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.body
+    try {
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        product.isArchived = false;
+        await product.save();
+
+        return res.status(200).json({ message: "Product Restored" }).end();
+    } catch (error) {
+        console.log("Error while trying to update product", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -182,6 +211,7 @@ export const deleteProduct = asyncHandler(async (req: Request, res: Response) =>
 export const archiveProduct = asyncHandler(async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        console.log(id)
         await ArchiveProductById(id);
         return res.status(200).json({ message: "Product Archived" }).end();
     } catch (error) {
@@ -264,83 +294,81 @@ export const updateProductStock = async (req: Request, res: Response) => {
 };
 
 export const setProductDiscount = asyncHandler(async (req: Request, res: Response) => {
-        const { isDiscounted, discountedPrice } = req.body;
+    const { isDiscounted, discountedPrice } = req.body;
 
-        try {
-            const product = await ProductModel.findById(req.params.id);
+    try {
+        const product = await ProductModel.findById(req.params.id);
 
-            if (!product) {
-                return res.status(404).json({ message: 'Product not found' });
-            }
-
-            // Update discount-related fields
-            if (isDiscounted !== undefined) {
-                product.isDiscounted = isDiscounted;
-
-                // If ending the discount, reset the discount-related fields
-                if (!isDiscounted) {
-                    product.discountedPrice = undefined;
-                }
-            }
-
-            // Optionally update discountedPrice if provided
-            if (discountedPrice !== undefined) {
-                // Check if discounted price is less than or equal to normal price
-                if (isDiscounted && discountedPrice > product.price) {
-                    return res.status(400).json({ message: 'Discounted price cannot exceed normal price' });
-                }
-                product.discountedPrice = discountedPrice;
-            }
-
-            // Save the updated product
-            const updatedProduct = await product.save();
-
-            return res.status(200)
-                .json({ message: "Product Updated", data: updatedProduct })
-                .end();
-        } catch (error) {
-            console.log("Error while trying to update product", error);
-            return res.status(500).json({ error: "Internal server error" });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
+
+        // Update discount-related fields
+        if (isDiscounted !== undefined) {
+            product.isDiscounted = isDiscounted;
+
+            // If ending the discount, reset the discount-related fields
+            if (!isDiscounted) {
+                product.discountedPrice = undefined;
+            }
+        }
+
+        // Optionally update discountedPrice if provided
+        if (discountedPrice !== undefined) {
+            // Check if discounted price is less than or equal to normal price
+            if (isDiscounted && discountedPrice > product.price) {
+                return res.status(400).json({ message: 'Discounted price cannot exceed normal price' });
+            }
+            product.discountedPrice = discountedPrice;
+        }
+
+        // Save the updated product
+        const updatedProduct = await product.save();
+
+        return res.status(200)
+            .json({ message: "Product Updated", data: updatedProduct })
+            .end();
+    } catch (error) {
+        console.log("Error while trying to update product", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
-);
+});
 
 export const createProductReview = asyncHandler(async (req: CustomRequest, res: Response) => {
-        const { rating, title, comment } = req.body
-        const { id } = req.params
-        const user = req.user
+    const { rating, title, comment } = req.body
+    const { id } = req.params
+    const user = req.user
 
-        // console.log({rating, title, comment, id, user})
+    // console.log({rating, title, comment, id, user})
 
-        const product = await ProductModel.findById(id);
+    const product = await ProductModel.findById(id);
 
-        if (product) {
-            const alreadyReviewed = product.reviews
-                .find(r => r.user.toString() === user._id.toString())
+    if (product) {
+        const alreadyReviewed = product.reviews
+            .find(r => r.user.toString() === user._id.toString())
 
-            if (alreadyReviewed) {
-                return res.status(400).json({ error: "Product already reviewed" });
-            }
-
-            const review = {
-                name: user.firstName.concat(" " + user.lastName),
-                rating: Number(rating),
-                title,
-                comment,
-                user: user._id
-            }
-
-            product.reviews.push(review)
-            product.numReviews = product.reviews.length
-
-            product.rating = product.reviews.reduce((acc, curr) =>
-                curr.rating + acc, 0) / product.reviews.length
-
-            await product.save()
-            return res.status(201).json({ message: 'Review Added' })
-        } else {
-            res.status(404)
-            throw new Error('Product not found')
+        if (alreadyReviewed) {
+            return res.status(400).json({ error: "Product already reviewed" });
         }
+
+        const review = {
+            name: user.firstName.concat(" " + user.lastName),
+            rating: Number(rating),
+            title,
+            comment,
+            user: user._id
+        }
+
+        product.reviews.push(review)
+        product.numReviews = product.reviews.length
+
+        product.rating = product.reviews.reduce((acc, curr) =>
+            curr.rating + acc, 0) / product.reviews.length
+
+        await product.save()
+        return res.status(201).json({ message: 'Review Added' })
+    } else {
+        res.status(404)
+        throw new Error('Product not found')
     }
-);
+});

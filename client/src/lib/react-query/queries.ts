@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, getArchivedProducts, restoreProduct } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -25,7 +25,7 @@ export const useSignInAccount = () => {
     });
 };
 
-export const useGetUserSession= () => {
+export const useGetUserSession = () => {
     return useMutation({
         mutationFn: () => getUserSession(),
         onSuccess: (data) => { },
@@ -88,6 +88,13 @@ export const useGetProducts = () => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_PRODUCTS],
         queryFn: () => getProducts(),
+    });
+};
+
+export const useGetArchivedProducts = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_ARCHIVED_PRODUCTS],
+        queryFn: () => getArchivedProducts(),
     });
 };
 
@@ -169,6 +176,18 @@ export const useArchiveProduct = () => {
     });
 };
 
+export const useRestoreProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (product: { id: string }) => restoreProduct(product),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_ARCHIVED_PRODUCTS],
+            });
+        },
+    });
+};
+
 export const useSetProductDiscount = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -191,7 +210,7 @@ export const useGetOrders = () => {
     });
 };
 
-export const useGetOrderBySessionId= (sessionId: string) => {
+export const useGetOrderBySessionId = (sessionId: string) => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_ORDER_BY_SESSION_ID, sessionId],
         queryFn: () => getOrdersBySessionId(sessionId),
@@ -237,7 +256,7 @@ export const useUpdateShippingStatus = () => {
 export const useCreateReview = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (review: { productId: string; rating: number; title: string; comment: string }) => 
+        mutationFn: (review: { productId: string; rating: number; title: string; comment: string }) =>
             createReview(review),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
