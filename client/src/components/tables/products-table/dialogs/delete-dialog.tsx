@@ -26,7 +26,8 @@ export default function DeleteDialog({ product, isOpen, showActionToggle }: Dele
   async function handleEvent() {
     showActionToggle(false);
 
-    await archiveProduct(product._id);
+    const res = await archiveProduct(product._id)
+    toast.success(res.message)
 
     // if (product.image.length > 0) {
 
@@ -44,7 +45,7 @@ export default function DeleteDialog({ product, isOpen, showActionToggle }: Dele
     //       error: () => 'Error deleting files.',
     //     }
     //   );
-      
+
     //   // toast.promise(() => deleteMediaFilesByKey(imageKeys as []),
     //   //   {
     //   //     loading: 'Deleting Files...',
@@ -71,7 +72,7 @@ export default function DeleteDialog({ product, isOpen, showActionToggle }: Dele
             variant="destructive"
             onClick={() => { handleEvent() }}
           >
-            Delete
+            Archive
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

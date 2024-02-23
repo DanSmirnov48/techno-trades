@@ -83,6 +83,15 @@ export const dashboardConfig: DashboardConfig = {
       ],
     },
     {
+      title: "Archive",
+      label: "",
+      for: "admin",
+      href: "/dashboard/archive",
+      icon: "archive",
+      variant: "default",
+      items: [],
+    },
+    {
       title: "Create Product",
       label: "",
       for: "admin",

@@ -1,4 +1,4 @@
-import mongoose, { Query, Schema, Types } from 'mongoose';
+import mongoose, { Model, Query, Schema, Types } from 'mongoose';
 import slugify from 'slugify'
 
 interface IReview {
@@ -32,6 +32,11 @@ export interface IProduct extends Document {
     [key: string]: any;
 }
 
+interface IProductMethods {
+    getArchivedProducts(): Promise<IProduct[]>;
+    getAllProducts(): Promise<IProduct[]>;
+}
+
 const reviewSchema = new Schema<IReview>({
     name: { type: String, required: true },
     rating: { type: Number, required: true },
@@ -43,6 +48,8 @@ const reviewSchema = new Schema<IReview>({
         ref: 'User',
     },
 }, { timestamps: true });
+
+type ProductModel = Model<IProduct> & IProductMethods;
 
 const ProductSchema = new Schema<IProduct>({
     user: {
@@ -72,12 +79,20 @@ const ProductSchema = new Schema<IProduct>({
     isArchived: { type: Boolean, required: true, default: false },
 }, { timestamps: true });
 
-ProductSchema.pre(/^find/, function (this: Query<IProduct[], IProduct>, next) {
-    this.find({ isArchived: { $ne: true } });
-    next();
-});
+// ProductSchema.pre(/^find/, function (this: Query<IProduct[], IProduct>, next) {
+//     this.find({ isArchived: { $ne: true } });
+//     next();
+// });
 
-export const ProductModel = mongoose.model<IProduct>('Product', ProductSchema);
+ProductSchema.statics.getArchivedProducts = async function () {
+    return this.find({ isArchived: true });
+};
+
+ProductSchema.statics.getAllProducts = async function () {
+    return this.find({ isArchived: { $ne: true } });
+};
+
+export const ProductModel = mongoose.model<IProduct, ProductModel>('Product', ProductSchema);
 
 export const GetProduct = () => ProductModel.find()
 
