@@ -1,4 +1,4 @@
-import { SigninForm, SignupForm } from '@/_auth/forms';
+import { SigninForm, SignupForm, OtpForm } from '@/_auth/forms';
 import { JSX } from 'react';
 
 export interface AuthRoute {
@@ -14,6 +14,10 @@ const authRoutes: AuthRoute[] = [
     {
         path: '/sign-up',
         outlet: <SignupForm />,
+    },
+    {
+        path: '/verify-account',
+        outlet: < OtpForm />,
     },
 ];
 

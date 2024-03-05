@@ -46,18 +46,22 @@ const SignupForm = () => {
   const { mutateAsync: createAccount, isPending: loadingUser } = useCreateUserAccount();
 
   const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
-    try {
-      const account: AuthResponse = await createAccount(user);
 
-      if (account.status === 200 && account.data.status === 'success') {
-        toast.success(`Your Account Created Successfully!`);
-        navigate("/sign-in");
-      }
-    } catch (error) {
-      toast.error('Unknown Error', {
-        description: `${error}`,
-      })
-    }
+    toast.success(`Your Account Created Successfully!`);
+    navigate("/verify-account");
+
+    // try {
+    //   const account: AuthResponse = await createAccount(user);
+
+    //   if (account.status === 200 && account.data.status === 'success') {
+    //     toast.success(`Your Account Created Successfully!`);
+    //     navigate("/verify-account");
+    //   }
+    // } catch (error) {
+    //   toast.error('Unknown Error', {
+    //     description: `${error}`,
+    //   })
+    // }
   };
 
   // flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg dark:bg-gray-800 lg:max-w-4xl

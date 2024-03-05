@@ -22,6 +22,21 @@ export async function createUserAccount(user: INewUser) {
   }
 }
 
+export async function verifyAccount(user: { code: string;  }) {
+  try {
+    const session = await axios.post(`/api/users/verify-account`, user);
+    return session;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
 export async function signInAccount(user: { email: string; password: string }) {
   try {
     const session = await axios.post(`/api/users/login`, user);

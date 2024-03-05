@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -16,6 +16,12 @@ export const useCreateUserAccount = () => {
     });
 };
 
+export const useVerifyAccount = () => {
+    return useMutation({
+        mutationFn: (user: { code: string }) => verifyAccount(user),
+    });
+};
+
 export const useSignInAccount = () => {
     return useMutation({
         mutationFn: (user: { email: string; password: string }) =>
@@ -25,7 +31,7 @@ export const useSignInAccount = () => {
     });
 };
 
-export const useGetUserSession= () => {
+export const useGetUserSession = () => {
     return useMutation({
         mutationFn: () => getUserSession(),
         onSuccess: (data) => { },
@@ -191,7 +197,7 @@ export const useGetOrders = () => {
     });
 };
 
-export const useGetOrderBySessionId= (sessionId: string) => {
+export const useGetOrderBySessionId = (sessionId: string) => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_ORDER_BY_SESSION_ID, sessionId],
         queryFn: () => getOrdersBySessionId(sessionId),
@@ -237,7 +243,7 @@ export const useUpdateShippingStatus = () => {
 export const useCreateReview = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (review: { productId: string; rating: number; title: string; comment: string }) => 
+        mutationFn: (review: { productId: string; rating: number; title: string; comment: string }) =>
             createReview(review),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
