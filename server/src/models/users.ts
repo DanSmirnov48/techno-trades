@@ -20,11 +20,14 @@ export interface IUser extends Document {
     passwordResetToken?: string;
     passwordResetExpires?: Date;
     active: boolean;
+    verified: boolean;
+    verificationCode: number | undefined;
 }
 
 interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
     changedPasswordAfter(JWTTimestamp: number): boolean;
+    checkValidationCode(code: number): boolean;
     createPasswordResetToken(): string;
 }
 
@@ -80,6 +83,13 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         default: true,
         select: false,
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    verificationCode: {
+        type: Number,
+    }
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
@@ -119,6 +129,10 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boole
     }
     return false;
 }
+
+userSchema.methods.checkValidationCode = function (code: number): boolean {
+    return this.verificationCode == code;
+};
 
 userSchema.methods.createPasswordResetToken = function (): string {
     const resetToken = crypto.randomBytes(32).toString('hex');

@@ -18,6 +18,7 @@ import {
   signup,
   updatePassword,
   validate,
+  verifyAccount,
 } from "../controllers/authController";
 import { authRateLimiter } from "../config/site";
 
@@ -25,6 +26,7 @@ const router = express.Router();
 
 // User AUTHENTICATION
 router.route("/signup").post(signup);                                 //✔️
+router.route("/verify-account").post(verifyAccount);                  //✔️
 router.route("/login").post(authRateLimiter, logIn);                  //✔️
 router.route('/logout').get(logout);                                  //✔️
 router.route("/validate").get(validate);                              //✔️

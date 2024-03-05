@@ -110,14 +110,49 @@ const createSendToken = (user: IUser, statusCode: number, req: Request, res: Res
     }).end();
 };
 
+const generateRandomCode = (): number => {
+    return Math.floor(100000 + Math.random() * 900000);
+};
+
 export const signup = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        // verificationCode: generateRandomCode(),
+        verificationCode: 999999,
     });
+
+    return res.status(200).json({ status: 'success' }).end();
+});
+
+export const verifyAccount = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.body;
+
+    // Find the user with the provided verification code
+    const user = await User.findOne({ verificationCode: code });
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkValidationCode(code);
+
+    if (!isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Update the user's verification status to true
+    const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { verified: true }, $unset: { verificationCode: 1 } },
+        { new: true, runValidators: true }
+    );
 
     return res.status(200).json({ status: 'success' }).end();
 });
