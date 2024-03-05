@@ -195,6 +195,15 @@ export async function getProducts() {
   }
 }
 
+export async function getArchivedProducts() {
+  try {
+    const response = await axios.get(`/api/products/archived-products`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getPaginatedProducts(page: number, pageSize: number) {
   try {
     const response = await axios.get(`/api/products/pp`, {
@@ -275,6 +284,15 @@ export async function updateProduct(product: IUpdateProduct) {
 export async function archiveProduct(id: any) {
   try {
     const { data } = await axios.delete(`/api/products/${id}`)
+    return data
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function restoreProduct(product: { id: string; }) {
+  try {
+    const { data } = await axios.patch(`/api/products/unarchive-product`, product)
     return data
   } catch (error) {
     console.log(error);

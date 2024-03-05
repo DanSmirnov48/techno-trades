@@ -97,6 +97,13 @@ export const useGetProducts = () => {
     });
 };
 
+export const useGetArchivedProducts = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_ARCHIVED_PRODUCTS],
+        queryFn: () => getArchivedProducts(),
+    });
+};
+
 export const useGetPaginatedProducts = (page: number, pageSize: number) => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_PRODUCTS, page, pageSize],
@@ -170,6 +177,18 @@ export const useArchiveProduct = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_PRODUCTS],
+            });
+        },
+    });
+};
+
+export const useRestoreProduct = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (product: { id: string }) => restoreProduct(product),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_ARCHIVED_PRODUCTS],
             });
         },
     });

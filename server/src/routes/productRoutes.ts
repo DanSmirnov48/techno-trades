@@ -14,6 +14,8 @@ import {
   updateProductStock,
   updateMultipleProducts,
   archiveProduct,
+  getArchivedProducts,
+  unarchiveProduct,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 
@@ -23,6 +25,14 @@ router
   .route("/")
   .get(getProducts)
   .post(protect, restrictTo("admin"), createProduct);
+
+router
+  .route("/archived-products")
+  .get(protect, restrictTo("admin"), getArchivedProducts);
+
+router
+  .route("/unarchive-product")
+  .patch(protect, restrictTo("admin", "user"), unarchiveProduct);
 
 router.route("/pp").get(getPaginatedProducts);
 
