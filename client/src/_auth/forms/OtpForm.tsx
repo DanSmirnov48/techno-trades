@@ -32,7 +32,7 @@ const OtpForm = () => {
                 toast.error("Invalid verification code");
             } else {
                 toast.success("Successfully Verified");
-                navigate("/sign-in");
+                navigate("/account-verified");
             }
         }
     };
@@ -45,7 +45,7 @@ const OtpForm = () => {
                     {user && (
                         <CardDescription className="py-2">
                             We emailed you a six-digit code to{" "}
-                            <span className="font-bold text-base">{user.email}</span>.
+                            <span className="font-bold text-base">{user.email}</span>. 
                             Enter the code below to confirm your email address.
                         </CardDescription>
                     )}
