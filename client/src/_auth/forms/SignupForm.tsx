@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateUserAccount } from "@/lib/react-query/queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useUserStore } from "@/hooks/store";
 
 interface AuthResponse {
   data?: any;
@@ -22,6 +23,7 @@ interface AuthResponse {
 const SignupForm = () => {
 
   const navigate = useNavigate();
+  const { setUserProducts } = useUserStore()
   const [type, setType] = useState<'password' | 'text'>('password');
 
   const handleToggle = () => {
@@ -46,22 +48,19 @@ const SignupForm = () => {
   const { mutateAsync: createAccount, isPending: loadingUser } = useCreateUserAccount();
 
   const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
+    try {
+      const account: AuthResponse = await createAccount(user);
 
-    toast.success(`Your Account Created Successfully!`);
-    navigate("/verify-account");
-
-    // try {
-    //   const account: AuthResponse = await createAccount(user);
-
-    //   if (account.status === 200 && account.data.status === 'success') {
-    //     toast.success(`Your Account Created Successfully!`);
-    //     navigate("/verify-account");
-    //   }
-    // } catch (error) {
-    //   toast.error('Unknown Error', {
-    //     description: `${error}`,
-    //   })
-    // }
+      if (account.status === 200 && account.data.status === 'success') {
+        setUserProducts(user)
+        toast.success(`Your Account Created Successfully!`);
+        navigate("/verify-account");
+      }
+    } catch (error) {
+      toast.error('Unknown Error', {
+        description: `${error}`,
+      })
+    }
   };
 
   // flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg dark:bg-gray-800 lg:max-w-4xl
