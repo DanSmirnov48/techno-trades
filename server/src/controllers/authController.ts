@@ -115,16 +115,18 @@ const generateRandomCode = (): number => {
 };
 
 export const signup = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const verificationCode = generateRandomCode()
+
     await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
-        // verificationCode: generateRandomCode(),
-        verificationCode: 999999,
+        verificationCode: verificationCode,
     });
 
+    await sendEmail({ body: `Your Code is: ${verificationCode}`, subject: "Your Account Verification Code" }, [req.body.email], verificationCode.toString());
     return res.status(200).json({ status: 'success' }).end();
 });
 
@@ -369,11 +371,11 @@ export const forgotPassword = asyncHandler(async (req: Request, res: Response, n
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
     try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Your password reset token (valid for 10 min)',
-            message
-        });
+        // await sendEmail({
+        //     email: user.email,
+        //     subject: 'Your password reset token (valid for 10 min)',
+        //     message
+        // });
 
         res.status(200).json({
             status: 'success',

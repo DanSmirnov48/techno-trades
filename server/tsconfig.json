@@ -12,8 +12,30 @@
     "skipLibCheck": true,
     "paths": {
       "*": ["*"]
-    }
+    },
+    "jsx": "react"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
+
+// {
+//   "compilerOptions": {
+//     "target": "ES2020",
+//     "module": "CommonJS",
+//     "moduleResolution": "node",
+//     "strict": true,
+//     "baseUrl": ".", // Change this to "."
+//     "outDir": "dist",
+//     "sourceMap": true,
+//     "noImplicitAny": true,
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "paths": {
+//       "react-email": ["node_modules/react-email"] // Change this to point to react-email
+//     },
+//     "jsx": "react"
+//   },
+//   "include": ["src/**/*"],
+//   "exclude": ["node_modules"]
+// }
