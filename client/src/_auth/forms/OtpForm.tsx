@@ -1,137 +1,121 @@
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormMessage,
+} from "@/components/ui/form"
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPDash,
+    InputOTPSlot,
+} from "@/components/ui/input-otp"
+import { z } from "zod"
 import { toast } from "sonner";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { OTPInput, SlotProps } from "input-otp";
-import { Shell } from "@/components/dashboard/shell";
-import { useVerifyAccount } from "@/lib/react-query/queries";
+import { useForm } from "react-hook-form"
 import { useUserStore } from "@/hooks/store";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { OtpValidation } from "@/lib/validation";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useVerifyAccount } from "@/lib/react-query/queries";
 
 const OtpForm = () => {
     const navigate = useNavigate();
-    const [otp, setOtp] = useState<string | null>(null);
     const { mutateAsync: verifyAccount, isPending } = useVerifyAccount();
     const user = useUserStore((state) => state.user);
 
-    const onSubmit = async () => {
-        if (otp) {
-            const res = await verifyAccount({ code: otp });
-            //@ts-ignore
-            if (res.status === 400 && res.error.error === "Invalid verification code") {
-                setOtp(null);
-                toast.error("Invalid verification code");
-            } else {
-                toast.success("Successfully Verified");
-                navigate("/account-verified");
-            }
+    const form = useForm<z.infer<typeof OtpValidation>>({
+        resolver: zodResolver(OtpValidation),
+        defaultValues: {
+            pin: "",
+        },
+    })
+
+    async function onSubmit(data: z.infer<typeof OtpValidation>) {
+        const res = await verifyAccount({ code: data.pin });
+        //@ts-ignore
+        if (res.status === 400 && res.error.error === "Invalid verification code") {
+            form.reset()
+            toast.error("Invalid verification code");
+        } else {
+            toast.success("Successfully Verified");
+            navigate("/account-verified");
+            form.reset()
         }
-    };
+    }
 
     return (
-        <Shell className="flex items-center justify-center">
-            <Card className="flex flex-col items-center justify-center overflow-hidden p-10 gap-3 max-w-xl">
-                <CardHeader>
-                    <CardTitle>Verify your email address</CardTitle>
-                    {user && (
-                        <CardDescription className="py-2">
-                            We emailed you a six-digit code to{" "}
-                            <span className="font-bold text-base">{user.email}</span>. 
-                            Enter the code below to confirm your email address.
-                        </CardDescription>
-                    )}
-                </CardHeader>
-                <CardContent>
-                    {isPending ? (
-                        <Loader2 className="animate-spin w-20 h-20" />
-                    ) : (
-                        <OTPInput
-                            value={otp ?? ""}
-                            onChange={setOtp}
-                            onComplete={onSubmit}
-                            maxLength={6}
-                            containerClassName="group flex items-center justify-center has-[:disabled]:opacity-30"
-                            render={({ slots }) => (
-                                <>
-                                    <div className="flex">
-                                        {slots.slice(0, 3).map((slot, idx) => (
-                                            <Slot key={idx} {...slot} />
-                                        ))}
-                                    </div>
+        <div className="w-full px-6 py-8 md:px-8 lg:w-1/2 rounded-xl shadow-lg">
+            <p className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">
+                Verify your email address
+            </p>
 
-                                    <FakeDash />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8 w-full mt-4">
+                    <FormField
+                        control={form.control}
+                        name="pin"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <InputOTP
+                                        maxLength={6}
+                                        containerClassName="group flex items-center justify-center has-[:disabled]:opacity-30 my-5"
+                                        render={({ slots }) => (
+                                            <>
+                                                <InputOTPGroup>
+                                                    {slots.slice(0, 3).map((slot, index) => (
+                                                        <InputOTPSlot key={index} {...slot} />
+                                                    ))}{" "}
+                                                </InputOTPGroup>
+                                                <InputOTPDash />
+                                                <InputOTPGroup>
+                                                    {slots.slice(3).map((slot, index) => (
+                                                        <InputOTPSlot key={index + 3} {...slot} />
+                                                    ))}
+                                                </InputOTPGroup>
+                                            </>
+                                        )}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                {user && (
+                                    <FormDescription className="py-2">
+                                        We emailed you a six-digit code to{" "}
+                                        <span className="font-bold text-base">{user.email}</span>.
+                                        Enter the code below to confirm your email address.
+                                    </FormDescription>
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                                    <div className="flex">
-                                        {slots.slice(3).map((slot, idx) => (
-                                            <Slot key={idx} {...slot} />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                        />
-                    )}
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-5 w-full">
-                    <div className="w-full p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
-                        Make sure to keep this window open while check your inbox.
-                    </div>
-                    <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                        <p>Didn't recieve code?</p>
-                        <Button
-                            variant={"link"}
-                            className="flex flex-row items-center text-blue-600 p-0"
-                        >
-                            Resend
-                        </Button>
-                    </div>
-                </CardFooter>
-            </Card>
-        </Shell>
+                    <Button size={"lg"} type="submit" disabled={!user || isPending} className="w-full px-6 py-3 text-lg font-medium tracking-wide text-white dark:text-dark-4 capitalize transition-colors duration-300 transform rounded-lg focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+                        {isPending ? <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> : <>Validate Account</>}
+                    </Button>
+                </form>
+            </Form>
+
+            <div className="flex flex-col space-y-5 w-full mt-5">
+                <div className="w-full p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
+                    Make sure to keep this window open while check your inbox.
+                </div>
+                <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                    <p>Didn't recieve code?</p>
+                    <Button
+                        variant={"link"}
+                        className="flex flex-row items-center text-blue-600 p-0"
+                    >
+                        Resend
+                    </Button>
+                </div>
+            </div>
+        </div>
     );
-};
-
+}
 export default OtpForm;
-
-function Slot(props: SlotProps) {
-    return (
-        <div
-            className={cn(
-                "relative w-14 h-16 text-[2rem]",
-                "flex items-center justify-center",
-                "transition-all duration-300",
-                "border-border border-y border-r first:border-l first:rounded-l-md last:rounded-r-md",
-                "group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20",
-                "outline outline-0 outline-accent-foreground/20",
-                { "outline-4 outline-accent-foreground": props.isActive }
-            )}
-        >
-            {props.char !== null && <div>{props.char}</div>}
-            {props.hasFakeCaret && <FakeCaret />}
-        </div>
-    );
-}
-
-function FakeCaret() {
-    return (
-        <div className="absolute pointer-events-none inset-0 flex items-center justify-center animate-caret-blink">
-            <div className="w-px h-8 bg-dark-4 dark:bg-white" />
-        </div>
-    );
-}
-
-function FakeDash() {
-    return (
-        <div className="flex w-10 justify-center items-center">
-            <div className="w-3 h-1 rounded-full bg-border" />
-        </div>
-    );
-}
