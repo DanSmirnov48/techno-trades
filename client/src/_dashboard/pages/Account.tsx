@@ -8,6 +8,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { Header } from "@/components/dashboard/header";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UpdateUserEmail from "../forms/UpdateUserEmail";
 
 export default function DashboardAccount() {
   const location = useLocation();
@@ -43,6 +44,7 @@ export default function DashboardAccount() {
         <TabsContent value="account">
           <LastSignIn />
           <UpdateProfile />
+          <UpdateUserEmail />
           <CloseAccount />
         </TabsContent>
         <TabsContent value="password">

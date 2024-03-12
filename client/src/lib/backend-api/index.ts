@@ -22,7 +22,7 @@ export async function createUserAccount(user: INewUser) {
   }
 }
 
-export async function verifyAccount(user: { code: string;  }) {
+export async function verifyAccount(user: { code: string; }) {
   try {
     const session = await axios.post(`/api/users/verify-account`, user);
     return session;
@@ -76,6 +76,36 @@ export async function signOutAccount() {
 export async function updateMyAccount(user: { firstName: string; lastName: string; photo?: UserImage }) {
   try {
     const response = await axios.patch(`/api/users/update-me`, user);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function requestEmailChangeVerificationCode() {
+  try {
+    const response = await axios.get(`/api/users/request-email-change-verification-code`);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function updateMyEmail(user: { code: string; newEmail: string }) {
+  try {
+    const response = await axios.post(`/api/users/update-user-email`, user);
     return response;
   } catch (error: any) {
     if (error.response) {

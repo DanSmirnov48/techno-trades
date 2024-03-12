@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts, requestEmailChangeVerificationCode, updateMyEmail } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -57,6 +57,33 @@ export const useUpdateMyAccount = () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
             });
+        },
+    });
+};
+
+export const useRequestEmailChangeVerificationCode = () => {
+    return useMutation({
+        mutationFn: requestEmailChangeVerificationCode,
+    });
+};
+
+export const useUpdateMyEmail = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (user: { code: string; newEmail: string }) => updateMyEmail(user),
+        onError: (error) => { console.log(error) },
+        onSuccess: (response) => {
+            if (response.status === 200) {
+                //@ts-ignore
+                const userId = response.data.data.user._id as string;
+                if (userId) {
+                    queryClient.invalidateQueries({
+                        queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
+                    });
+                }
+            }else if(response.status === 400){
+                console.log(response)
+            }
         },
     });
 };

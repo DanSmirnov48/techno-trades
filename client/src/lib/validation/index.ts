@@ -17,6 +17,10 @@ export const SignupValidation = z.object({
     path: ["passwordConfirm"]
 });
 
+export const OtpValidation = z.object({
+    pin: z.string().min(6, {message: "Your one-time password must be 6 characters."})
+})
+
 export const SigninValidation = z.object({
     email: z.string().email(),
     password: z.string().min(8, { message: "Password must be at least 8 characters." }),
@@ -27,6 +31,12 @@ export const ProfileUpdateValidation = z.object({
     lastname: z.string().min(2, { message: "Must be at least 2 characters." }),
     email: z.string().email(),
     photo: z.custom<UserImage>(),
+});
+
+export const UpdateUserEmailValidation = z.object({
+    currentEmail: z.string().email(),
+    newEmail: z.string().email(),
+    pin: z.string().min(6, { message: "Your one-time password must be 6 characters." })
 });
 
 export const UpdatePasswordValidation = z.object({
