@@ -9,6 +9,7 @@ import {
 } from "../controllers/userController";
 import {
   forgotPassword,
+  generateUserEmailChangeVerificationCode,
   logIn,
   logout,
   protect,
@@ -17,6 +18,7 @@ import {
   restrictTo,
   signup,
   updatePassword,
+  updateUserEmail,
   validate,
   verifyAccount,
 } from "../controllers/authController";
@@ -38,6 +40,9 @@ router.route("/reset-password/:token").patch(resetPassword);          //❌
 
 // Profile UPDATE for AUTHORIZED users
 router.route("/update-my-password").patch(protect, updatePassword);   //✔️
+router.route("/request-email-change-verification-code")
+  .get(protect, generateUserEmailChangeVerificationCode);             //✔️
+router.route("/update-user-email").post(protect, updateUserEmail);    //✔️
 router.route("/update-me").patch(protect, updateMe);                  //✔️
 router.route("/deactivate-me").delete(protect, deleteMe);             //✔️
 

@@ -13,6 +13,7 @@ export interface IUser extends Document {
         name: { type: String },
         url: { type: String },
     },
+    emailUpdateVerificationCode?: string;
     role: 'user' | 'admin';
     password: string;
     passwordConfirm: string;
@@ -21,7 +22,7 @@ export interface IUser extends Document {
     passwordResetExpires?: Date;
     active: boolean;
     verified: boolean;
-    verificationCode: number | undefined;
+    verificationCode?: number;
 }
 
 interface IUserMethods {
@@ -29,6 +30,8 @@ interface IUserMethods {
     changedPasswordAfter(JWTTimestamp: number): boolean;
     checkValidationCode(code: number): boolean;
     createPasswordResetToken(): string;
+    createEmailUpdateVerificationCode(): string;
+    checkUserEmailupdateVerificationCode(code: string): boolean;
 }
 
 type UserModel = Model<IUser, {}, IUserMethods>;
@@ -49,6 +52,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         lowercase: true,
         validate: [validator.isEmail, 'Invalid email address'],
     },
+    emailUpdateVerificationCode: String,
     photo: {
         key: { type: String },
         name: { type: String },
@@ -150,6 +154,17 @@ userSchema.methods.createPasswordResetToken = function (): string {
     this.passwordResetExpires = expirationTime;
 
     return resetToken;
+};
+
+userSchema.methods.createEmailUpdateVerificationCode = function (): string {
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
+
+    this.emailUpdateVerificationCode = code
+    return code;
+};
+
+userSchema.methods.checkUserEmailupdateVerificationCode = function (code: string): boolean {
+    return this.emailUpdateVerificationCode == code;
 };
 
 export const User = mongoose.model<IUser, UserModel>('User', userSchema);

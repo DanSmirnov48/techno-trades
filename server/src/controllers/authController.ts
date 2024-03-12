@@ -4,7 +4,7 @@ import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import { sendEmail } from '../utils/email';
+import { sendEmailVerificationMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
@@ -126,7 +126,12 @@ export const signup = asyncHandler(async (req: Request, res: Response, next: Nex
         verificationCode: verificationCode,
     });
 
-    await sendEmail({ body: `Your Code is: ${verificationCode}`, subject: "Your Account Verification Code" }, [req.body.email], verificationCode.toString());
+    await sendEmailVerificationMail({
+        subject: "Your Account Verification Code",
+        sendTo: req.body.email,
+        verificationCode: verificationCode.toString()
+    });
+
     return res.status(200).json({ status: 'success' }).end();
 });
 
@@ -438,3 +443,58 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
     // 4) Log user in, send JWT
     createSendToken(user!, 200, req, res);
 })
+
+export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: CustomRequest, res: Response) => {
+    // 1) Get user from collection
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'User not found' });
+    }
+
+    const code = user.createEmailUpdateVerificationCode();
+    const fdf = await user.save({ validateBeforeSave: false });
+    console.log({ fdf })
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Code sent to email!',
+    });
+})
+
+export const updateUserEmail = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { code, newEmail } = req.body;
+
+    // Find the user with the provided verification code
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'User not found' });
+    }
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkUserEmailupdateVerificationCode(code.toString());
+
+    if (!isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Update the user's verification status to true
+    const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { verified: true, email: newEmail }, $unset: { emailUpdateVerificationCode: 1 } },
+        { new: true, runValidators: true }
+    );
+
+    console.log({ updatedUser })
+
+    return res.status(200).json({
+        status: 'success',
+        data: {
+            user: updatedUser
+        }
+    }).end();
+});
