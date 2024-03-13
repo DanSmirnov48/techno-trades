@@ -174,7 +174,7 @@ const UpdateProfile = () => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
@@ -186,22 +186,17 @@ const UpdateProfile = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {isUploading && <Progress value={uploadProgress} />}
             <Button type="submit" disabled={isUploading || isLoadingUpdate}>
-              {isUploading ? (
-                <>
-                  <Loader2 className="animate-spin h-5 w-5 mr-3" />
-                  Uploading...
-                </>
-              ) : isLoadingUpdate ? (
+              {(isUploading || isLoadingUpdate) ? (
                 <>
                   <Loader2 className="animate-spin h-5 w-5 mr-3" />
                   Uploading...
                 </>
               ) : (
-                <>Update Product</>
+                <>Update Profile</>
               )}
             </Button>
 

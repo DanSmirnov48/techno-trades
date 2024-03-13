@@ -15,10 +15,10 @@ import {
 import * as React from "react";
 
 interface VerifyEmailProps {
-  verificationCode?: string;
+  verificationCode: string;
 }
 
-export default function VerifyEmail({ verificationCode = "596853" }: VerifyEmailProps) {
+export default function VerifyEmail({ verificationCode }: VerifyEmailProps) {
   return (
     <Html>
       <Head />
@@ -28,7 +28,7 @@ export default function VerifyEmail({ verificationCode = "596853" }: VerifyEmail
           <Section style={coverSection}>
             <Section style={imageSection}>
               <Img
-                src={"./logo.ico"}
+                src={".logo.ico"}
                 width="75"
                 height="45"
                 alt="Logo"

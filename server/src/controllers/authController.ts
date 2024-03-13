@@ -4,7 +4,7 @@ import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import { sendEmailVerificationMail } from '../utils/email';
+import { sendEmailChangeVerificationMail, sendEmailVerificationMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
@@ -445,6 +445,8 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
 })
 
 export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const { email } = req.query;
+
     // 1) Get user from collection
     const user = await User.findById(req.user?._id);
 
@@ -453,14 +455,24 @@ export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: 
         return res.status(400).json({ error: 'User not found' });
     }
 
-    const code = user.createEmailUpdateVerificationCode();
-    const fdf = await user.save({ validateBeforeSave: false });
-    console.log({ fdf })
+    if (email) {
+        const code = user.createEmailUpdateVerificationCode();
+        const fdf = await user.save({ validateBeforeSave: false });
+        console.log({ fdf })
 
-    res.status(200).json({
-        status: 'success',
-        message: 'Code sent to email!',
-    });
+        await sendEmailChangeVerificationMail({
+            subject: "Your Email Change Verification Code",
+            sendTo: email?.toString(),
+            verificationCode: code
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Code sent to email!',
+        }).end();
+    }
+
+    res.status(500).end();
 })
 
 export const updateUserEmail = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {

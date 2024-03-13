@@ -66,7 +66,7 @@ const UpdateUserEmail = () => {
         const email = form.getValues('newEmail');
         if (email.trim() !== '' && email.match(isValidEmail)) {
             setShowOTPField(true);
-            const res = await requestVerificationCode()
+            const res = await requestVerificationCode({ email: email })
         } else {
             form.setError("newEmail", {
                 type: "manual",
@@ -116,7 +116,7 @@ const UpdateUserEmail = () => {
                                 <FormItem>
                                     <FormLabel className="shad-form_label">Current Email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" className="h-12" {...field} />
+                                        <Input type="email" className="h-12" {...field} disabled />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

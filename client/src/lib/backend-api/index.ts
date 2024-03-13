@@ -88,9 +88,11 @@ export async function updateMyAccount(user: { firstName: string; lastName: strin
   }
 }
 
-export async function requestEmailChangeVerificationCode() {
+export async function requestEmailChangeVerificationCode({ email }: { email: string }) {
   try {
-    const response = await axios.get(`/api/users/request-email-change-verification-code`);
+    const response = await axios.get(`/api/users/request-email-change-verification-code`, {
+      params: { email }
+    });
     return response;
   } catch (error: any) {
     if (error.response) {

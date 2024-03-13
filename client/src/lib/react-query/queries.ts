@@ -63,7 +63,7 @@ export const useUpdateMyAccount = () => {
 
 export const useRequestEmailChangeVerificationCode = () => {
     return useMutation({
-        mutationFn: requestEmailChangeVerificationCode,
+        mutationFn: ({ email }: { email: string }) => requestEmailChangeVerificationCode({ email }),
     });
 };
 
@@ -81,7 +81,7 @@ export const useUpdateMyEmail = () => {
                         queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
                     });
                 }
-            }else if(response.status === 400){
+            } else if (response.status === 400) {
                 console.log(response)
             }
         },
