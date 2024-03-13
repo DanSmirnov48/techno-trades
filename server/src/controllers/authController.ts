@@ -4,7 +4,7 @@ import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import { sendEmailChangeVerificationMail, sendEmailVerificationMail } from '../utils/email';
+import { sendEmailChangeVerificationMail, sendEmailVerificationMail, sendForgotPasswordVerificationMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
@@ -357,70 +357,95 @@ export const validateAccessToken = async (req: CustomRequest, res: Response, nex
 };
 
 export const forgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
     // 1) Get user based on POSTed email
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: email });
     if (!user) {
         return next(new Error('There is no user with email address.'));
     }
 
-    // 2) Generate the random reset token
-    //@ts-ignore
-    const resetToken = user.createPasswordResetToken();
-    await user.save({ validateBeforeSave: false });
-
-    // 3) Send it to user's email
-    const resetURL = `${req.protocol}://${req.get(
-        'host'
-    )}/api/users/reset-password/${resetToken}`;
-
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
-    try {
-        // await sendEmail({
-        //     email: user.email,
-        //     subject: 'Your password reset token (valid for 10 min)',
-        //     message
-        // });
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Token sent to email!',
-            passwordResetExpires: user.passwordResetExpires
-        });
-    } catch (err) {
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
+    if (email) {
+        // 2) Generate the random reset token
+        const code = user.createPasswordResetVerificationCode();
         await user.save({ validateBeforeSave: false });
 
-        return next(new Error('There was an error sending the email. Try again later!'));
+        // 3) Send it to user's email
+        try {
+            await sendForgotPasswordVerificationMail({
+                subject: "Reset your TechnoTrades password",
+                sendTo: email.toString(),
+                verificationCode: code
+            });
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'Token sent to email!',
+                passwordResetExpires: user.passwordResetExpires
+            });
+        } catch (err) {
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            await user.save({ validateBeforeSave: false });
+
+            return next(new Error('There was an error sending the email. Try again later!'));
+        }
     }
+    res.status(500).end();
 })
 
-export const resetPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    // 1) Get user based on the token
-    const hashedToken = crypto
-        .createHash('sha256')
-        .update(req.params.token)
-        .digest('hex');
+export const verifyPasswordResetCode = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.body;
 
+    // 1) Get user based on POSTed email
     const user = await User.findOne({
-        passwordResetToken: hashedToken,
+        passwordResetToken: code,
         passwordResetExpires: { $gt: Date.now() }
     });
 
     // 2) If token has not expired, and there is user, set the new password
     if (!user) {
-        return next(new Error('Token is invalid or has expired'));
+        return res.status(400).json({ error: 'Token is invalid or has expired' });
     }
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save();
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkForgotPasswordVerificationCode(code.toString());
+
+    if (isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(200).json({ success: 'Valid Code' });
+    }
+
+    res.status(500).end();
+})
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { password, confirmPassword, email, code } = req.body;
+
+    // // 1) Get user based on the token
+    const user = await User.findOne({
+        email: email,
+        passwordResetToken: code,
+        passwordResetExpires: { $gt: Date.now() }
+    });
+
+    // 2) If token has not expired, and there is user, set the new password
+    if (!user) {
+        return next(new Error('User not found'));
+    }
 
     // 3) Update changedPasswordAt property for the user
-    // 4) Log the user in, send JWT
-    createSendToken(user, 200, req, res);
+    try {
+        user.password = password;
+        user.passwordConfirm = confirmPassword;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        return res.status(200).json({ success: 'Password Reset Success' });
+    } catch (err) {
+        return next(new Error('There was an error sending the email. Try again later!'));
+    }
 })
 
 export const updatePassword = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -462,7 +487,7 @@ export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: 
 
         await sendEmailChangeVerificationMail({
             subject: "Your Email Change Verification Code",
-            sendTo: email?.toString(),
+            sendTo: email.toString(),
             verificationCode: code
         });
 

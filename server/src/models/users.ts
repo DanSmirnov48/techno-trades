@@ -29,9 +29,10 @@ interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
     changedPasswordAfter(JWTTimestamp: number): boolean;
     checkValidationCode(code: number): boolean;
-    createPasswordResetToken(): string;
+    createPasswordResetVerificationCode(): string;
     createEmailUpdateVerificationCode(): string;
     checkUserEmailupdateVerificationCode(code: string): boolean;
+    checkForgotPasswordVerificationCode(code: string): boolean;
 }
 
 type UserModel = Model<IUser, {}, IUserMethods>;
@@ -138,22 +139,17 @@ userSchema.methods.checkValidationCode = function (code: number): boolean {
     return this.verificationCode == code;
 };
 
-userSchema.methods.createPasswordResetToken = function (): string {
-    const resetToken = crypto.randomBytes(32).toString('hex');
+userSchema.methods.createPasswordResetVerificationCode = function (): string {
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
 
-    this.passwordResetToken = crypto
-        .createHash('sha256')
-        .update(resetToken)
-        .digest('hex');
-
-    console.log({ resetToken }, this.passwordResetToken);
+    this.passwordResetToken = code
 
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 10);
 
     this.passwordResetExpires = expirationTime;
 
-    return resetToken;
+    return code;
 };
 
 userSchema.methods.createEmailUpdateVerificationCode = function (): string {
@@ -165,6 +161,10 @@ userSchema.methods.createEmailUpdateVerificationCode = function (): string {
 
 userSchema.methods.checkUserEmailupdateVerificationCode = function (code: string): boolean {
     return this.emailUpdateVerificationCode == code;
+};
+
+userSchema.methods.checkForgotPasswordVerificationCode = function (code: string): boolean {
+    return this.passwordResetToken == code;
 };
 
 export const User = mongoose.model<IUser, UserModel>('User', userSchema);
