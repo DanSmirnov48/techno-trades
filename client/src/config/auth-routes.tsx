@@ -3,6 +3,7 @@ import {
     SignupForm,
     OtpForm,
     AccountVerified,
+    ForgotPasswordForm
 } from "@/_auth/forms";
 import { JSX } from "react";
 
@@ -27,6 +28,10 @@ const authRoutes: AuthRoute[] = [
     {
         path: "/account-verified",
         outlet: <AccountVerified />,
+    },
+    {
+        path: "/forgot-password",
+        outlet: <ForgotPasswordForm />,
     },
 ];
 

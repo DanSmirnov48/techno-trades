@@ -39,6 +39,13 @@ export const UpdateUserEmailValidation = z.object({
     pin: z.string().min(6, { message: "Your one-time password must be 6 characters." })
 });
 
+export const ForgotPasswordValidation = z.object({
+    email: z.string().email(),
+    pin: z.string().min(6, { message: "Your one-time password must be 6 characters." }),
+    newPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    newPasswordConfirm: z.string().min(8, { message: "Password must be at least 8 characters." })
+});
+
 export const UpdatePasswordValidation = z.object({
     currentPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
     newPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),

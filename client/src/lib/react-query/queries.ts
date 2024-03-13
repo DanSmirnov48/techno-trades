@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts, requestEmailChangeVerificationCode, updateMyEmail } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts, requestEmailChangeVerificationCode, updateMyEmail, requestForgotPasswordVerificationCode, verifyPasswordResetVerificationDoe, resetForgottenPassword } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -64,6 +64,24 @@ export const useUpdateMyAccount = () => {
 export const useRequestEmailChangeVerificationCode = () => {
     return useMutation({
         mutationFn: ({ email }: { email: string }) => requestEmailChangeVerificationCode({ email }),
+    });
+};
+
+export const useRequestForgotPasswordVerificationCode = () => {
+    return useMutation({
+        mutationFn: (email: { email: string }) => requestForgotPasswordVerificationCode(email),
+    });
+};
+
+export const useVerifyPasswordResetVerificationDoe = () => {
+    return useMutation({
+        mutationFn: (code: { code: string }) => verifyPasswordResetVerificationDoe(code),
+    });
+};
+
+export const useResetForgottenPassword = () => {
+    return useMutation({
+        mutationFn: (user: { password: string; confirmPassword: string, email: string, code: string }) => resetForgottenPassword(user),
     });
 };
 

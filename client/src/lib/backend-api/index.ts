@@ -105,6 +105,60 @@ export async function requestEmailChangeVerificationCode({ email }: { email: str
   }
 }
 
+/*
+
+
+*/
+
+export async function requestForgotPasswordVerificationCode(email: { email: string }) {
+  try {
+    const response = await axios.post(`/api/users/forgot-password`, email);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function verifyPasswordResetVerificationDoe(code: { code: string }) {
+  try {
+    const response = await axios.post(`/api/users/verify-password-reset-code`, code);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function resetForgottenPassword(user: { password: string; confirmPassword: string, email: string, code: string }) {
+  try {
+    const response = await axios.patch(`/api/users/reset-forgotten-password`, user);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+/*
+
+*/
+
 export async function updateMyEmail(user: { code: string; newEmail: string }) {
   try {
     const response = await axios.post(`/api/users/update-user-email`, user);
