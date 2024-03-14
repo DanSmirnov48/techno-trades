@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { INewProduct, INewUser, IUpdateProduct, IUser, UserImage } from "@/types";
-import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts, requestEmailChangeVerificationCode, updateMyEmail, requestForgotPasswordVerificationCode, verifyPasswordResetVerificationDoe, resetForgottenPassword } from "../backend-api";
+import { createOrder, createProduct, createReview, createUserAccount, deactivateMyAccount, archiveProduct, getAllUsers, getFilteredProducts, getMyOrders, getOrders, getOrdersBySessionId, getPaginatedProducts, getProducts, getProuctById, getProuctBySlug, getUserById, getUserSession, setProductDiscount, signInAccount, signOutAccount, updateMyAccount, updateMyPassword, updateProduct, updateShippingStatus, verifyAccount, restoreProduct, getArchivedProducts, requestEmailChangeVerificationCode, updateMyEmail, requestForgotPasswordVerificationCode, verifyPasswordResetVerificationDoe, resetForgottenPassword, magicLinkSignIn, sendMagicLinkToken } from "../backend-api";
 import { PriceRange } from "@/hooks/store";
 import { useProductStore } from '@/hooks/store'
 
@@ -26,6 +26,22 @@ export const useSignInAccount = () => {
     return useMutation({
         mutationFn: (user: { email: string; password: string }) =>
             signInAccount(user),
+        onSuccess: (data) => { },
+        onError: (data) => { },
+    });
+};
+
+export const useMagicLinkSignIn = () => {
+    return useMutation({
+        mutationFn: (user: { email: string }) => magicLinkSignIn(user),
+        onSuccess: (data) => { },
+        onError: (data) => { },
+    });
+};
+
+export const useSendMagicLinkToken = () => {
+    return useMutation({
+        mutationFn: ({ token }: { token: string }) => sendMagicLinkToken({ token }),
         onSuccess: (data) => { },
         onError: (data) => { },
     });

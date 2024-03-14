@@ -2,6 +2,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { IUser } from "@/types";
 import { useState } from "react";
+import { MagicLinkSignIn } from ".";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/components/shared";
 import { Input } from "@/components/ui/input";
@@ -24,7 +25,7 @@ interface AuthResponse {
 const SigninForm = () => {
 
   const navigate = useNavigate();
-  const { checkAuthUser, setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+  const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
 
   const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | undefined>();
@@ -75,10 +76,14 @@ const SigninForm = () => {
         <CardTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">Welcome back!</CardTitle>
       </CardHeader>
       <CardContent>
-        <Link to={""} className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+        {/* <Link to={""} className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
           <Icons.google className="w-6 h-6" />
           <span className="w-5/6 px-4 py-3 font-bold text-center">Sign in with Google</span>
-        </Link>
+        </Link> */}
+
+        <div className="mb-10">
+          <MagicLinkSignIn />
+        </div>
 
         <div className="flex items-center justify-between my-6">
           <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>

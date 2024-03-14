@@ -3,7 +3,8 @@ import {
     SignupForm,
     OtpForm,
     AccountVerified,
-    ForgotPasswordForm
+    ForgotPasswordForm,
+    SignInWithMagic
 } from "@/_auth/forms";
 import { JSX } from "react";
 
@@ -16,6 +17,10 @@ const authRoutes: AuthRoute[] = [
     {
         path: "/sign-in",
         outlet: <SigninForm />,
+    },
+    {
+        path: "/login/:token",
+        outlet: <SignInWithMagic />,
     },
     {
         path: "/sign-up",

@@ -52,6 +52,36 @@ export async function signInAccount(user: { email: string; password: string }) {
   }
 }
 
+export async function magicLinkSignIn(user: { email: string }) {
+  try {
+    const session = await axios.post(`/api/users/magic-link-login`, user);
+    return session;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
+export async function sendMagicLinkToken({ token }: { token: string }) {
+  try {
+    const response = await axios.patch(`/api/users/login/${token}`);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return { error: error.response.data, status: error.response.status };
+    } else if (error.request) {
+      return { error: 'No response from the server', status: 500 };
+    } else {
+      return { error: 'An unexpected error occurred', status: 500 };
+    }
+  }
+}
+
 export async function getUserSession() {
   try {
     const response = await axios.get('/api/users/validate');
