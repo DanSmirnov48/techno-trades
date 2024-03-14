@@ -18,7 +18,7 @@ export const SignupValidation = z.object({
 });
 
 export const OtpValidation = z.object({
-    pin: z.string().min(6, {message: "Your one-time password must be 6 characters."})
+    pin: z.string().min(6, { message: "Your one-time password must be 6 characters." })
 })
 
 export const SigninValidation = z.object({
@@ -44,6 +44,11 @@ export const ForgotPasswordValidation = z.object({
     pin: z.string().min(6, { message: "Your one-time password must be 6 characters." }),
     newPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
     newPasswordConfirm: z.string().min(8, { message: "Password must be at least 8 characters." })
+}).refine((data) => {
+    return data.newPassword === data.newPasswordConfirm;
+}, {
+    message: "Password do not match",
+    path: ["newPasswordConfirm"]
 });
 
 export const UpdatePasswordValidation = z.object({

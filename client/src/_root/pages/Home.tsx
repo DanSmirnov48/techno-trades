@@ -1,43 +1,44 @@
 import { Link } from "react-router-dom";
 import { useCategoryFilter } from "@/hooks/store";
-import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { NewArrivals, Promotion } from "@/components/root";
 import SplideCarousel from "@/components/root/SplideCarousel";
 import { Tag, CalendarDays, Recycle, Store } from "lucide-react";
 import { categories } from "@/components/tables/products-table/filters";
 
 const Home = () => {
-  function banner() {
-    const gradientStyle = {
-      background:
-        "linear-gradient(to right, #FFFFFF 0%, #f1f1f1 25%, #d4d4d490 35%, #d4d4d490 65%, #f1f1f1 75%, #FFFFFF 100%)",
-    };
-
+  function Banner() {
     return (
-      <section className="w-full" style={gradientStyle}>
-        <Shell className="flex justify-around h-16 text-sm font-medium">
-          <div className="flex flex-row w-full h-16 items-center">
+      <div className="flex justify-between text-sm font-medium">
+        <Card className="bg-accent max-w-xs h-16 pt-2">
+          <CardContent className="flex flex-row w-full items-center">
             <Tag className="w-14" />
             <span>You won't get it cheaper. Full stop.</span>
-          </div>
-          <div className="flex flex-row w-full h-16 items-center">
+          </CardContent>
+        </Card>
+        <Card className="bg-accent max-w-xs h-16 pt-2">
+          <CardContent className="flex flex-row w-full items-center">
             <CalendarDays className="w-14 mr-2" />
             <span>Spread the cost(29.9% APR representative variable)</span>
-          </div>
-          <div className="flex flex-row w-full h-16 items-center">
+          </CardContent>
+        </Card>
+        <Card className="bg-accent max-w-xs h-16 pt-2">
+          <CardContent className="flex flex-row w-full items-center">
             <Recycle className="w-14 mr-2" />
             <span>
               Recycle your old tech &amp; get £5 off your next purchase.
               T&amp;Cs apply.
             </span>
-          </div>
-          <div className="flex flex-row w-full h-16 items-center">
+          </CardContent>
+        </Card>
+        <Card className="bg-accent max-w-xs h-16 pt-4">
+          <CardContent className="flex flex-row w-full items-center">
             <Store className="w-14" />
             <span>Free order &amp; collect in an hour</span>
-          </div>
-        </Shell>
-      </section>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -125,13 +126,14 @@ const Home = () => {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen items-center bg-light-1 dark:bg-dark-2 transform transition duration-700 ease-in-out">
-      {banner()}
-      <div className="w-full px-2.5 md:px-10 my-20 max-w-screen-2xl">
-        {Hero()}
+      <div className="w-full px-2.5 md:px-10 my-10 max-w-screen-2xl">
+        <Banner />
+        <div className="my-10" />
+        <Hero />
+        <div className="my-10" />
+        <SplideCarousel />
         <div className="my-20" />
-        {SplideCarousel()}
-        <div className="my-20" />
-        {ShopCategories()}
+        <ShopCategories />
         <div className="my-32" />
         <NewArrivals />
         <div className="my-32" />
