@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useLocation } from "react-router-dom";
 import { OrderInvoice } from "@/components/shared";
-import { useGetOrderBySessionId } from "@/lib/react-query/queries";
+import { useGetOrderBySessionId } from "@/lib/react-query/queries/order-queries";
 
 const CkeckoutSuccess: React.FC = () => {
   const { search } = useLocation();

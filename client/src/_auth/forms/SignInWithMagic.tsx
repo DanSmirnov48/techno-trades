@@ -3,7 +3,7 @@ import { IUser } from "@/types";
 import { useEffect } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSendMagicLinkToken } from "@/lib/react-query/queries";
+import { useSendMagicLinkToken } from "@/lib/react-query/queries/user-queries";
 
 interface AuthResponse {
     data?: any;

@@ -36,7 +36,7 @@ import {
     useRequestForgotPasswordVerificationCode,
     useResetForgottenPassword,
     useVerifyPasswordResetVerificationDoe
-} from "@/lib/react-query/queries";
+} from "@/lib/react-query/queries/user-queries";
 
 interface ForgotPasswordResponse {
     data?: any;

@@ -1,12 +1,12 @@
+import { toast } from "sonner"
+import { ListRestart, X } from "lucide-react"
+import { ProductType } from "@/lib/validation"
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { categories } from '../products-table/filters'
-import { ProductType } from "@/lib/validation"
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
-import { ListRestart, X } from "lucide-react"
+import { useRestoreProduct } from "@/lib/react-query/queries/product-queries"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useRestoreProduct } from "@/lib/react-query/queries"
-import { toast } from "sonner"
 
 export const columns: ColumnDef<ProductType>[] = [
   {

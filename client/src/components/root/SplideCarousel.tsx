@@ -2,7 +2,7 @@
 import { Splide, SplideSlide, SplideTrack } from "@splidejs/react-splide";
 import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
-import { useGetProducts } from "@/lib/react-query/queries";
+import { useGetProducts } from "@/lib/react-query/queries/product-queries";
 import "@splidejs/splide/dist/css/splide.min.css";
 import { buttonVariants } from "../ui/button";
 import { Link } from "react-router-dom";

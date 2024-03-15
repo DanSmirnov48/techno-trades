@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMagicLinkSignIn } from "@/lib/react-query/queries";
+import { useMagicLinkSignIn } from "@/lib/react-query/queries/user-queries";
 
 interface MagicLinkResponse {
     data?: any;
@@ -31,7 +31,7 @@ const MagicLinkSignInValidation = z.object({
 export default function MagicLinkSignIn() {
 
     const [error, setError] = useState<string | undefined>();
-    const { mutateAsync: magicLinkSignIn } = useMagicLinkSignIn()
+    const { mutateAsync: requestMagicLink } = useMagicLinkSignIn()
 
     const form = useForm<z.infer<typeof MagicLinkSignInValidation>>({
         resolver: zodResolver(MagicLinkSignInValidation),
@@ -47,7 +47,7 @@ export default function MagicLinkSignIn() {
     };
 
     const handleSignin = async (user: z.infer<typeof MagicLinkSignInValidation>) => {
-        const res: MagicLinkResponse = await magicLinkSignIn({ email: user.email })
+        const res: MagicLinkResponse = await requestMagicLink({ email: user.email })
         if (res.status === 200 && res.data.status === "success") {
             form.reset()
             toast.info(res.data.message)

@@ -33,7 +33,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { OtpValidation } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useVerifyAccount } from "@/lib/react-query/queries";
+import { useVerifyAccount } from "@/lib/react-query/queries/user-queries";
 
 const OtpForm = () => {
     const navigate = useNavigate();

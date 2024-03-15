@@ -2,7 +2,7 @@ import { Product } from "@/types";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { useBrandFilter } from "@/hooks/store";
-import { useGetProducts } from "@/lib/react-query/queries";
+import { useGetProducts } from "@/lib/react-query/queries/product-queries";
 
 const ProductBrandFilter: React.FC = () => {
   const { data } = useGetProducts();

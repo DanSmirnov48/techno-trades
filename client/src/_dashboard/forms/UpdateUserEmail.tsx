@@ -26,7 +26,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
 import { UpdateUserEmailValidation } from "@/lib/validation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useRequestEmailChangeVerificationCode, useUpdateMyEmail } from "@/lib/react-query/queries";
+import { useRequestEmailChangeVerificationCode, useUpdateMyEmail } from "@/lib/react-query/queries/user-queries";
 
 interface EmailUpdateResponse {
     data?: {

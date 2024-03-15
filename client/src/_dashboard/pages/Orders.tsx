@@ -7,10 +7,10 @@ import { Shell } from "@/components/dashboard/shell";
 import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/dashboard/header";
 import { cn, formatDate, formatPrice } from "@/lib/utils";
-import { useGetMyOrders } from "@/lib/react-query/queries";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import PDFExportComponent from "@/components/shared/ExportToPDF";
 import { CardSkeleton } from "@/components/dashboard/card-skeleton";
+import { useGetMyOrders } from "@/lib/react-query/queries/order-queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function DashboardOrders() {

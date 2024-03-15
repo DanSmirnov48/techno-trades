@@ -23,7 +23,7 @@ import { categories } from "../filters";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { useUpdateProduct } from "@/lib/react-query/queries";
+import { useUpdateProduct } from "@/lib/react-query/queries/product-queries";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
 

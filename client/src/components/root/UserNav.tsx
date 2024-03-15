@@ -23,10 +23,10 @@ import {
   Settings,
   SunMedium,
 } from "lucide-react";
-import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
-import { useSignOutAccount } from "@/lib/react-query/queries";
-import { Link, useNavigate } from "react-router-dom";
 import { Icons } from "../shared";
+import { Link, useNavigate } from "react-router-dom";
+import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
+import { useSignOutAccount } from "@/lib/react-query/queries/user-queries";
 
 export function UserNav() {
   const { mutate: signOut } = useSignOutAccount();

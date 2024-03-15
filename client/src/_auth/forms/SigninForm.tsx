@@ -2,17 +2,16 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { IUser } from "@/types";
 import { useState } from "react";
-import { MagicLinkSignIn } from ".";
+import { MagicSignInForm } from ".";
 import { useForm } from "react-hook-form";
-import { Icons } from "@/components/shared";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SigninValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
-import { useSignInAccount } from "@/lib/react-query/queries";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useSignInAccount } from "@/lib/react-query/queries/user-queries";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
@@ -76,13 +75,8 @@ const SigninForm = () => {
         <CardTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">Welcome back!</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* <Link to={""} className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-          <Icons.google className="w-6 h-6" />
-          <span className="w-5/6 px-4 py-3 font-bold text-center">Sign in with Google</span>
-        </Link> */}
-
         <div className="mb-10">
-          <MagicLinkSignIn />
+          <MagicSignInForm />
         </div>
 
         <div className="flex items-center justify-between my-6">

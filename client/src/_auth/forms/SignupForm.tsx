@@ -18,7 +18,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { SignupValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserAccount } from "@/lib/react-query/queries";
+import { useCreateUserAccount } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {

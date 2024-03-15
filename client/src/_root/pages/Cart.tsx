@@ -6,8 +6,8 @@ import { Icons } from "@/components/shared";
 import { cn, formatPrice } from "@/lib/utils";
 import { CartTableItem } from "@/components/root";
 import { useUserContext } from "@/context/AuthContext";
-import { useCreateOrder } from "@/lib/react-query/queries";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useCreateOrder } from "@/lib/react-query/queries/order-queries";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Cart = () => {
