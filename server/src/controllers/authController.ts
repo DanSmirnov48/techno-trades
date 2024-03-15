@@ -4,7 +4,7 @@ import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import { sendEmailChangeVerificationMail, sendEmailVerificationMail, sendForgotPasswordVerificationMail } from '../utils/email';
+import { sendEmailChangeVerificationMail, sendEmailVerificationMail, sendForgotPasswordVerificationMail, sendMagicSignInLinkMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
@@ -179,6 +179,75 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
     }
     // 3) If everything ok, send token to client
     createSendToken(user!, 200, req, res);
+});
+
+export const magicLinkLogIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    // 1) Check if email and password exist
+    if (!email) {
+        return next(new Error('Please provide email!'));
+    }
+    // 2) Check if user exists && password is correct
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+    }
+
+    // 2) Generate the random reset token
+    const magicLink = user.createMagicLogInLink();
+    await user.save({ validateBeforeSave: false });
+
+    // 3) Send it to user's email
+    const resetURL = `${process.env.CLIENT_URL}/login/${magicLink}`;
+
+    try {
+        await sendMagicSignInLinkMail({
+            subject: "Magic SignIn Link",
+            sendTo: req.body.email,
+            verificationCode: resetURL
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Magic Link sent to email!'
+        }).end();
+    } catch (err) {
+        user.magicLogInLink = undefined;
+        user.magicLogInLinkExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        return next(
+            new Error('There was an error sending the email. Try again later!'),
+        );
+    }
+});
+
+export const logInWithMagicLink = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.params;
+
+    if (token) {
+        // 1) Get user based on the token
+        const user = await User.findOne({
+            magicLogInLink: token,
+            magicLogInLinkExpires: { $gt: Date.now() }
+        });
+
+        console.log(user)
+
+        // 2) If token has not expired, and there is user, set the new password
+        if (!user) {
+            return next(new Error('Token is invalid or has expired'));
+        }
+
+        user.magicLogInLink = undefined;
+        user.magicLogInLinkExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        // 3) Log the user in, send JWT
+        createSendToken(user, 200, req, res);
+    }
 });
 
 export const logout = (req: Request, res: Response) => {

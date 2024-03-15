@@ -23,6 +23,8 @@ export interface IUser extends Document {
     active: boolean;
     verified: boolean;
     verificationCode?: number;
+    magicLogInLink?: String,
+    magicLogInLinkExpires?: Date,
 }
 
 interface IUserMethods {
@@ -33,6 +35,7 @@ interface IUserMethods {
     createEmailUpdateVerificationCode(): string;
     checkUserEmailupdateVerificationCode(code: string): boolean;
     checkForgotPasswordVerificationCode(code: string): boolean;
+    createMagicLogInLink(): string;
 }
 
 type UserModel = Model<IUser, {}, IUserMethods>;
@@ -94,7 +97,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     },
     verificationCode: {
         type: Number,
-    }
+    },
+    magicLogInLink: String,
+    magicLogInLinkExpires: Date,
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
@@ -165,6 +170,19 @@ userSchema.methods.checkUserEmailupdateVerificationCode = function (code: string
 
 userSchema.methods.checkForgotPasswordVerificationCode = function (code: string): boolean {
     return this.passwordResetToken == code;
+};
+
+userSchema.methods.createMagicLogInLink = function (): string {
+    const magicLink = crypto.randomBytes(32).toString('hex');
+
+    this.magicLogInLink = magicLink
+    
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+    
+    this.magicLogInLinkExpires = expirationTime;
+
+    return magicLink;
 };
 
 export const User = mongoose.model<IUser, UserModel>('User', userSchema);

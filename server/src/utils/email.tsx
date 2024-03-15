@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer';
 import { renderToStaticMarkup } from 'react-dom/server';
 import VerifyEmail from './email-templates/VerifyEmail';
 import EmailChangeVerification from './email-templates/EmailChangeVerification';
+import ForgotPasswordVerification from './email-templates/ForgotPasswordVerification';
+import MagicSignIn from './email-templates/MagicLinkSignIn';
 
 export type EmailVerificationContentProps = {
   subject: string;
@@ -40,6 +42,40 @@ export const sendEmailVerificationMail = async ({ subject, sendTo, verificationC
 
 export const sendEmailChangeVerificationMail = async ({ subject, sendTo, verificationCode }: EmailVerificationContentProps) => {
   const renderedEmail = renderToStaticMarkup(<EmailChangeVerification verificationCode={verificationCode} />);
+
+  const mailOptions = {
+    from: `"TechnoTrades" <${process.env.EMAIL_EMAIL}>`,
+    to: sendTo,
+    html: renderedEmail,
+    subject: subject,
+  };
+
+  transporter.sendMail(mailOptions, (error: any, info: any) => {
+    if (error) return console.log(error);
+
+    console.log('Email sent: ', info);
+  });
+};
+
+export const sendForgotPasswordVerificationMail = async ({ subject, sendTo, verificationCode }: EmailVerificationContentProps) => {
+  const renderedEmail = renderToStaticMarkup(<ForgotPasswordVerification verificationCode={verificationCode} />);
+
+  const mailOptions = {
+    from: `"TechnoTrades" <${process.env.EMAIL_EMAIL}>`,
+    to: sendTo,
+    html: renderedEmail,
+    subject: subject,
+  };
+
+  transporter.sendMail(mailOptions, (error: any, info: any) => {
+    if (error) return console.log(error);
+
+    console.log('Email sent: ', info);
+  });
+};
+
+export const sendMagicSignInLinkMail = async ({ subject, sendTo, verificationCode }: EmailVerificationContentProps) => {
+  const renderedEmail = renderToStaticMarkup(<MagicSignIn magicLink={verificationCode} />);
 
   const mailOptions = {
     from: `"TechnoTrades" <${process.env.EMAIL_EMAIL}>`,

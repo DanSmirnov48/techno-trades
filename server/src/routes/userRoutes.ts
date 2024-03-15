@@ -11,7 +11,9 @@ import {
   forgotPassword,
   generateUserEmailChangeVerificationCode,
   logIn,
+  logInWithMagicLink,
   logout,
+  magicLinkLogIn,
   protect,
   refreshAccessToken,
   resetPassword,
@@ -31,6 +33,8 @@ const router = express.Router();
 router.route("/signup").post(signup);
 router.route("/verify-account").post(verifyAccount);
 router.route("/login").post(authRateLimiter, logIn);
+router.route("/magic-link-login").post(magicLinkLogIn);
+router.route("/login/:token").patch(logInWithMagicLink);
 router.route("/logout").get(logout);
 router.route("/validate").get(validate);
 router.route("/refresh-token").get(refreshAccessToken);
