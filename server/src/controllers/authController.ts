@@ -127,8 +127,7 @@ export const signup = asyncHandler(async (req: Request, res: Response, next: Nex
     });
 
     await sendEmailVerificationMail({
-        subject: "Your Account Verification Code",
-        sendTo: req.body.email,
+        to: req.body.email,
         verificationCode: verificationCode.toString()
     });
 
@@ -204,9 +203,8 @@ export const magicLinkLogIn = asyncHandler(async (req: Request, res: Response, n
 
     try {
         await sendMagicSignInLinkMail({
-            subject: "Magic SignIn Link",
-            sendTo: req.body.email,
-            verificationCode: resetURL
+            to: req.body.email,
+            magicLink: resetURL
         });
 
         return res.status(200).json({
@@ -442,8 +440,7 @@ export const forgotPassword = asyncHandler(async (req: Request, res: Response, n
         // 3) Send it to user's email
         try {
             await sendForgotPasswordVerificationMail({
-                subject: "Reset your TechnoTrades password",
-                sendTo: email.toString(),
+                to: email.toString(),
                 verificationCode: code
             });
 
@@ -555,8 +552,7 @@ export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: 
         console.log({ fdf })
 
         await sendEmailChangeVerificationMail({
-            subject: "Your Email Change Verification Code",
-            sendTo: email.toString(),
+            to: email.toString(),
             verificationCode: code
         });
 
