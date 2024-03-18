@@ -4,7 +4,7 @@ import jwt, { Secret, VerifyOptions } from 'jsonwebtoken'
 import { User, IUser } from '../models/users'
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
-import { sendEmail } from '../utils/email';
+import { sendEmailChangeVerificationMail, sendEmailVerificationMail, sendForgotPasswordVerificationMail, sendMagicSignInLinkMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
 interface CustomRequest extends Request {
@@ -110,14 +110,56 @@ const createSendToken = (user: IUser, statusCode: number, req: Request, res: Res
     }).end();
 };
 
+const generateRandomCode = (): number => {
+    return Math.floor(100000 + Math.random() * 900000);
+};
+
 export const signup = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const verificationCode = generateRandomCode()
+
     await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        verificationCode: verificationCode,
     });
+
+    await sendEmailVerificationMail({
+        subject: "Your Account Verification Code",
+        sendTo: req.body.email,
+        verificationCode: verificationCode.toString()
+    });
+
+    return res.status(200).json({ status: 'success' }).end();
+});
+
+export const verifyAccount = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.body;
+
+    // Find the user with the provided verification code
+    const user = await User.findOne({ verificationCode: code });
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkValidationCode(code);
+
+    if (!isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Update the user's verification status to true
+    const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { verified: true }, $unset: { verificationCode: 1 } },
+        { new: true, runValidators: true }
+    );
 
     return res.status(200).json({ status: 'success' }).end();
 });
@@ -137,6 +179,75 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
     }
     // 3) If everything ok, send token to client
     createSendToken(user!, 200, req, res);
+});
+
+export const magicLinkLogIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    // 1) Check if email and password exist
+    if (!email) {
+        return next(new Error('Please provide email!'));
+    }
+    // 2) Check if user exists && password is correct
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+    }
+
+    // 2) Generate the random reset token
+    const magicLink = user.createMagicLogInLink();
+    await user.save({ validateBeforeSave: false });
+
+    // 3) Send it to user's email
+    const resetURL = `${process.env.CLIENT_URL}/login/${magicLink}`;
+
+    try {
+        await sendMagicSignInLinkMail({
+            subject: "Magic SignIn Link",
+            sendTo: req.body.email,
+            verificationCode: resetURL
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Magic Link sent to email!'
+        }).end();
+    } catch (err) {
+        user.magicLogInLink = undefined;
+        user.magicLogInLinkExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        return next(
+            new Error('There was an error sending the email. Try again later!'),
+        );
+    }
+});
+
+export const logInWithMagicLink = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.params;
+
+    if (token) {
+        // 1) Get user based on the token
+        const user = await User.findOne({
+            magicLogInLink: token,
+            magicLogInLinkExpires: { $gt: Date.now() }
+        });
+
+        console.log(user)
+
+        // 2) If token has not expired, and there is user, set the new password
+        if (!user) {
+            return next(new Error('Token is invalid or has expired'));
+        }
+
+        user.magicLogInLink = undefined;
+        user.magicLogInLinkExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        // 3) Log the user in, send JWT
+        createSendToken(user, 200, req, res);
+    }
 });
 
 export const logout = (req: Request, res: Response) => {
@@ -315,70 +426,95 @@ export const validateAccessToken = async (req: CustomRequest, res: Response, nex
 };
 
 export const forgotPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
     // 1) Get user based on POSTed email
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: email });
     if (!user) {
         return next(new Error('There is no user with email address.'));
     }
 
-    // 2) Generate the random reset token
-    //@ts-ignore
-    const resetToken = user.createPasswordResetToken();
-    await user.save({ validateBeforeSave: false });
-
-    // 3) Send it to user's email
-    const resetURL = `${req.protocol}://${req.get(
-        'host'
-    )}/api/users/reset-password/${resetToken}`;
-
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
-    try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Your password reset token (valid for 10 min)',
-            message
-        });
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Token sent to email!',
-            passwordResetExpires: user.passwordResetExpires
-        });
-    } catch (err) {
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
+    if (email) {
+        // 2) Generate the random reset token
+        const code = user.createPasswordResetVerificationCode();
         await user.save({ validateBeforeSave: false });
 
-        return next(new Error('There was an error sending the email. Try again later!'));
+        // 3) Send it to user's email
+        try {
+            await sendForgotPasswordVerificationMail({
+                subject: "Reset your TechnoTrades password",
+                sendTo: email.toString(),
+                verificationCode: code
+            });
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'Token sent to email!',
+                passwordResetExpires: user.passwordResetExpires
+            });
+        } catch (err) {
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            await user.save({ validateBeforeSave: false });
+
+            return next(new Error('There was an error sending the email. Try again later!'));
+        }
     }
+    res.status(500).end();
 })
 
-export const resetPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    // 1) Get user based on the token
-    const hashedToken = crypto
-        .createHash('sha256')
-        .update(req.params.token)
-        .digest('hex');
+export const verifyPasswordResetCode = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.body;
 
+    // 1) Get user based on POSTed email
     const user = await User.findOne({
-        passwordResetToken: hashedToken,
+        passwordResetToken: code,
         passwordResetExpires: { $gt: Date.now() }
     });
 
     // 2) If token has not expired, and there is user, set the new password
     if (!user) {
-        return next(new Error('Token is invalid or has expired'));
+        return res.status(400).json({ error: 'Token is invalid or has expired' });
     }
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save();
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkForgotPasswordVerificationCode(code.toString());
+
+    if (isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(200).json({ success: 'Valid Code' });
+    }
+
+    res.status(500).end();
+})
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const { password, confirmPassword, email, code } = req.body;
+
+    // // 1) Get user based on the token
+    const user = await User.findOne({
+        email: email,
+        passwordResetToken: code,
+        passwordResetExpires: { $gt: Date.now() }
+    });
+
+    // 2) If token has not expired, and there is user, set the new password
+    if (!user) {
+        return next(new Error('User not found'));
+    }
 
     // 3) Update changedPasswordAt property for the user
-    // 4) Log the user in, send JWT
-    createSendToken(user, 200, req, res);
+    try {
+        user.password = password;
+        user.passwordConfirm = confirmPassword;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        return res.status(200).json({ success: 'Password Reset Success' });
+    } catch (err) {
+        return next(new Error('There was an error sending the email. Try again later!'));
+    }
 })
 
 export const updatePassword = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -401,3 +537,70 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
     // 4) Log user in, send JWT
     createSendToken(user!, 200, req, res);
 })
+
+export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const { email } = req.query;
+
+    // 1) Get user from collection
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'User not found' });
+    }
+
+    if (email) {
+        const code = user.createEmailUpdateVerificationCode();
+        const fdf = await user.save({ validateBeforeSave: false });
+        console.log({ fdf })
+
+        await sendEmailChangeVerificationMail({
+            subject: "Your Email Change Verification Code",
+            sendTo: email.toString(),
+            verificationCode: code
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Code sent to email!',
+        }).end();
+    }
+
+    res.status(500).end();
+})
+
+export const updateUserEmail = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { code, newEmail } = req.body;
+
+    // Find the user with the provided verification code
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+        // If no user is found with the provided code, return an error
+        return res.status(400).json({ error: 'User not found' });
+    }
+
+    // Check if the verification code matches the one stored in the user document
+    const isCodeValid = user.checkUserEmailupdateVerificationCode(code.toString());
+
+    if (!isCodeValid) {
+        // If the codes don't match, return an error
+        return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    // Update the user's verification status to true
+    const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $set: { verified: true, email: newEmail }, $unset: { emailUpdateVerificationCode: 1 } },
+        { new: true, runValidators: true }
+    );
+
+    console.log({ updatedUser })
+
+    return res.status(200).json({
+        status: 'success',
+        data: {
+            user: updatedUser
+        }
+    }).end();
+});

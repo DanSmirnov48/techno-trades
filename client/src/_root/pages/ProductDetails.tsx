@@ -13,7 +13,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductReviewForm from "@/components/root/ProductReviewForm";
 import { AddToCartButton, AddToFavoritesButton } from "@/components/shared";
-import { useGetProductBySlug, useGetProducts } from "@/lib/react-query/queries";
+import { useGetProductBySlug, useGetProducts } from "@/lib/react-query/queries/product-queries";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { calculateDiscountPercentage, cn, formatPrice, isProductAddedWithinNDays, ratingStyle } from "@/lib/utils";
 

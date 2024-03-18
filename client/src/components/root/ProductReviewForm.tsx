@@ -11,7 +11,7 @@ import { Rating } from "@smastrom/react-rating";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
 import { ProductReviewValidation } from "@/lib/validation";
-import { useCreateReview } from "@/lib/react-query/queries";
+import { useCreateReview } from "@/lib/react-query/queries/review-queries";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 
 type ReviewFormProps = {

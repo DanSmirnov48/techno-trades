@@ -1,6 +1,7 @@
 import { showPerPage, sortCategories } from '@/constants/idnex';
-import { Product } from '@/types';
+import { IUser, Product } from '@/types';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface SortingState {
     isChecked: boolean;
@@ -56,6 +57,11 @@ interface ProductStoreState {
     totalProducts: number;
     setFilteredProducts: (products: Product[]) => void;
     setTotalProducts: (count: number) => void;
+}
+
+interface UserStoreState {
+    user: null | Partial<IUser>;
+    setUserProducts: (user: Partial<IUser>) => void;
 }
 
 export const useSorting = create<SortingState>((set) => ({
@@ -128,3 +134,16 @@ export const useProductStore = create<ProductStoreState>((set) => ({
     setFilteredProducts: (products) => set({ filteredProducts: products }),
     setTotalProducts: (count) => set({ totalProducts: count }),
 }));
+
+export const useUserStore = create<UserStoreState>()(
+    persist(
+        (set) => ({
+            user: null,
+            setUserProducts: (user) => set({ user: user }),
+        }),
+        {
+            name: 'user',
+            storage: createJSONStorage(() => sessionStorage),
+        }
+    )
+);

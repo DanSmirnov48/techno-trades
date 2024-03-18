@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { IUser } from "@/types";
-import { useGetUserSession } from "@/lib/react-query/queries";
+import { useGetUserSession } from "@/lib/react-query/queries/user-queries";
 
 interface AuthResponse {
   status: number;

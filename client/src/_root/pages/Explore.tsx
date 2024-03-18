@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { GridProductList, ListProductList } from "@/components/shared";
 import { Pagination, PaginationContent } from "@/components/ui/pagination"
-import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-query/queries";
+import { useGetFilteredProducts, useGetPaginatedProducts } from "@/lib/react-query/queries/product-queries";
 import { FilterLoader, ProductFilters, ProductLoader, ProductSearch, ProductSorting } from "@/components/product-filters";
 import { useSorting, useBrandFilter, useStockFiltering, usePriceFilterStore, useRatingFilterStore, useCategoryFilter, useProductStore } from "@/hooks/store";
 

@@ -1,2 +1,7 @@
 export {default as SignupForm } from './SignupForm'
 export {default as SigninForm } from './SigninForm'
+export {default as OtpForm } from './OtpForm'
+export {default as AccountVerified } from './AccountVerified'
+export {default as ForgotPasswordForm } from './ForgotPasswordForm'
+export {default as MagicSignInForm } from './MagicSignInForm'
+export {default as SignInWithMagic } from './SignInWithMagic'

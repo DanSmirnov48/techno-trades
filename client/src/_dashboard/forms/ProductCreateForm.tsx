@@ -19,8 +19,8 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { ProductCreateValidation } from "@/lib/validation";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { cn, convertFileToUrl, formatPrice } from "@/lib/utils";
-import { useCreateProduct } from "@/lib/react-query/queries";
 import { categories } from "@/components/tables/products-table/filters";
+import { useCreateProduct } from "@/lib/react-query/queries/product-queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 

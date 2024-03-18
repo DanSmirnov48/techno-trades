@@ -1,7 +1,7 @@
 import { Product } from "@/types";
 import { GridProductList } from "@/components/shared";
-import { useGetProducts } from "@/lib/react-query/queries";
 import { ProductLoader } from "@/components/product-filters";
+import { useGetProducts } from "@/lib/react-query/queries/product-queries";
 
 const Deals = () => {
   const { data, isPending: isProductLoading } = useGetProducts();

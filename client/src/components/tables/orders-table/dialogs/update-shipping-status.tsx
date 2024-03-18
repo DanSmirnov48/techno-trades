@@ -21,7 +21,7 @@ import {
 import { deliveryStatuses } from "../filters";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useUpdateShippingStatus } from "@/lib/react-query/queries";
+import { useUpdateShippingStatus } from "@/lib/react-query/queries/order-queries";
 import { toast } from "sonner";
 
 type EditProps = {

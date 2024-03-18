@@ -13,6 +13,7 @@ export interface IUser extends Document {
         name: { type: String },
         url: { type: String },
     },
+    emailUpdateVerificationCode?: string;
     role: 'user' | 'admin';
     password: string;
     passwordConfirm: string;
@@ -20,12 +21,21 @@ export interface IUser extends Document {
     passwordResetToken?: string;
     passwordResetExpires?: Date;
     active: boolean;
+    verified: boolean;
+    verificationCode?: number;
+    magicLogInLink?: String,
+    magicLogInLinkExpires?: Date,
 }
 
 interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
     changedPasswordAfter(JWTTimestamp: number): boolean;
-    createPasswordResetToken(): string;
+    checkValidationCode(code: number): boolean;
+    createPasswordResetVerificationCode(): string;
+    createEmailUpdateVerificationCode(): string;
+    checkUserEmailupdateVerificationCode(code: string): boolean;
+    checkForgotPasswordVerificationCode(code: string): boolean;
+    createMagicLogInLink(): string;
 }
 
 type UserModel = Model<IUser, {}, IUserMethods>;
@@ -46,6 +56,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         lowercase: true,
         validate: [validator.isEmail, 'Invalid email address'],
     },
+    emailUpdateVerificationCode: String,
     photo: {
         key: { type: String },
         name: { type: String },
@@ -80,6 +91,15 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         default: true,
         select: false,
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    verificationCode: {
+        type: Number,
+    },
+    magicLogInLink: String,
+    magicLogInLinkExpires: Date,
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
@@ -120,22 +140,49 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boole
     return false;
 }
 
-userSchema.methods.createPasswordResetToken = function (): string {
-    const resetToken = crypto.randomBytes(32).toString('hex');
+userSchema.methods.checkValidationCode = function (code: number): boolean {
+    return this.verificationCode == code;
+};
 
-    this.passwordResetToken = crypto
-        .createHash('sha256')
-        .update(resetToken)
-        .digest('hex');
+userSchema.methods.createPasswordResetVerificationCode = function (): string {
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
 
-    console.log({ resetToken }, this.passwordResetToken);
+    this.passwordResetToken = code
 
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 10);
 
     this.passwordResetExpires = expirationTime;
 
-    return resetToken;
+    return code;
+};
+
+userSchema.methods.createEmailUpdateVerificationCode = function (): string {
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
+
+    this.emailUpdateVerificationCode = code
+    return code;
+};
+
+userSchema.methods.checkUserEmailupdateVerificationCode = function (code: string): boolean {
+    return this.emailUpdateVerificationCode == code;
+};
+
+userSchema.methods.checkForgotPasswordVerificationCode = function (code: string): boolean {
+    return this.passwordResetToken == code;
+};
+
+userSchema.methods.createMagicLogInLink = function (): string {
+    const magicLink = crypto.randomBytes(32).toString('hex');
+
+    this.magicLogInLink = magicLink
+    
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+    
+    this.magicLogInLinkExpires = expirationTime;
+
+    return magicLink;
 };
 
 export const User = mongoose.model<IUser, UserModel>('User', userSchema);

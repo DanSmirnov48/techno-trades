@@ -9,8 +9,8 @@ import { cn, convertFileToUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader2, RotateCcw, X } from "lucide-react";
 import { toast } from "sonner";
-import { deleteMediaFilesByKey } from "@/lib/backend-api";
-import { useUpdateProduct } from "@/lib/react-query/queries";
+import { deleteMediaFilesByKey } from "@/lib/backend-api/medias";
+import { useUpdateProduct } from "@/lib/react-query/queries/product-queries";
 import { IUpdateProduct, ProductImage } from "@/types";
 import { Progress } from "@/components/ui/progress";
 

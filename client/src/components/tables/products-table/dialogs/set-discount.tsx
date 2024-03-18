@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { calculateDiscountPercentage, cn, formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
-import { useSetProductDiscount } from "@/lib/react-query/queries";
+import { useSetProductDiscount } from "@/lib/react-query/queries/product-queries";
 import { AlertCircle } from "lucide-react";
 
 type EditProps = {

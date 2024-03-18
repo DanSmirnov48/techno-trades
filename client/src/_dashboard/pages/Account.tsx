@@ -6,6 +6,7 @@ import ResetPassword from "../forms/ResetPassword";
 import { Shell } from "@/components/dashboard/shell";
 import { useUserContext } from "@/context/AuthContext";
 import { Header } from "@/components/dashboard/header";
+import UpdateUserEmail from "../forms/UpdateUserEmail";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -43,6 +44,7 @@ export default function DashboardAccount() {
         <TabsContent value="account">
           <LastSignIn />
           <UpdateProfile />
+          <UpdateUserEmail />
           <CloseAccount />
         </TabsContent>
         <TabsContent value="password">

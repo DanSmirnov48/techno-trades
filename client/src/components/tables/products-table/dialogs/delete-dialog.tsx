@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ProductType } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
-import { useArchiveProduct } from "@/lib/react-query/queries";
+import { useArchiveProduct } from "@/lib/react-query/queries/product-queries";
 import { toast } from "sonner"
-import { deleteMediaFilesByKey } from "@/lib/backend-api";
+import { deleteMediaFilesByKey } from "@/lib/backend-api/medias";
 
 type DeleteProps = {
   product: ProductType;

@@ -1,8 +1,8 @@
 import { takeRight } from 'lodash'
 import { Button } from "@/components/ui/button"
-import { useGetOrders } from "@/lib/react-query/queries"
 import { Overview } from "@/components/dashboard/overview"
 import { RecentSales } from "@/components/dashboard/recent-sales"
+import { useGetOrders } from "@/lib/react-query/queries/order-queries"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 

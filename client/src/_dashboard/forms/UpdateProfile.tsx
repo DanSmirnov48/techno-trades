@@ -13,10 +13,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
 import { useDropzone } from "@uploadthing/react/hooks";
 import { ProfileUpdateValidation } from "@/lib/validation";
-import { deleteMediaFilesByKey } from "@/lib/backend-api";
-import { useUpdateMyAccount } from "@/lib/react-query/queries";
+import { deleteMediaFilesByKey } from "@/lib/backend-api/medias";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useUpdateMyAccount } from "@/lib/react-query/queries/user-queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
@@ -174,7 +174,7 @@ const UpdateProfile = () => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
@@ -186,22 +186,17 @@ const UpdateProfile = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {isUploading && <Progress value={uploadProgress} />}
             <Button type="submit" disabled={isUploading || isLoadingUpdate}>
-              {isUploading ? (
-                <>
-                  <Loader2 className="animate-spin h-5 w-5 mr-3" />
-                  Uploading...
-                </>
-              ) : isLoadingUpdate ? (
+              {(isUploading || isLoadingUpdate) ? (
                 <>
                   <Loader2 className="animate-spin h-5 w-5 mr-3" />
                   Uploading...
                 </>
               ) : (
-                <>Update Product</>
+                <>Update Profile</>
               )}
             </Button>
 

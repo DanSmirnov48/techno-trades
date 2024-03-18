@@ -1,8 +1,8 @@
 import { Icons } from "../shared";
+import { MobileProductFilters } from ".";
 import { useSorting } from "@/hooks/store";
 import { showPerPage, sortCategories } from "@/constants/idnex";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { MobileProductFilters } from ".";
 
 const ProductSorting: React.FC = () => {
   const {

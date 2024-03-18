@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdatePasswordValidation } from "@/lib/validation";
-import { useUpdateMyPassword } from "@/lib/react-query/queries";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useUpdateMyPassword } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const ResetPassword = () => {

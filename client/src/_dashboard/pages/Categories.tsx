@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { Shell } from "@/components/dashboard/shell";
 import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/dashboard/header";
-import { useGetProducts } from "@/lib/react-query/queries";
 import { categories } from "@/components/tables/products-table/filters";
+import { useGetProducts } from "@/lib/react-query/queries/product-queries";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Categories = () => {

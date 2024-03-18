@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { INITIAL_USER, useUserContext } from "@/context/AuthContext";
-import { useDeactivateMyAccount, useSignOutAccount } from "@/lib/react-query/queries";
+import { useDeactivateMyAccount, useSignOutAccount } from "@/lib/react-query/queries/user-queries";
 import {
   Form,
   FormControl,

@@ -1,6 +1,6 @@
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useGetProducts } from "@/lib/react-query/queries";
+import { useGetProducts } from "@/lib/react-query/queries/product-queries";
 
 export default function ProductsTable() {
   const { data, isLoading } = useGetProducts();

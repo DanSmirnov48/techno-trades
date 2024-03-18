@@ -1,6 +1,6 @@
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useGetAllUsers } from "@/lib/react-query/queries";
+import { useGetAllUsers } from "@/lib/react-query/queries/user-queries";
 
 export default function UsersTable() {
   const { data, isLoading } = useGetAllUsers();
