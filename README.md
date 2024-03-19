@@ -32,23 +32,64 @@ CVC: ANY 3 DIGITS e.g(999)
 ```
 
 
-## Installation
+## Run Locally
 
 This app requires [node.js](https://nodejs.org/) v14+ to run.
 To run the site, open terminal and make sure it is in the project's directory
 Install the dependencies and start the server.
 
+Install & Run Server dependencies
+
 ```sh
-npm install
-node server
-npm start
+  git clone https://github.com/DanSmirnov48/techno-trades.git
 ```
+
+```sh
+  cd techno-trades
+```
+
+```sh
+  npm install
+```
+
+```sh
+  npm run server
+```
+
+Install & Run Client dependencies
+
+```sh
+  cd client
+```
+
+```sh
+  npm install
+```
+
+```sh
+  npm run dev
+```
+
+## Tech Stack
+
+**Client:**
+- React Vite
+- Tailwind
+- TanStack React Query
+- React-hook-form
+- Shadcn/ui
+- Zod
+- Zustand
+- Axios
+- UploadThing
+
+**Server:**
+- Express
+- MongoDb & Mongoose
+- NodeMailer
+- React-email
+- Stripe
+- UploadThing
+
+
     
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-
-`port`
-
-`MONGO_URI`
