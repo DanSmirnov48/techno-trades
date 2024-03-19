@@ -3,7 +3,7 @@
     <img src="https://github.com/DanSmirnov48/techno-trades/blob/main/images/banner.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 100px;">
 </div>
 
-### Live Appliocation
+## Live Appliocation
 You can check out the [deployed app here](https://techno-trades-b8640249eefb.herokuapp.com), and create your own account or use of the dummy ones:
 
 ```yaml
@@ -16,7 +16,14 @@ and the password is the same of all users
 ```yaml
 Password: password123
 ```
-### Making Payments
+
+## User Auth & Account Verification
+The user authentication and autherazation is using NodeMailer to send users vefication emails. </br>
+At SignUp user will be asked to enter a verification code that will be sent to provided email. **Can not create an account without this!** </br>
+So if you are Signing Up enter an email you can verify.
+
+
+## Making Payments
 The app is using Stripe as a payment method, and is running is Development Mode, which means it doesn't actually withdraw any real money but you will have to use the following card details:
 ```yaml
 Card Number: 4242 4242 4242 4242
