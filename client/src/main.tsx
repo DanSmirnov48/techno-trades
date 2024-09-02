@@ -15,12 +15,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <HelmetProvider>
-              <Banner />
               <Navbar />
               <Helmet>
                 <App />
               </Helmet>
-              <Footer />
             </HelmetProvider>
           </ThemeProvider>
         </AuthProvider>
