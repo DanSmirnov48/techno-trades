@@ -281,8 +281,8 @@ const ProductDetails = () => {
             <div className="mt-2" />
             {product && <AddToFavoritesButton product={product} variant="button" />}
             <Dialog open={open} onOpenChange={setOpen}>
-              <DialogContent className="max-w-screen-lg flex justify-center select-none bg-white">
-                <Carousel className="w-full max-w-4xl">
+              <DialogContent className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 max-w-screen-lg select-none">
+                <Carousel className="lg:col-span-2 mx-10">
                   <CarouselContent>
                     {product?.image.map((_, index) => (
                       <CarouselItem
@@ -299,6 +299,13 @@ const ProductDetails = () => {
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel>
+                <div className="flex flex-col gap-3 h-full rounded-lg bg-accent p-2">
+                  {product?.image.map((image) => (
+                    <div key={image._id} className="block border-2 rounded-xl bg-white p-2 border-gray-200" >
+                      <img className="object-contain w-full h-32" src={image.url} />
+                    </div>
+                  ))}
+                </div>
               </DialogContent>
             </Dialog>
           </div>
@@ -341,11 +348,9 @@ const ProductDetails = () => {
         </div>
       </section>
       <br />
-      {isAuthenticated && product && (
-        <ProductReviewForm product={product} />
-      )}
+      {isAuthenticated && product && (<ProductReviewForm product={product} />)}
       <br />
-      <ReviewsSection product={product!} />
+      {product && (<ReviewsSection product={product} />)}
     </Shell>
   );
 };
