@@ -1,6 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
+import { SigninForm } from "@/_auth/forms";
 import { useEffect, useState } from "react";
 import { Icons } from "@/components/shared";
 import { cn, formatPrice } from "@/lib/utils";
@@ -8,18 +9,8 @@ import { CartTableItem } from "@/components/root";
 import { useUserContext } from "@/context/AuthContext";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useCreateOrder } from "@/lib/react-query/queries/order-queries";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { SigninForm } from "@/_auth/forms";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const Cart = () => {
   const delivery = Number(49.99);
@@ -28,6 +19,7 @@ const Cart = () => {
   const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
   const { user, isAuthenticated } = useUserContext();
   const { mutateAsync: CreateOrder } = useCreateOrder();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -163,7 +155,7 @@ const Cart = () => {
                   Stripe Checkout
                 </Button>
               ) : (
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger className="w-full">
                     <Button size={"lg"} className="w-full bg-dark-1 rounded-md dark:text-white/90 py-4 px-8">
                       Sign In to Checkout
@@ -173,7 +165,7 @@ const Cart = () => {
                     <DialogHeader>
                       <DialogTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">Welcome back!</DialogTitle>
                     </DialogHeader>
-                    <SigninForm />
+                    <SigninForm returnAs={"form"} withMagicSignIn={false} setOpen={setOpen} />
                     <DialogFooter className="flex items-center sm:justify-center my-3">
                       <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
                       <Link to={"/sign-up"} className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">or sign up</Link>

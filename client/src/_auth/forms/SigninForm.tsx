@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { toast } from "sonner";
 import { IUser } from "@/types";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { MagicSignInForm } from ".";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useSignInAccount } from "@/lib/react-query/queries/user-queries";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {
@@ -20,7 +21,13 @@ interface AuthResponse {
   status?: any;
 }
 
-const SigninForm = () => {
+interface SigninFormProps {
+  returnAs: "card" | "form";
+  withMagicSignIn?: boolean;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSignIn, setOpen }) => {
 
   const navigate = useNavigate();
   const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
@@ -59,7 +66,11 @@ const SigninForm = () => {
         setIsAuthenticated(true)
         user.role === 'admin' && setIsAdmin(true);
         toast.success(`Nice to see you back ${user.firstName}`)
-        navigate("/");
+        if (returnAs === "form" && setOpen) {
+          setOpen(false)
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       toast.error('Unknown Error', {
@@ -68,17 +79,18 @@ const SigninForm = () => {
     }
   };
 
-  return (
-    <>
-      <div className="">
-        <MagicSignInForm />
-      </div>
-
-      <div className="flex items-center justify-between my-6">
-        <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
-        <div className="text-xs text-center text-gray-500 uppercase dark:text-gray-400">or login with email & password</div>
-        <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
-      </div>
+  const formContent = (
+    <Fragment>
+      {withMagicSignIn &&
+        <Fragment>
+          <MagicSignInForm />
+          <div className="flex items-center justify-between my-6">
+            <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
+            <div className="text-xs text-center text-gray-500 uppercase dark:text-gray-400">or login with email & password</div>
+            <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
+          </div>
+        </Fragment>
+      }
       {error &&
         <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
           <AlertCircle className="w-6 h-6 mr-2" />
@@ -139,7 +151,27 @@ const SigninForm = () => {
           </div>
         </form>
       </Form>
-    </>
-  );
+    </Fragment>
+  )
+
+  if (returnAs === "card") {
+    return (
+      <Card className="w-full px-6 py-8 md:px-8 lg:w-1/2 rounded-xl shadow-lg">
+        <CardHeader>
+          <CardTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">Welcome back!</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {formContent}
+        </CardContent>
+        <CardFooter className="flex items-center justify-between mt-5 mb-10">
+          <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+          <Link to={"/sign-up"} className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">or sign up</Link>
+          <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+        </CardFooter>
+      </Card>
+    );
+  } else {
+    return formContent;
+  }
 };
 export default SigninForm;

@@ -6,7 +6,6 @@ import {
     ForgotPasswordForm,
     SignInWithMagic
 } from "@/_auth/forms";
-import { SigninCard } from "@/components/auth/SignInCard";
 import { JSX } from "react";
 
 export interface AuthRoute {
@@ -17,7 +16,7 @@ export interface AuthRoute {
 const authRoutes: AuthRoute[] = [
     {
         path: "/sign-in",
-        outlet: <SigninCard />,
+        outlet: <SigninForm returnAs={"card"} withMagicSignIn />,
     },
     {
         path: "/login/:token",
