@@ -6,7 +6,6 @@ import http from 'http';
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from 'cors';
-import { config } from 'dotenv';
 import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
 import mediaRoutes from "./routes/mediaRoutes";
@@ -17,8 +16,8 @@ import orderRouter from "./routes/orderRouter";
 import AppError from "./utils/appError";
 import path from 'path'
 import { corsOptions, helmetOptions } from "./config/site";
+import env from './config/config';
 
-config()
 connectDB()
 
 const app: Application = express();
@@ -63,8 +62,7 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
   })
 }
 
-const PORT = process.env.PORT || 8080;
-
-server.listen(PORT, () => {
-  console.log(`Server is running on PORT ${PORT}`);
+server.listen(env.PORT, () => {
+  console.log(`Server is running on port ${env.PORT}`);
+  console.log(`Connected to MongoDB at ${env.MONGO_URI}`);
 });
