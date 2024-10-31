@@ -17,6 +17,7 @@ import AppError from "./utils/appError";
 import path from 'path'
 import { corsOptions, helmetOptions } from "./config/site";
 import env from './config/config';
+import { IUser } from "models/users";
 
 connectDB()
 
@@ -66,3 +67,11 @@ server.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}`);
   console.log(`Connected to MongoDB at ${env.MONGO_URI}`);
 });
+
+declare global {
+  namespace Express {
+    interface Request {
+      user: IUser
+    }
+  }
+}

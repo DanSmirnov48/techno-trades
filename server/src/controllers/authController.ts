@@ -7,9 +7,9 @@ import asyncHandler from '../middlewares/asyncHandler';
 import { sendEmailChangeVerificationMail, sendEmailVerificationMail, sendForgotPasswordVerificationMail, sendMagicSignInLinkMail } from '../utils/email';
 
 // Custom interface to extend the Request interface
-interface CustomRequest extends Request {
-    user?: IUser;
-}
+// interface Request extends Request {
+//     user?: IUser;
+// }
 
 interface DecodedToken {
     id: string;
@@ -256,7 +256,7 @@ export const logout = (req: Request, res: Response) => {
     res.end()
 };
 
-export const protect = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const protect = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // 1) Getting token and check of it's there
     let token;
     if (
@@ -290,7 +290,7 @@ export const protect = asyncHandler(async (req: CustomRequest, res: Response, ne
 });
 
 export const restrictTo = (...roles: Array<IUser['role']>) => {
-    return (req: CustomRequest, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction) => {
         // Ensure req.user and req.user.role are defined
         if (!req.user || !req.user.role) {
             return next(
@@ -308,7 +308,7 @@ export const restrictTo = (...roles: Array<IUser['role']>) => {
     };
 };
 
-export const validate = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const validate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { accessToken, refreshToken } = req.cookies;
 
     if (accessToken && accessToken !== undefined) {
@@ -362,7 +362,7 @@ export const validate = asyncHandler(async (req: CustomRequest, res: Response, n
     }
 });
 
-export const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const refreshAccessToken = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -392,7 +392,7 @@ export const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: R
     }
 });
 
-export const validateAccessToken = async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extract the access token from the request
         const accessToken = req.headers.authorization?.split(' ')[1];
@@ -514,7 +514,7 @@ export const resetPassword = asyncHandler(async (req: Request, res: Response, ne
     }
 })
 
-export const updatePassword = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const updatePassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // 1) Get user from collection
     const user = await User.findById(req.user?._id).select('+password');
 
@@ -535,7 +535,7 @@ export const updatePassword = asyncHandler(async (req: CustomRequest, res: Respo
     createSendToken(user!, 200, req, res);
 })
 
-export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: CustomRequest, res: Response) => {
+export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: Request, res: Response) => {
     const { email } = req.query;
 
     // 1) Get user from collection
@@ -565,7 +565,7 @@ export const generateUserEmailChangeVerificationCode = asyncHandler(async (req: 
     res.status(500).end();
 })
 
-export const updateUserEmail = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const updateUserEmail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { code, newEmail } = req.body;
 
     // Find the user with the provided verification code

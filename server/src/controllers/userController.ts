@@ -2,11 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { User, IUser, getUser } from '../models/users';
 import asyncHandler from '../middlewares/asyncHandler';
 
-// Custom interface to extend the Request interface
-interface CustomRequest extends Request {
-    user?: IUser;
-}
-
 const filterObj = <T extends Record<string, unknown>>
     (obj: T, ...allowedFields: (keyof T)[]): Partial<T> => {
     const newObj: Partial<T> = {};
@@ -19,10 +14,10 @@ const filterObj = <T extends Record<string, unknown>>
 };
 
 export const getMe = (
-    req: CustomRequest,
+    req: Request,
     res: Response,
     next: NextFunction) => {
-    req.params.id = req.user!._id.toString();
+    req.params.id = req.user._id.toString();
     next();
 }
 
@@ -67,7 +62,7 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
     }
 })
 
-export const updateMe = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const updateMe = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // 1) Create error if user POSTs password data
     if (req.body.password || req.body.passwordConfirm) {
         return next(new Error('This route is not for password updates. Please use /updateMyPassword.'));
@@ -77,7 +72,7 @@ export const updateMe = asyncHandler(async (req: CustomRequest, res: Response, n
     const filteredBody = filterObj(req.body, 'firstName', 'lastName', 'photo');
 
     // 3) Update user document
-    const updatedUser = await User.findByIdAndUpdate(req.user?._id, filteredBody, {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
         new: true,
         runValidators: true
     });
@@ -90,8 +85,8 @@ export const updateMe = asyncHandler(async (req: CustomRequest, res: Response, n
     });
 })
 
-export const deleteMe = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
-    await User.findByIdAndUpdate(req.user?._id, { active: false })
+export const deleteMe = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    await User.findByIdAndUpdate(req.user._id, { active: false })
     res.status(204).json({
         status: 'success',
         data: null

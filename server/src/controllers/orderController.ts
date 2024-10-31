@@ -1,19 +1,12 @@
 import { Stripe } from 'stripe';
-import { config } from 'dotenv';
 import { ObjectId } from 'mongoose';
 import { OrderModel, GetCurrUserOrders, GetOrders, UpdateOrderShippingStatusById, GetOrdersBySessionId } from '../models/order';
 import asyncHandler from '../middlewares/asyncHandler';
-import { IUser } from '../models/users';
+import env from '../config/config';
 import { Request, Response } from "express";
 import { UpdateMultipleProductsStock } from './productController';
 
-config()
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-interface CustomRequest extends Request {
-    user?: IUser;
-}
+const stripe = new Stripe(env.STRIPE_SECRET_KEY!);
 
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -51,9 +44,9 @@ export const updateShippingStatus = asyncHandler(async (req: Request, res: Respo
     }
 });
 
-export const getMyOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
+export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const userId = req.user?._id;
+        const userId = req.user._id;
         if (!userId) {
             return res.status(400).json({ error: 'User not authenticated' });
         }

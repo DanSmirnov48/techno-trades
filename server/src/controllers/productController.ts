@@ -9,13 +9,8 @@ import {
     UpdateProductById,
     UpdateProductStockById,
 } from "../models/products";
-import { ObjectId, Types } from "mongoose";
+import { ObjectId } from "mongoose";
 import { filterAndSortProducts } from "../utils/filterAndSortProducts";
-import { IUser } from "../models/users";
-
-interface CustomRequest extends Request {
-    user: IUser;
-}
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -334,7 +329,7 @@ export const setProductDiscount = asyncHandler(async (req: Request, res: Respons
     }
 });
 
-export const createProductReview = asyncHandler(async (req: CustomRequest, res: Response) => {
+export const createProductReview = asyncHandler(async (req: Request, res: Response) => {
     const { rating, title, comment } = req.body
     const { id } = req.params
     const user = req.user
