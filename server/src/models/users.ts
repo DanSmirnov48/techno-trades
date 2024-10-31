@@ -1,9 +1,7 @@
-import mongoose, { Model, ObjectId, Query, Schema, Types, model } from 'mongoose';
-import validator from 'validator'
+import { Query, Schema, Types, model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import crypto from 'crypto'
 
-export interface IUser extends Document {
+export interface IUser {
     _id: Types.ObjectId;
     firstName: string;
     lastName: string;
@@ -13,193 +11,42 @@ export interface IUser extends Document {
         name: { type: String },
         url: { type: String },
     },
-    emailUpdateVerificationCode?: string;
     role: 'user' | 'admin';
     password: string;
-    passwordConfirm: string;
-    passwordChangedAt?: Date;
-    passwordResetToken?: string;
-    passwordResetExpires?: Date;
-    active: boolean;
-    verified: boolean;
-    verificationCode?: number;
-    magicLogInLink?: String,
-    magicLogInLinkExpires?: Date,
+    isActive: boolean;
+    isEmailVerified: boolean;
+    otp: number | null;
+    otpExpiry: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-interface IUserMethods {
-    correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
-    changedPasswordAfter(JWTTimestamp: number): boolean;
-    checkValidationCode(code: number): boolean;
-    createPasswordResetVerificationCode(): string;
-    createEmailUpdateVerificationCode(): string;
-    checkUserEmailupdateVerificationCode(code: string): boolean;
-    checkForgotPasswordVerificationCode(code: string): boolean;
-    createMagicLogInLink(): string;
-}
-
-type UserModel = Model<IUser, {}, IUserMethods>;
-
-const userSchema = new Schema<IUser, UserModel, IUserMethods>({
-    firstName: {
-        type: String,
-        required: [true, 'A user must have a first name'],
-    },
-    lastName: {
-        type: String,
-        required: [true, 'A user must have a last name'],
-    },
-    email: {
-        type: String,
-        required: [true, 'A user must have an email'],
-        unique: true,
-        lowercase: true,
-        validate: [validator.isEmail, 'Invalid email address'],
-    },
-    emailUpdateVerificationCode: String,
+const UserSchema = new Schema<IUser>({
+    firstName: { type: String, required: true, maxlength: 50 },
+    lastName: { type: String, required: true, maxlength: 50 },
+    email: { type: String, required: true, unique: true },
     photo: {
-        key: { type: String },
-        name: { type: String },
-        url: { type: String },
+        key: { type: String, required: true },
+        name: { type: String, required: true },
+        url: { type: String, required: true },
     },
-    role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user',
-    },
-    password: {
-        type: String,
-        required: [true, 'A user must have a password'],
-        minlength: 8,
-        select: false,
-    },
-    passwordConfirm: {
-        type: String,
-        required: [true, 'Please confirm your password'],
-        validate: {
-            validator: function (this: IUser, value: string) {
-                return value === this.password;
-            },
-            message: 'Passwords do not match!',
-        },
-    },
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-    active: {
-        type: Boolean,
-        default: true,
-        select: false,
-    },
-    verified: {
-        type: Boolean,
-        default: false,
-    },
-    verificationCode: {
-        type: Number,
-    },
-    magicLogInLink: String,
-    magicLogInLinkExpires: Date,
+    role: { type: String, enum: ['user', 'admin'], default: 'user', },
+    password: { type: String, required: true },
+    isActive: { type: Boolean, default: true },
+    isEmailVerified: { type: Boolean, default: false },
+    otp: { type: Number, null: true, blank: true },
+    otpExpiry: { type: Date, null: true, blank: true },
 }, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
-    // Only run this function if password was actually modified
+UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
-
-    // Hash the password with cost of 12
     this.password = await bcrypt.hash(this.password, 12);
-
-    // Delete passwordConfirm field
-    this.passwordConfirm = undefined as any;
     next();
 });
 
-userSchema.pre('save', function (next) {
-    if (!this.isModified('password') || this.isNew) return next();
-
-    this.passwordChangedAt = new Date(Date.now() - 1000);
-    next();
-});
-
-userSchema.pre(/^find/, function (this: Query<IUser[], IUser>, next) {
-    // 'this' now refers to the query object
+UserSchema.pre(/^find/, function (this: Query<IUser[], IUser>, next) {
     this.find({ active: { $ne: false } });
-
     next();
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string): Promise<boolean> {
-    return await bcrypt.compare(candidatePassword, userPassword);
-};
-
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {
-    if (this.passwordChangedAt) {
-        const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
-        return JWTTimestamp < changedTimestamp;
-    }
-    return false;
-}
-
-userSchema.methods.checkValidationCode = function (code: number): boolean {
-    return this.verificationCode == code;
-};
-
-userSchema.methods.createPasswordResetVerificationCode = function (): string {
-    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
-
-    this.passwordResetToken = code
-
-    const expirationTime = new Date();
-    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-
-    this.passwordResetExpires = expirationTime;
-
-    return code;
-};
-
-userSchema.methods.createEmailUpdateVerificationCode = function (): string {
-    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
-
-    this.emailUpdateVerificationCode = code
-    return code;
-};
-
-userSchema.methods.checkUserEmailupdateVerificationCode = function (code: string): boolean {
-    return this.emailUpdateVerificationCode == code;
-};
-
-userSchema.methods.checkForgotPasswordVerificationCode = function (code: string): boolean {
-    return this.passwordResetToken == code;
-};
-
-userSchema.methods.createMagicLogInLink = function (): string {
-    const magicLink = crypto.randomBytes(32).toString('hex');
-
-    this.magicLogInLink = magicLink
-    
-    const expirationTime = new Date();
-    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-    
-    this.magicLogInLinkExpires = expirationTime;
-
-    return magicLink;
-};
-
-export const User = mongoose.model<IUser, UserModel>('User', userSchema);
-
-export const getUser = () => User.find()
-
-export const getUserByEmail = (email: string) => User.findOne({ email })
-
-export const getUserBySessionToken = (sessionToken: string) => User.findOne({
-    'authentication.sessionToken': sessionToken
-})
-export const getUserById = (id: string) => User.findById(id)
-
-export const createUser = async (values: Record<string, any>) =>
-    new User(values).save().then((user) => user.toObject())
-
-export const deleteUserById = (id: string) => User.findByIdAndDelete(id)
-
-export const updateUserById = (id: string, values: Record<string, any>) =>
-    User.findByIdAndUpdate(id, values)
+export const User = model<IUser>('User', UserSchema);
