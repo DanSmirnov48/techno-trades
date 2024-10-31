@@ -18,6 +18,8 @@ const envSchema = z.object({
     JWT_SECRET: z.string(),
     REFRESH_TOKEN_SECRET: z.string(),
 
+    EMAIL_OTP_EXPIRE_SECONDS: z.string().transform(Number),
+
     JWT_EXPIRES_IN: z.string(),
     REFRESH_TOKEN_EXPIRES_IN: z.string(),
 
