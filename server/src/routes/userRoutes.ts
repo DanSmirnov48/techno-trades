@@ -10,7 +10,7 @@ import {
 import {
   forgotPassword,
   generateUserEmailChangeVerificationCode,
-  logIn,
+  // logIn,
   logInWithMagicLink,
   logout,
   magicLinkLogIn,
@@ -18,7 +18,7 @@ import {
   refreshAccessToken,
   resetPassword,
   restrictTo,
-  signup,
+  // signup,
   updatePassword,
   updateUserEmail,
   validate,
@@ -27,12 +27,21 @@ import {
 } from "../controllers/authController";
 import { authRateLimiter } from "../config/site";
 
+
+import {
+  logIn,
+  register
+} from "../controllers/auth";
+
 const router = express.Router();
 
 // User AUTHENTICATION
-router.route("/signup").post(signup);
+//new routes
+router.route("/register").post(register);
+router.route("/login").post(logIn);
+
+//old routes
 router.route("/verify-account").post(verifyAccount);
-router.route("/login").post(authRateLimiter, logIn);
 router.route("/magic-link-login").post(magicLinkLogIn);
 router.route("/login/:token").patch(logInWithMagicLink);
 router.route("/logout").get(logout);
