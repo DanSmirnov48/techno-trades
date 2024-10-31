@@ -18,6 +18,7 @@ import path from 'path'
 import { corsOptions, helmetOptions } from "./config/site";
 import env from './config/config';
 import { IUser } from "models/users";
+import { handleError } from './middlewares/error';
 
 connectDB()
 
@@ -30,6 +31,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 })
 
+app.use(handleError)
 app.use(compression());
 app.use(cookieParser());
 app.use(mongoSanitize());
