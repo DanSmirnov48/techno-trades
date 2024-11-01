@@ -14,11 +14,11 @@ const checkPassword = async (user: IUser, password: string) => {
     return await bcrypt.compare(password, user.password)
 }
 
-const createUser = async (userData: Record<string,any>, isEmailVerified: boolean = false) => {
+const createUser = async (userData: Record<string, any>, isEmailVerified: boolean = false) => {
     const { password, ...otherUserData } = userData;
     const hashedPassword = await hashPassword(password);
     const newUser = await User.create({ password: hashedPassword, isEmailVerified, ...otherUserData });
-    return newUser; 
+    return newUser;
 };
 
 const createOtp = async (user: IUser): Promise<number> => {
@@ -40,4 +40,32 @@ const createRefreshToken = () => {
     return jwt.sign(payload, ENV.JWT_SECRET, { algorithm: ALGORITHM });
 }
 
-export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp };
+const verifyAsync = (token: string, secret: string) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secret, {}, (err, payload) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(payload);
+            }
+        });
+    });
+}
+
+const decodeAuth = async (token: string): Promise<IUser | null> => {
+    try {
+        const decoded = await verifyAsync(token, ENV.JWT_SECRET) as { userId?: string };
+        const userId = decoded?.userId;
+
+        if (!userId) {
+            return null;
+        }
+
+        const user = await User.findOne({ _id: userId})
+        return user;
+    } catch (error) {
+        return null;
+    }
+}
+
+export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp, decodeAuth };
