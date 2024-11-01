@@ -31,7 +31,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 })
 
-app.use(handleError)
+
 app.use(compression());
 app.use(cookieParser());
 app.use(mongoSanitize());
@@ -48,6 +48,8 @@ app.use('/api/media', mediaRoutes)
 app.use('/api/orders', orderRouter)
 app.use('/api/products', productRoutes)
 app.use("/api/uploadthing", createUploadthingExpressHandler({ router: uploadRouter }));
+
+app.use(handleError)
 
 __dirname = path.resolve()
 if (process.env.NODE_ENV === 'PRODUCTION') {

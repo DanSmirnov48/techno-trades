@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, IUser, getUser } from '../models/users';
+import { User } from '../models/users';
 import asyncHandler from '../middlewares/asyncHandler';
 
 const filterObj = <T extends Record<string, unknown>>
@@ -43,7 +43,7 @@ export const getCurentUser = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-        const users = await getUser();
+        const users = await User.find()
         return res.status(200).json(users);
     } catch (error) {
         console.log(error);
