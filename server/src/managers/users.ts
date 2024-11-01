@@ -103,5 +103,6 @@ export {
     createRefreshToken,
     createUser,
     createOtp,
+    decodeAuth,
     setAuthCookie,
 };

@@ -26,9 +26,9 @@ const UserSchema = new Schema<IUser>({
     lastName: { type: String, required: true, maxlength: 50 },
     email: { type: String, required: true, unique: true },
     photo: {
-        key: { type: String, required: true },
-        name: { type: String, required: true },
-        url: { type: String, required: true },
+        key: { type: String, null: true, blank: true},
+        name: { type: String, null: true, blank: true},
+        url: { type: String, null: true, blank: true},
     },
     role: { type: String, enum: ['user', 'admin'], default: 'user', },
     password: { type: String, required: true },
