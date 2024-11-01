@@ -22,15 +22,15 @@ import {
   updatePassword,
   updateUserEmail,
   validate,
-  verifyAccount,
+  // verifyAccount,
   verifyPasswordResetCode,
 } from "../controllers/authController";
-import { authRateLimiter } from "../config/site";
 
 
 import {
   logIn,
-  register
+  register,
+  verifyEmail
 } from "../controllers/auth";
 
 const router = express.Router();
@@ -39,9 +39,9 @@ const router = express.Router();
 //new routes
 router.route("/register").post(register);
 router.route("/login").post(logIn);
+router.route("/verify-email").post(verifyEmail);
 
 //old routes
-router.route("/verify-account").post(verifyAccount);
 router.route("/magic-link-login").post(magicLinkLogIn);
 router.route("/login/:token").patch(logInWithMagicLink);
 router.route("/logout").get(logout);

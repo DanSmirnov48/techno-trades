@@ -21,6 +21,13 @@ const createUser = async (userData: Record<string,any>, isEmailVerified: boolean
     return newUser; 
 };
 
+const createOtp = async (user: IUser): Promise<number> => {
+    const otp: number = Math.floor(100000 + Math.random() * 900000);
+    const otpExpiry = new Date(Date.now() + ENV.EMAIL_OTP_EXPIRE_SECONDS * 1000);
+    await User.updateOne({ _id: user._id }, { $set: { otp, otpExpiry } });
+    return otp
+};
+
 // Authentication Tokens
 const ALGORITHM = "HS256"
 const createAccessToken = (userId: Types.ObjectId) => {
@@ -33,4 +40,4 @@ const createRefreshToken = () => {
     return jwt.sign(payload, ENV.JWT_SECRET, { algorithm: ALGORITHM });
 }
 
-export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser };
+export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp };

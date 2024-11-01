@@ -47,3 +47,9 @@ export class ValidationErr extends RequestError {
         super(message, 422, ErrorCode.INVALID_ENTRY, data);
     }
 }
+
+export class NotFoundError extends RequestError {
+    constructor(message: string) {
+        super(message, 404, ErrorCode.NON_EXISTENT);
+    }
+}
