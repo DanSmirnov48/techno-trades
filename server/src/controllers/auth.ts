@@ -9,7 +9,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     try {
         const userData = req.body;
         const { email } = userData;
-        
+
         const existingUser = await User.findOne({ email })
         if (existingUser) {
             throw new ValidationErr("email", "Email already registered")
@@ -117,6 +117,49 @@ export const logingWithOtp = asyncHandler(async (req: Request, res: Response, ne
         let tokens = { access, refresh }
 
         return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
+    } catch (error) {
+        next(error)
+    }
+});
+
+export const sendPasswordResetOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData = req.body;
+        const { email } = userData;
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            throw new NotFoundError("User not found!")
+        }
+
+        let otp = await createOtp(user);
+        return res.status(200).json(CustomResponse.success('Email sent successful', otp))
+    } catch (error) {
+        next(error)
+    }
+});
+
+export const setNewPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData = req.body;
+        const { email, otp, password } = userData;
+        const user = await User.findOne({ email })
+        if (!user) {
+            throw new NotFoundError("Incorrect email!")
+        }
+
+        // Verify otp
+        let currentDate = new Date()
+        if (user.otp !== otp || currentDate > user.otpExpiry) {
+            throw new RequestError("Otp is invalid or expired", 400, ErrorCode.INVALID_OTP)
+        }
+
+        // Update user
+        await User.updateOne(
+            { _id: user._id },
+            { $set: { otp: null, otpExpiry: null, password: password } }
+        );
+        return res.status(200).json(CustomResponse.success('Password reset successful'))
     } catch (error) {
         next(error)
     }

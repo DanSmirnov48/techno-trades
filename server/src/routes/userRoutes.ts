@@ -32,7 +32,9 @@ import {
   register,
   verifyEmail,
   sendLoginOtp,
-  logingWithOtp
+  logingWithOtp,
+  sendPasswordResetOtp,
+  setNewPassword
 } from "../controllers/auth";
 
 const router = express.Router();
@@ -44,6 +46,8 @@ router.route("/login").post(logIn);
 router.route("/verify-email").post(verifyEmail);
 router.route("/send-login-otp").get(sendLoginOtp);
 router.route("/login-with-otp").post(logingWithOtp);
+router.route("/send-password-reset-otp").post(sendPasswordResetOtp);
+router.route("/set-new-password").post(setNewPassword);
 
 //old routes
 router.route("/logout").get(logout);
