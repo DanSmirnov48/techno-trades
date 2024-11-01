@@ -30,7 +30,9 @@ import {
 import {
   logIn,
   register,
-  verifyEmail
+  verifyEmail,
+  sendLoginOtp,
+  logingWithOtp
 } from "../controllers/auth";
 
 const router = express.Router();
@@ -40,10 +42,10 @@ const router = express.Router();
 router.route("/register").post(register);
 router.route("/login").post(logIn);
 router.route("/verify-email").post(verifyEmail);
+router.route("/send-login-otp").get(sendLoginOtp);
+router.route("/login-with-otp").post(logingWithOtp);
 
 //old routes
-router.route("/magic-link-login").post(magicLinkLogIn);
-router.route("/login/:token").patch(logInWithMagicLink);
 router.route("/logout").get(logout);
 router.route("/validate").get(validate);
 router.route("/refresh-token").get(refreshAccessToken);

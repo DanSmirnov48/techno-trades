@@ -75,3 +75,49 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
         next(error)
     }
 });
+
+export const sendLoginOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email: string = req.body.email;
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            throw new NotFoundError("User not found!")
+        }
+        if (!user.isEmailVerified) {
+            throw new RequestError("Verify your email first", 401, ErrorCode.UNVERIFIED_USER);
+        }
+
+        let otp = await createOtp(user);
+        return res.status(201).json(CustomResponse.success('Login otp sent successful', otp))
+    } catch (error) {
+        next(error)
+    }
+});
+
+export const logingWithOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData = req.body;
+        const { email, otp } = userData;
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            throw new NotFoundError("Incorrect email!")
+        }
+
+        // Verify otp
+        const currentDate = new Date()
+        if (user.otp !== otp || currentDate > user.otpExpiry) {
+            throw new RequestError("Otp is invalid or expired", 400, ErrorCode.INVALID_OTP)
+        }
+
+        // Generate tokens
+        const access = createAccessToken(user.id)
+        const refresh = createRefreshToken()
+        let tokens = { access, refresh }
+
+        return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
+    } catch (error) {
+        next(error)
+    }
+});
