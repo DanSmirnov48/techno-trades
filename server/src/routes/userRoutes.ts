@@ -34,7 +34,8 @@ import {
   sendLoginOtp,
   logingWithOtp,
   sendPasswordResetOtp,
-  setNewPassword
+  setNewPassword,
+  validate
 } from "../controllers/auth";
 
 const router = express.Router();
@@ -48,10 +49,10 @@ router.route("/send-login-otp").get(sendLoginOtp);
 router.route("/login-with-otp").post(logingWithOtp);
 router.route("/send-password-reset-otp").post(sendPasswordResetOtp);
 router.route("/set-new-password").post(setNewPassword);
+router.route("/validate").get(validate);
 
 //old routes
 router.route("/logout").get(logout);
-router.route("/validate").get(validate);
 router.route("/refresh-token").get(refreshAccessToken);
 
 // Password RESET and UPDATE for UNAUTHORIZED users

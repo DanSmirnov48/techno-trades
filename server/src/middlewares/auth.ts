@@ -3,7 +3,7 @@ import { ErrorCode, RequestError } from "../config/handlers";
 import { IUser } from "../models/users";
 import { decodeAuth } from "../managers/users"
 
-const getUser = async (token: string): Promise<IUser> => {
+export const getUser = async (token: string): Promise<IUser> => {
     const user = await decodeAuth(token)
     if (!user) {
         throw new RequestError("Access token is invalid or expired", 401, ErrorCode.INVALID_TOKEN)

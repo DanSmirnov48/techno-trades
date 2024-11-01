@@ -4,6 +4,7 @@ import { User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
 import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, setAuthCookie } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
+import { getUser } from "../middlewares/auth";
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -168,6 +169,19 @@ export const setNewPassword = asyncHandler(async (req: Request, res: Response, n
             { $set: { otp: null, otpExpiry: null, password: password } }
         );
         return res.status(200).json(CustomResponse.success('Password reset successful'))
+    } catch (error) {
+        next(error)
+    }
+});
+
+export const validate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { accessToken } = req.cookies;
+        if (accessToken) {
+            const user = await getUser(accessToken);
+            req.user = user
+            return res.status(200).json(CustomResponse.success('Validate successful', user))
+        }
     } catch (error) {
         next(error)
     }

@@ -32,12 +32,18 @@ const createOtp = async (user: IUser): Promise<number> => {
 // Authentication Tokens
 const ALGORITHM = "HS256"
 const createAccessToken = (userId: Types.ObjectId) => {
-    let payload = { userId, exp: Math.floor(Date.now() / 1000) + (ENV.ACCESS_TOKEN_EXPIRY * 60) }
+    let payload = {
+        userId,
+        exp: Math.floor(Date.now() / 1000) + (ENV.ACCESS_TOKEN_EXPIRY * 60)
+    }
     return jwt.sign(payload, ENV.JWT_SECRET, { algorithm: ALGORITHM });
 }
 
 const createRefreshToken = () => {
-    const payload: Record<string, string | number> = { data: randomStr(10), exp: Math.floor(Date.now() / 1000) + (ENV.REFRESH_TOKEN_EXPIRY * 60) }
+    const payload: Record<string, string | number> = {
+        data: randomStr(10),
+        exp: Math.floor(Date.now() / 1000) + (ENV.REFRESH_TOKEN_EXPIRY * 60)
+    }
     return jwt.sign(payload, ENV.JWT_SECRET, { algorithm: ALGORITHM });
 }
 
@@ -90,4 +96,12 @@ const setAuthCookie = (res: Response, req: Request, cookieType: 'access' | 'refr
     });
 };
 
-export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp, decodeAuth, setAuthCookie };
+export {
+    hashPassword,
+    checkPassword,
+    createAccessToken,
+    createRefreshToken,
+    createUser,
+    createOtp,
+    setAuthCookie,
+};
