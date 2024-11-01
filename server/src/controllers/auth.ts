@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { CustomResponse } from "../config/utils";
 import { User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
-import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, } from "../managers/users";
+import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, setAuthCookie } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -70,6 +70,10 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
         const refresh = createRefreshToken()
         let tokens = { access, refresh }
 
+        // Set cookies
+        setAuthCookie(res, req, 'access', access);
+        setAuthCookie(res, req, 'refresh', refresh);
+
         return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
     } catch (error) {
         next(error)
@@ -115,6 +119,10 @@ export const logingWithOtp = asyncHandler(async (req: Request, res: Response, ne
         const access = createAccessToken(user.id)
         const refresh = createRefreshToken()
         let tokens = { access, refresh }
+
+        // Set cookies
+        setAuthCookie(res, req, 'access', access);
+        setAuthCookie(res, req, 'refresh', refresh);
 
         return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
     } catch (error) {

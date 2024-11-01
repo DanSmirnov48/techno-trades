@@ -4,6 +4,7 @@ import ENV from '../config/config';
 import { Types } from 'mongoose';
 import * as jwt from "jsonwebtoken";
 import { randomStr } from '../config/utils';
+import { Request, Response } from 'express';
 
 const hashPassword = async (password: string) => {
     const hashedPassword: string = await bcrypt.hash(password, 10)
@@ -61,11 +62,32 @@ const decodeAuth = async (token: string): Promise<IUser | null> => {
             return null;
         }
 
-        const user = await User.findOne({ _id: userId})
+        const user = await User.findOne({ _id: userId })
         return user;
     } catch (error) {
         return null;
     }
 }
 
-export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp, decodeAuth };
+const setAuthCookie = (res: Response, req: Request, cookieType: 'access' | 'refresh', token: string) => {
+    const isAccessToken = cookieType === 'access';
+
+    // Determine expiration time and cookie name based on token type
+    const cookieName = isAccessToken ? 'accessToken' : 'refreshToken';
+    const expiresInMs = isAccessToken
+        ? parseInt(process.env.ACCESS_TOKEN_EXPIRY || '86400000')   // Default to 24 hours if not set
+        : parseInt(process.env.REFRESH_TOKEN_EXPIRY || '604800000'); // Default to 7 days if not set
+
+    // Calculate expiration date
+    const expirationDate = new Date(Date.now() + expiresInMs);
+
+    // Set cookie with appropriate options
+    res.cookie(cookieName, token, {
+        expires: expirationDate,
+        httpOnly: !isAccessToken,   // Access token isn't httpOnly by default
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: 'strict',
+    });
+};
+
+export { hashPassword, checkPassword, createAccessToken, createRefreshToken, createUser, createOtp, decodeAuth, setAuthCookie };
