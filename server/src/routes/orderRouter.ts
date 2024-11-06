@@ -5,18 +5,15 @@ import {
   updateShippingStatus,
   getOrdersBySessionId,
 } from "../controllers/orderController";
-import { protect, restrictTo } from "../controllers/authController";
+import { admin, authMiddleware } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.route("/").get(protect, restrictTo("admin"), getOrders);
-
-router.route("/my-orders").get(protect, getMyOrders);
-
+router.route("/").get(authMiddleware, admin, getOrders);
+router.route("/my-orders").get(authMiddleware, getMyOrders);
 router
   .route("/update-shipping-status")
-  .post(protect, restrictTo("admin"), updateShippingStatus);
-
+  .post(authMiddleware, admin, updateShippingStatus);
 router.route("/:id").get(getOrdersBySessionId);
 
 export default router;

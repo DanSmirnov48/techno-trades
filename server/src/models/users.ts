@@ -40,12 +40,12 @@ const UserSchema = new Schema<IUser>({
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 12);
+    this.password = await bcrypt.hash(this.password, 10)
     next();
 });
 
 UserSchema.pre(/^find/, function (this: Query<IUser[], IUser>, next) {
-    this.find({ active: { $ne: false } });
+    this.find({ isActive: { $ne: false } });
     next();
 });
 

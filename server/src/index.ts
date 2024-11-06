@@ -13,12 +13,12 @@ import stripe from "./routes/stripe";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
 import orderRouter from "./routes/orderRouter";
-import AppError from "./utils/appError";
 import path from 'path'
 import { corsOptions, helmetOptions } from "./config/site";
 import env from './config/config';
-import { IUser } from "models/users";
+import { IUser } from "./models/users";
 import { handleError } from './middlewares/error';
+import { AppError } from "./config/handlers";
 
 connectDB()
 
@@ -30,7 +30,6 @@ process.on("uncaughtException", (err) => {
   console.log(`Shutting down the server due to Uncaught Exception`);
   process.exit(1);
 })
-
 
 app.use(compression());
 app.use(cookieParser());
