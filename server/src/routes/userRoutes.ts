@@ -9,8 +9,18 @@ import {
   sendPasswordResetOtp,
   setNewPassword,
   validate,
-  logout
+  logout,
 } from "../controllers/auth";
+import { authMiddleware, admin } from "../middlewares/auth";
+import {
+  updatePassword,
+  sendUserEmailChangeOtp,
+  updateUserEmail,
+  updateMe,
+  deleteMe,
+  getAllUsers,
+  getUserById,
+} from "../controllers/user";
 
 const router = express.Router();
 
@@ -20,19 +30,19 @@ router.route("/login").post(logIn);
 router.route("/logout").get(logout);
 router.route("/verify-email").post(verifyEmail);
 router.route("/resend-verification-email").post(resendVerificationEmail);
+router.route("/validate").get(validate);
+router.route("/forgot-password").post(sendPasswordResetOtp);
+router.route("/set-new-password").post(setNewPassword);
 router.route("/send-login-otp").get(sendLoginOtp);
 router.route("/login-with-otp").post(logingWithOtp);
-router.route("/send-password-reset-otp").post(sendPasswordResetOtp);
-router.route("/set-new-password").post(setNewPassword);
-router.route("/validate").get(validate);
 
-// router.route("/request-email-change-verification-code").get(protect, generateUserEmailChangeVerificationCode);
-// router.route("/update-my-password").patch(protect, updatePassword);
-// router.route("/update-user-email").post(protect, updateUserEmail);
-// router.route("/update-me").patch(protect, updateMe);
-// router.route("/deactivate-me").delete(protect, deleteMe);
-// router.route("/me").get(protect, getMe, getCurentUser);
-// router.route("/").get(protect, restrictTo("admin"), getAllUsers);
-// router.route("/:id").get(getUserById);
+router.route("/send-email-change-otp").get(authMiddleware, sendUserEmailChangeOtp);
+router.route("/update-my-email").patch(authMiddleware, updateUserEmail);
+router.route("/update-my-password").patch(authMiddleware, updatePassword);
+router.route("/update-me").patch(authMiddleware, updateMe);
+router.route("/deactivate-me").delete(authMiddleware, deleteMe);
+
+router.route("/:id").get(getUserById);
+router.route("/").get(authMiddleware, admin, getAllUsers);
 
 export default router;
