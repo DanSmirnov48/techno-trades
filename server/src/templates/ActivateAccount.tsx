@@ -13,12 +13,13 @@ import {
   Tailwind
 } from "@react-email/components";
 import * as React from "react";
+import { ImageUrl } from "../templates";
 
 interface VerifyEmailProps {
-  verificationCode: string;
+  otp: string;
 }
 
-export default function VerifyEmail({ verificationCode }: VerifyEmailProps) {
+export default function ActivateAccount({ otp }: VerifyEmailProps) {
   return (
     <Html>
       <Head />
@@ -28,7 +29,7 @@ export default function VerifyEmail({ verificationCode }: VerifyEmailProps) {
           <Section style={coverSection}>
             <Section style={imageSection}>
               <Img
-                src={".logo.ico"}
+                src={ImageUrl}
                 width="75"
                 height="45"
                 alt="Logo"
@@ -45,7 +46,7 @@ export default function VerifyEmail({ verificationCode }: VerifyEmailProps) {
               <Section style={verificationSection}>
                 <Text style={verifyText}>Verification code</Text>
 
-                <Text style={codeText}>{verificationCode}</Text>
+                <Text style={codeText}>{otp}</Text>
                 <Text style={validityText}>
                   (This code is valid for 10 minutes)
                 </Text>
