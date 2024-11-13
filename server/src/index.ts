@@ -10,7 +10,6 @@ import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
 import mediaRoutes from "./routes/mediaRoutes";
 import stripe from "./routes/stripe";
-import stripe2 from "./routes/stripe-custom";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
 import orderRouter from "./routes/orderRouter";
@@ -42,7 +41,6 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 const server = http.createServer(app)
 
 app.use("/api/stripe", stripe);
-app.use("/api/stripe-custom", stripe2);
 app.use(express.json())
 app.use('/api/users', userRoutes)
 app.use('/api/media', mediaRoutes)
