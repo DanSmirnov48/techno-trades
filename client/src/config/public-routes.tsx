@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, PopularBrands, ProductDetails } from '@/_root/pages';
+import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, PopularBrands, ProductDetails, Checkout } from '@/_root/pages';
 import { ProtectedRouteProps, UserRole } from '@/components/root/ProtectedRoute';
 
 export interface PublicRoute {
@@ -22,6 +22,10 @@ const publicRoutes: PublicRoute[] = [
   {
     path: '/cart',
     outlet: <Cart />,
+  },
+  {
+    path: '/checkout',
+    outlet: <Checkout />,
   },
   {
     path: '/checkout-success',
