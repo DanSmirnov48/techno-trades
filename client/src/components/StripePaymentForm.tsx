@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { Appearance, loadStripe, StripeElementsOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
 import {
     Elements,
     useStripe,
@@ -8,6 +8,9 @@ import {
 } from '@stripe/react-stripe-js';
 import { Button } from './ui/button';
 import { Icons } from './shared';
+import { useUserContext } from '@/context/AuthContext';
+import { useCart } from '@/hooks/useCart';
+import axios from 'axios';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PRIVATE_KEY);
 
@@ -41,9 +44,23 @@ function CheckoutForm() {
         setIsLoading(false);
     }
 
+    const options: StripePaymentElementOptions = {
+        fields: {
+            billingDetails: {
+                address: {
+                    country: 'never',
+                    postalCode: 'never',
+                }
+            }
+        },
+        layout: {
+            type: 'accordion',
+        },
+    };
+
     return (
         <form id="payment-form" onSubmit={handleSubmit} className='w-full max-w-[650px]'>
-            <PaymentElement id="payment-element" />
+            <PaymentElement id="payment-element" options={options} />
             <Button
                 disabled={isLoading || !stripe || !elements}
                 className="w-full bg-dark-4 py-7 dark:text-white/90 text-lg mt-10"
@@ -64,27 +81,79 @@ function CheckoutForm() {
 }
 
 const StripeCheckout = () => {
+    const { items } = useCart();
+    const { user, isAuthenticated } = useUserContext();
     const [clientSecret, setClientSecret] = useState("");
 
     useEffect(() => {
-        fetch("/api/stripe-custom/create-payment-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                amount: 1000,
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log({ data })
-                setClientSecret(data.clientSecret);
-            });
-    }, []);
+        const fetchPaymentIntent = async () => {
+            try {
+                const order = items.map(({ product, quantity }) => {
+                    return {
+                        productId: product._id!,
+                        quantity: quantity,
+                    };
+                });
+
+                const response = await axios.post("/api/stripe/create-payment-intent", {
+                    userId: user._id,
+                    order: order
+                });
+
+                setClientSecret(response.data.clientSecret);
+            } catch (error) {
+                console.error("Error fetching payment intent:", error);
+            }
+        };
+
+        fetchPaymentIntent();
+    }, [items, user._id]);
+
+    const appearance: Appearance = {
+        theme: 'stripe',
+        variables: {
+            colorPrimary: '#0047AB',
+            colorBackground: '#ffffff',
+            colorText: '#30313d',
+            colorDanger: '#df1b41',
+            fontFamily: 'system-ui, sans-serif',
+            spacingUnit: '4px',
+            borderRadius: '4px',
+        },
+        rules: {
+            '.Label': {
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#6b7280'
+            },
+            '.Input': {
+                padding: '12px',
+                fontSize: '16px',
+                color: '#1f2937',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '4px'
+            },
+            '.AccordionItem': {
+                padding: '20px 120px',
+                backgroundColor: '#f9fafb',
+                border: '1px solid #e5e7eb',
+                borderRadius: '10px',
+            }
+        }
+    };
+
+    const options: StripeElementsOptions = {
+        clientSecret,
+        appearance: appearance,
+        loader: 'auto',
+    };
 
     return (
         clientSecret && stripePromise && (
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <CheckoutForm />
+            <Elements stripe={stripePromise} options={options}>
+                {isAuthenticated && <CheckoutForm />}
             </Elements>
         )
     );
