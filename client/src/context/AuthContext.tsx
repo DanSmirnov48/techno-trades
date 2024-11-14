@@ -13,13 +13,10 @@ import { useGetUserSession } from "@/lib/react-query/queries/user-queries";
 interface AuthResponse {
   status: number;
   statusText: string;
-  data?: {
-    data: {
-      user: IUser;
-      accessToke: string;
-      lastSignIn: string;
-    }
-    status: string
+  data: {
+    data: IUser
+    status: string;
+    message: string;
   };
 }
 
@@ -79,14 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, status } = session;
       if (data && status === 200 && !validating) {
         setUser({
-          _id: data.data.user._id,
-          firstName: data.data.user.firstName,
-          lastName: data.data.user.lastName,
-          email: data.data.user.email,
-          photo: data.data.user.photo,
-          role: data.data.user.role,
+          _id: data.data._id,
+          firstName: data.data.firstName,
+          lastName: data.data.lastName,
+          email: data.data.email,
+          photo: data.data.photo,
+          role: data.data.role,
         })
-        data.data.user.role === 'admin' && setIsAdmin(true);
+        data.data.role === 'admin' && setIsAdmin(true);
         setIsAuthenticated(true);
         return true;
       } else {
