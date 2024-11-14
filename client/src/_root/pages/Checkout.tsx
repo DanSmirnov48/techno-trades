@@ -2,8 +2,6 @@ import { Loader2 } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
-import { useUserContext } from "@/context/AuthContext";
-import { useCreateOrder } from "@/lib/react-query/queries/order-queries";
 import StripePaymentForm from '@/components/StripePaymentForm'
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator";
@@ -13,22 +11,10 @@ const Cart = () => {
     const { items } = useCart();
     const [isMounted, setIsMounted] = useState<boolean>(false);
     const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
-    const { user } = useUserContext();
-    const { mutateAsync: CreateOrder } = useCreateOrder();
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
-
-    async function checkOutHandler() {
-        const order = items.map(({ product, quantity }) => {
-            return {
-                productId: product._id!,
-                quantity: quantity,
-            };
-        });
-        await CreateOrder({ orders: order, userId: user._id });
-    }
 
     return (
         <div className="flex flex-col flex-1 min-h-screen items-center">

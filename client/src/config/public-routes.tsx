@@ -26,6 +26,8 @@ const publicRoutes: PublicRoute[] = [
   {
     path: '/checkout',
     outlet: <Checkout />,
+    isProtected: true,
+    allowedRoles: ['admin', 'user'],
   },
   {
     path: '/checkout-success',

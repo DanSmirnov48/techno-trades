@@ -54,6 +54,18 @@ export async function createOrder(data: {
     }
 }
 
+export async function createPaymentIntent(data: {
+    order: { productId: string; quantity: number }[];
+    userId: string;
+}): Promise<string | undefined> {
+    try {
+        const response = await axios.post("/api/stripe/create-payment-intent", data);
+        return response.data.clientSecret
+    } catch (error) {
+        console.error("Error during checkout:", error);
+    }
+}
+
 export async function updateShippingStatus(order: {
     orderId: string;
     status: string;

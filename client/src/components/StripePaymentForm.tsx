@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Appearance, loadStripe, StripeElementsOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
 import {
     Elements,
@@ -10,7 +10,7 @@ import { Button } from './ui/button';
 import { Icons } from './shared';
 import { useUserContext } from '@/context/AuthContext';
 import { useCart } from '@/hooks/useCart';
-import axios from 'axios';
+import { createPaymentIntent } from '@/lib/backend-api/orders';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PRIVATE_KEY);
 
@@ -84,30 +84,44 @@ const StripeCheckout = () => {
     const { items } = useCart();
     const { user, isAuthenticated } = useUserContext();
     const [clientSecret, setClientSecret] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchPaymentIntent = useCallback(async () => {
+        if (!isAuthenticated || !user?._id || items.length === 0) {
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const order = items.map(({ product, quantity }) => ({
+                productId: product._id!,
+                quantity: quantity,
+            }));
+
+            const clientSecret = await createPaymentIntent({
+                order: order,
+                userId: user._id
+            });
+
+            if (clientSecret) {
+                setClientSecret(clientSecret);
+            } else {
+                setError("Failed to create payment intent");
+            }
+        } catch (error) {
+            setError("Error creating payment intent");
+            console.error("Error fetching payment intent:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [items, user._id]);
 
     useEffect(() => {
-        const fetchPaymentIntent = async () => {
-            try {
-                const order = items.map(({ product, quantity }) => {
-                    return {
-                        productId: product._id!,
-                        quantity: quantity,
-                    };
-                });
-
-                const response = await axios.post("/api/stripe/create-payment-intent", {
-                    userId: user._id,
-                    order: order
-                });
-
-                setClientSecret(response.data.clientSecret);
-            } catch (error) {
-                console.error("Error fetching payment intent:", error);
-            }
-        };
-
         fetchPaymentIntent();
-    }, [items, user._id]);
+    }, [fetchPaymentIntent]);
 
     const appearance: Appearance = {
         theme: 'stripe',
@@ -149,6 +163,18 @@ const StripeCheckout = () => {
         appearance: appearance,
         loader: 'auto',
     };
+
+    if (items.length === 0) {
+        return <div>Your cart is empty</div>;
+    }
+
+    if (loading) {
+        return <div>Loading payment form...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         clientSecret && stripePromise && (
