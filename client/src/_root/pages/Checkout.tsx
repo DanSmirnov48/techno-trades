@@ -3,6 +3,7 @@ import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
 import StripePaymentForm from '@/components/StripePaymentForm'
+import AddressForm from "@/components/addressForm";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CartItem } from "@/components/root";
@@ -27,6 +28,7 @@ const Cart = () => {
                 </h1>
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
                     <div className="lg:col-span-3 flex flex-col gap-10">
+                        <AddressForm />
                         <StripePaymentForm />
                     </div>
                     <section className="border lg:col-span-2 mt-16 rounded-lg bg-zinc-50 dark:bg-dark-4 px-4 py-6 sm:p-6 lg:mt-0 lg:p-8 h-fit relative">
@@ -41,8 +43,8 @@ const Cart = () => {
                         </div>
                         <Separator className="w-full absolute right-0 h-0.5" />
                         <ScrollArea className="mt-7">
-                            {items.map((item) => (
-                                <CartItem product={item.product} qty={item.quantity} key={item.product._id} allowRemoveItem={false} />
+                            {items.map(({ product, quantity }) => (
+                                <CartItem product={product} qty={quantity} key={product._id} allowRemoveItem={false} />
                             ))}
                         </ScrollArea>
 
