@@ -6,9 +6,10 @@ import { ImageIcon, X } from "lucide-react";
 type CartItemProps = {
   product: Product;
   qty: number;
+  allowRemoveItem?: boolean
 };
 
-const CartItem = ({ product, qty }: CartItemProps) => {
+const CartItem = ({ product, qty, allowRemoveItem = true }: CartItemProps) => {
 
   const { url } = product.image[0];
   const { removeItem } = useCart();
@@ -17,7 +18,7 @@ const CartItem = ({ product, qty }: CartItemProps) => {
     <div className="space-y-3 py-2">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <div className="flex items-center justify-center relative aspect-square w-24 h-24 min-w-fit overflow-hidden rounded bg-white">
+          <div className="flex items-center justify-center relative aspect-square w-24 h-24 min-w-fit overflow-hidden rounded bg-white border">
             {url ? (
               <img
                 src={url}
@@ -43,15 +44,17 @@ const CartItem = ({ product, qty }: CartItemProps) => {
               Quantity: {qty.toString()}
             </span>
 
-            <div className="mt-4 text-xs text-muted-foreground">
-              <button
-                onClick={() => removeItem(product._id!)}
-                className="flex items-center gap-0.5 text-rose-800 dark:text-rose-400"
-              >
-                <X className="w-3 h-4" />
-                Remove
-              </button>
-            </div>
+            {allowRemoveItem &&
+              <div className="mt-4 text-xs text-muted-foreground">
+                <button
+                  onClick={() => removeItem(product._id!)}
+                  className="flex items-center gap-0.5 text-rose-800 dark:text-rose-400"
+                >
+                  <X className="w-3 h-4" />
+                  Remove
+                </button>
+              </div>
+            }
           </div>
         </div>
 

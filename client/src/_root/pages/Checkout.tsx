@@ -3,8 +3,11 @@ import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
 import StripePaymentForm from '@/components/StripePaymentForm'
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { CartItem } from "@/components/root";
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
     const delivery = Number(49.99);
@@ -27,34 +30,21 @@ const Cart = () => {
                         <StripePaymentForm />
                     </div>
                     <section className="border lg:col-span-2 mt-16 rounded-lg bg-zinc-50 dark:bg-dark-4 px-4 py-6 sm:p-6 lg:mt-0 lg:p-8 h-fit relative">
-                        <h2 className="text-xl font-normal text-dark-4 dark:text-white/90 mb-5">Order summary</h2>
+                        <div className="w-full flex flex-row justify-between items-center mb-3">
+                            <h2 className="text-xl font-normal text-dark-4 dark:text-white/90">Order summary</h2>
+                            <Link
+                                className={cn(buttonVariants({ variant: "outline" }))}
+                                to="/cart"
+                            >
+                                Edit
+                            </Link>
+                        </div>
                         <Separator className="w-full absolute right-0 h-0.5" />
-                        <Table>
-                            <TableBody>
-                                {items.map((item) => (
-                                    <TableRow key={item.product._id} className={cn("hover:bg-transparent select-none border-b-0")}>
-                                        <TableCell className="px-0">
-                                            <div key={item.product._id} className="flex max-w-md">
-                                                <div className="relative h-24 w-24 border p-2 rounded-md bg-white">
-                                                    <img
-                                                        src={item.product.image[0].url}
-                                                        alt="product image"
-                                                        className="h-full w-full rounded-md object-contain"
-                                                    />
-                                                </div>
-
-                                                <div className="ml-4 flex flex-1 flex-col sm:ml-6 justify-center gap-1">
-                                                    <h3 className="text-md text-dark-4 dark:text-white/90 font-semibold">{item.product.name}</h3>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="">
-                                            {formatPrice(item.product.price * item.quantity, { currency: "GBP" })}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                        <ScrollArea className="mt-7">
+                            {items.map((item) => (
+                                <CartItem product={item.product} qty={item.quantity} key={item.product._id} allowRemoveItem={false} />
+                            ))}
+                        </ScrollArea>
 
                         <Separator className="w-full absolute right-0 h-0.5" />
 

@@ -11,6 +11,8 @@ import { Icons } from './shared';
 import { useUserContext } from '@/context/AuthContext';
 import { useCart } from '@/hooks/useCart';
 import { createPaymentIntent } from '@/lib/backend-api/orders';
+import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import { Skeleton } from './ui/skeleton';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PRIVATE_KEY);
 
@@ -79,6 +81,27 @@ function CheckoutForm() {
         </form>
     )
 }
+
+const FormLoading = () => (
+    <Card className="w-full max-w-[650px] shadow-md flex flex-col gap-5 content-center justify-center m-auto bg-accent py-16 px-20 cursor-wait">
+        <CardContent className='flex flex-col gap-4'>
+            <div className='space-y-2'>
+                <CardDescription>Card number</CardDescription>
+                <Skeleton className=" bg-white h-12 w-full border-2" />
+            </div>
+            <div className="flex flex-row gap-5">
+                <div className='w-full space-y-2'>
+                    <CardDescription>Expiration data</CardDescription>
+                    <Skeleton className=" bg-white h-12 w-full border-2" />
+                </div>
+                <div className='w-full space-y-2'>
+                    <CardDescription>Security code</CardDescription>
+                    <Skeleton className=" bg-white h-12 w-full border-2" />
+                </div>
+            </div>
+        </CardContent>
+    </Card>
+)
 
 const StripeCheckout = () => {
     const { items } = useCart();
@@ -169,7 +192,7 @@ const StripeCheckout = () => {
     }
 
     if (loading) {
-        return <div>Loading payment form...</div>;
+        return <FormLoading />
     }
 
     if (error) {
