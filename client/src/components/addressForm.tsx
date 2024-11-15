@@ -15,11 +15,13 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { Checkbox } from "./ui/checkbox"
 import { Fragment } from "react"
 
@@ -34,9 +36,37 @@ export default function AddressForm() {
                     <Address />
                 </CardContent>
             </Card>
+            <Card className="w-full max-w-[650px] shadow-md">
+                <CardHeader>
+                    <CardTitle className="text-xl font-semibold">Shipping Method</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Shipping />
+                </CardContent>
+            </Card>
         </Fragment>
     )
 }
+
+const counties = [
+    {
+        value: "united-kingdom",
+        label: "United Kingdom",
+    }
+];
+
+const shippingOptions = [
+    {
+        value: 'free',
+        label: 'Free 1-5 day Shipping',
+        price: '£0.00',
+    },
+    {
+        value: 'express',
+        label: 'Express Shipping',
+        price: '£29.99',
+    }
+];
 
 const shippingAddressFormSchema = z.object({
     firstName: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 100 characters." }),
@@ -46,11 +76,20 @@ const shippingAddressFormSchema = z.object({
     city: z.string().min(1, 'City is required'),
     state: z.string().optional(),
     postcode: z.string().min(5, 'Postcode must be at least 5 characters'),
-    country: z.literal('United Kingdom'),
+    country: z.enum(counties.map((county) => county.value) as [string, ...string[]], {
+        required_error: "Country is required",
+    }),
     same_as_billing: z.boolean().default(true).optional(),
 })
 
+const shippingMethodFormSchema = z.object({
+    shipping_type: z.enum(shippingOptions.map(option => option.value) as [string, ...string[]], {
+        required_error: "You need to select a shipping method.",
+    }),
+});
+
 type ShippingAddressFormSchema = z.infer<typeof shippingAddressFormSchema>
+type ShippingMethodFormSchema = z.infer<typeof shippingMethodFormSchema>
 
 function Address() {
     const form = useForm<ShippingAddressFormSchema>({
@@ -143,7 +182,15 @@ function Address() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                                    <SelectGroup>
+                                        {counties.map((status, index) => (
+                                            <SelectItem key={index} value={status.value}>
+                                                <span className="flex items-center">
+                                                    {status.label}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -205,3 +252,58 @@ function Address() {
         </Form>
     )
 }
+
+function Shipping() {
+    const form = useForm<ShippingMethodFormSchema>({
+        resolver: zodResolver(shippingMethodFormSchema),
+    })
+
+    function onSubmit(data: ShippingMethodFormSchema) {
+        toast.info('You submitted the following values:',
+            {
+                description: (
+                    <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
+                        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                    </pre>
+                ),
+            })
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                    control={form.control}
+                    name="shipping_type"
+                    render={({ field }) => (
+                        <FormItem className="space-y-3">
+                            <FormControl>
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex flex-col space-y-1"
+                                >
+                                    {shippingOptions.map((option) => (
+                                        <FormItem
+                                            key={option.value}
+                                            className="flex items-center space-x-3 space-y-0 rounded-lg border p-4"
+                                        >
+                                            <FormControl>
+                                                <RadioGroupItem value={option.value} />
+                                            </FormControl>
+                                            <div className="w-full flex flex-row items-center justify-between">
+                                                <FormLabel className="font-normal">{option.label}</FormLabel>
+                                                <FormLabel className="font-normal">{option.price}</FormLabel>
+                                            </div>
+                                        </FormItem>
+                                    ))}
+                                </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            </form>
+        </Form>
+    );
+};
