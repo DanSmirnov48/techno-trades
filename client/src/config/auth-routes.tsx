@@ -1,11 +1,10 @@
 import {
-    SigninForm,
-    SignupForm,
     OtpForm,
     AccountVerified,
     ForgotPasswordForm,
 } from "@/_auth/forms";
 import Signin from '@/_auth/pages/SignIn'
+import Register from '@/_auth/pages/Register'
 import { JSX } from "react";
 
 export interface AuthRoute {
@@ -15,16 +14,12 @@ export interface AuthRoute {
 
 const authRoutes: AuthRoute[] = [
     {
-        path: "/sign-in",
-        outlet: <SigninForm returnAs={"card"} withMagicSignIn />,
-    },
-    {
         path: "auth/sign-in",
         outlet: <Signin />,
     },
     {
-        path: "/sign-up",
-        outlet: <SignupForm />,
+        path: "/auth/sign-up",
+        outlet: <Register />,
     },
     {
         path: "/verify-account",
