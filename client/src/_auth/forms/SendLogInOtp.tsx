@@ -15,26 +15,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMagicLinkSignIn } from "@/lib/react-query/queries/user-queries";
+import { useSendLoginOtp } from "@/lib/react-query/queries/user-queries";
 
-interface MagicLinkResponse {
+interface OtpSignInResponse {
     data?: any;
     error?: any;
     status?: number;
     statusTest?: string;
 }
 
-const MagicLinkSignInValidation = z.object({
+const userEmailSchema = z.object({
     email: z.string().email(),
 });
 
-export default function MagicLinkSignIn() {
+type UserEmailSchema = z.infer<typeof userEmailSchema>
 
+export default function SendLogInOtp() {
     const [error, setError] = useState<string | undefined>();
-    const { mutateAsync: requestMagicLink } = useMagicLinkSignIn()
+    const { mutateAsync: sendLoginOtp } = useSendLoginOtp()
 
-    const form = useForm<z.infer<typeof MagicLinkSignInValidation>>({
-        resolver: zodResolver(MagicLinkSignInValidation),
+    const form = useForm<UserEmailSchema>({
+        resolver: zodResolver(userEmailSchema),
         defaultValues: {
             email: "",
         },
@@ -46,8 +47,8 @@ export default function MagicLinkSignIn() {
         setError(undefined)
     };
 
-    const handleSignin = async (user: z.infer<typeof MagicLinkSignInValidation>) => {
-        const res: MagicLinkResponse = await requestMagicLink({ email: user.email })
+    async function onSubmit(data: UserEmailSchema) {
+        const res: OtpSignInResponse = await sendLoginOtp({ email: data.email })
         if (res.status === 200 && res.data.status === "success") {
             form.reset()
             toast.info(res.data.message)
@@ -72,44 +73,45 @@ export default function MagicLinkSignIn() {
             }
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(handleSignin)}
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col items-center sm:flex-row my-5"
                 >
-                    <div className="flex flex-row items-center mb-4 sm:mb-0 w-full sm:mr-2">
+                    <div className="flex flex-col w-full sm:mr-2">
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">
-                                        Email Address
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="email"
-                                            placeholder="Email"
-                                            className="block w-full px-4 py-2 h-12"
-                                            {...field}
-                                            onChange={(e) => handleNewEmailChange(e.target.value)}
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
+                                    <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Email Address</FormLabel>
+                                    <div className="flex gap-2">
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                placeholder="john.doe@email.com"
+                                                className="block w-full px-4 py-2 h-12"
+                                                {...field}
+                                                onChange={(e) => handleNewEmailChange(e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <Button
+                                            type="submit"
+                                            variant={"outline"}
+                                            className="flex-shrink-0 h-12"
+                                        >
+                                            <Forward className="h-6 w-6 text-dark-4" />
+                                        </Button>
+                                    </div>
+                                    <FormMessage />
+
+                                    <FormDescription className="max-w-sm">
                                         We will email you a{" "}
-                                        <span className="italic font-medium">Magic Link</span> to Sign
+                                        <span className="italic font-medium">One Time Password</span> to Sign
                                         in to your account!
                                     </FormDescription>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
-                    <Button
-                        type="submit"
-                        variant={"outline"}
-                        className="flex-shrink-0 h-12"
-                    >
-                        <Forward className="h-6 w-6 text-dark-4" />
-                    </Button>
                 </form>
             </Form>
         </>
