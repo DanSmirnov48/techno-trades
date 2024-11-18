@@ -50,9 +50,9 @@ export async function signInAccount(user: { email: string; password: string }) {
     }
 }
 
-export async function magicLinkSignIn(user: { email: string }) {
+export async function sendLoginOtp(user: { email: string }) {
     try {
-        const session = await axios.post(`/api/users/magic-link-login`, user);
+        const session = await axios.post(`/api/users/send-login-otp`, user);
         return session;
     } catch (error: any) {
         if (error.response) {
@@ -65,9 +65,9 @@ export async function magicLinkSignIn(user: { email: string }) {
     }
 }
 
-export async function sendMagicLinkToken({ token }: { token: string }) {
+export async function logingWithOtp({ otp }: { otp: string }) {
     try {
-        const response = await axios.patch(`/api/users/login/${token}`);
+        const response = await axios.post(`/api/users/login-with-otp`, otp);
         return response;
     } catch (error: any) {
         if (error.response) {

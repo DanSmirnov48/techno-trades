@@ -17,7 +17,7 @@ import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSendLoginOtp } from "@/lib/react-query/queries/user-queries";
 
-interface OtpSignInResponse {
+interface MagicLinkResponse {
     data?: any;
     error?: any;
     status?: number;
@@ -28,9 +28,15 @@ const userEmailSchema = z.object({
     email: z.string().email(),
 });
 
-type UserEmailSchema = z.infer<typeof userEmailSchema>
+export type UserEmailSchema = z.infer<typeof userEmailSchema>
 
-export default function SendLogInOtp() {
+interface SendOtpProps {
+    showOTPField: boolean
+    setShowOTPField: React.Dispatch<React.SetStateAction<boolean>>
+    setUserData: React.Dispatch<React.SetStateAction<UserEmailSchema | undefined>>
+}
+
+export default function SendLogInOtp({ showOTPField, setShowOTPField, setUserData }: SendOtpProps) {
     const [error, setError] = useState<string | undefined>();
     const { mutateAsync: sendLoginOtp } = useSendLoginOtp()
 
@@ -48,10 +54,12 @@ export default function SendLogInOtp() {
     };
 
     async function onSubmit(data: UserEmailSchema) {
-        const res: OtpSignInResponse = await sendLoginOtp({ email: data.email })
+        const res: MagicLinkResponse = await sendLoginOtp({ email: data.email })
         if (res.status === 200 && res.data.status === "success") {
             form.reset()
             toast.info(res.data.message)
+            setShowOTPField(true);
+            setUserData(data)
         } else if (res.error.error === 'User not found') {
             form.setFocus("email")
             setError(res.error.error)
@@ -90,10 +98,12 @@ export default function SendLogInOtp() {
                                                 placeholder="john.doe@email.com"
                                                 className="block w-full px-4 py-2 h-12"
                                                 {...field}
+                                                disabled={showOTPField}
                                                 onChange={(e) => handleNewEmailChange(e.target.value)}
                                             />
                                         </FormControl>
                                         <Button
+                                            disabled={showOTPField}
                                             type="submit"
                                             variant={"outline"}
                                             className="flex-shrink-0 h-12"
@@ -103,11 +113,13 @@ export default function SendLogInOtp() {
                                     </div>
                                     <FormMessage />
 
-                                    <FormDescription className="max-w-sm">
-                                        We will email you a{" "}
-                                        <span className="italic font-medium">One Time Password</span> to Sign
-                                        in to your account!
-                                    </FormDescription>
+                                    {(!showOTPField) && (
+                                        <FormDescription className="max-w-sm">
+                                            We will email you a{" "}
+                                            <span className="italic font-medium">One Time Password</span> to Sign
+                                            in to your account!
+                                        </FormDescription>
+                                    )}
                                 </FormItem>
                             )}
                         />

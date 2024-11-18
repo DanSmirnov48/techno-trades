@@ -1,15 +1,19 @@
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 import { Fragment, useState } from 'react';
 import { Icons } from '@/components/shared';
 import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from '@/components/ui/button';
+import { UserEmailSchema } from '../forms/SendLogInOtp';
 import { SendLogInOtp, SigninForm, SignInWithOtp } from '../forms'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function SignIn() {
-    const [showTrigger, setShowTrigger] = useState<boolean>(true);
-    const [activeTab, setActiveTab] = useState<string>('otp');
+    const [showTrigger, setShowTrigger] = useState<boolean>(false);
+    const [activeTab, setActiveTab] = useState<string>('password');
+    const [showOTPField, setShowOTPField] = useState(false);
+    const [userData, setUserData] = useState<UserEmailSchema | undefined>();
 
     const handleTabChange = (value: string) => {
         setShowTrigger(!showTrigger)
@@ -29,10 +33,10 @@ export default function SignIn() {
                     </h1>
                 </CardHeader>
                 <CardContent>
-                    <Accordion type="single" defaultValue={"password"} value={activeTab} onValueChange={handleTabChange}>
+                    <Accordion className='flex flex-col gap-3' type="single" defaultValue={"password"} value={activeTab} onValueChange={handleTabChange}>
                         <AccordionItem value="password" className='border-none'>
                             {showTrigger &&
-                                <AccordionTrigger className={cn(
+                                <AccordionTrigger showIcon={false} className={cn(
                                     buttonVariants({
                                         className: "w-full border-2 text-lg font-medium tracking-wide mb-5 hover:no-underline",
                                         size: "lg",
@@ -48,7 +52,7 @@ export default function SignIn() {
                             </AccordionContent>
                         </AccordionItem>
                         <Fragment>
-                            <div className="mx-8 flex items-center justify-between my-3">
+                            <div className="mx-8 flex items-center justify-between mb-3">
                                 <span className="w-[45%] border-b dark:border-gray-600"></span>
                                 <div className="text-sm text-center text-gray-500 dark:text-gray-400">or</div>
                                 <span className="w-[45%] border-b dark:border-gray-400"></span>
@@ -56,7 +60,7 @@ export default function SignIn() {
                         </Fragment>
                         <AccordionItem value="otp" className='border-none'>
                             {!showTrigger &&
-                                <AccordionTrigger className={cn(
+                                <AccordionTrigger showIcon={false} className={cn(
                                     buttonVariants({
                                         className: "w-full border-2 text-lg font-medium tracking-wide hover:no-underline",
                                         size: "lg",
@@ -68,12 +72,31 @@ export default function SignIn() {
                                 </AccordionTrigger>
                             }
                             <AccordionContent className='px-1'>
-                                <SendLogInOtp />
-                                <SignInWithOtp />
+                                <SendLogInOtp
+                                    showOTPField={showOTPField}
+                                    setShowOTPField={setShowOTPField}
+                                    setUserData={setUserData}
+                                />
+                                {showOTPField &&
+                                    <SignInWithOtp
+                                        showOTPField={showOTPField}
+                                        setShowOTPField={setShowOTPField}
+                                        userData={userData}
+                                    />}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
                 </CardContent>
+                <CardFooter className='flex items-center justify-center my-5'>
+                    <div className="flex flex-row  items-center gap-2 text-center">
+                        <span className="text-black/50">Don't have an account? </span>
+                        <Link
+                            to={"/sign-up"}
+                            className="text-foreground font-semibold dark:text-gray-400 hover:underline">
+                            Sign Up
+                        </Link>
+                    </div>
+                </CardFooter>
             </Card>
         </Shell>
     )

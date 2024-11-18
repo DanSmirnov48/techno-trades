@@ -5,8 +5,8 @@ import {
     createUserAccount,
     verifyAccount,
     signInAccount,
-    magicLinkSignIn,
-    sendMagicLinkToken,
+    sendLoginOtp,
+    logingWithOtp,
     getUserSession,
     signOutAccount,
     updateMyAccount,
@@ -47,17 +47,17 @@ export const useSignInAccount = () => {
     });
 };
 
-export const useMagicLinkSignIn = () => {
+export const useSendLoginOtp = () => {
     return useMutation({
-        mutationFn: (user: { email: string }) => magicLinkSignIn(user),
+        mutationFn: (user: { email: string }) => sendLoginOtp(user),
         onSuccess: (data) => { },
         onError: (data) => { },
     });
 };
 
-export const useSendMagicLinkToken = () => {
+export const useLogingWithOtp = () => {
     return useMutation({
-        mutationFn: ({ token }: { token: string }) => sendMagicLinkToken({ token }),
+        mutationFn: ({ otp }: { otp: string }) => logingWithOtp({ otp }),
         onSuccess: (data) => { },
         onError: (data) => { },
     });

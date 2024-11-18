@@ -4,6 +4,7 @@ import { useLogingWithOtp } from "@/lib/react-query/queries/user-queries";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormMessage,
@@ -22,6 +23,8 @@ import { toast } from "sonner";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Fragment } from "react";
+import { UserEmailSchema } from "./SendLogInOtp";
 
 interface AuthResponse {
     data?: any;
@@ -33,7 +36,13 @@ const OtpSchema = z.object({
     otp: z.string()
 })
 
-export default function SignInWithOtp() {
+interface SigninWithOtpProps {
+    showOTPField: boolean
+    setShowOTPField: React.Dispatch<React.SetStateAction<boolean>>
+    userData: UserEmailSchema | undefined
+}
+
+export default function SignInWithOtp({ showOTPField, setShowOTPField, userData }: SigninWithOtpProps) {
     const navigate = useNavigate();
     const { mutateAsync, isPending } = useLogingWithOtp()
     const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
@@ -93,6 +102,15 @@ export default function SignInWithOtp() {
                                 />
                             </FormControl>
                             <FormMessage />
+                            {(showOTPField) && (
+                                <Fragment>
+                                    <FormDescription className="py-2">
+                                        We emailed you an eight-digit code to{" "}
+                                        <span className="font-bold text-base">{userData?.email}</span>.
+                                        Enter the code you recieved to confirm your identity and continue resetting your password.
+                                    </FormDescription>
+                                </Fragment>
+                            )}
                         </FormItem>
                     )}
                 />
@@ -113,18 +131,20 @@ export default function SignInWithOtp() {
                     )}
                 </Button>
 
-                <div className="flex flex-col space-y-5 w-full mt-5">
-                    <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                        <p>Didn't recieve code?</p>
-                        <Button
-                            variant={"link"}
-                            type="button"
-                            className="flex flex-row items-center text-blue-600 p-0"
-                        >
-                            Resend
-                        </Button>
+                {(showOTPField) && (
+                    <div className="flex flex-col space-y-5 w-full mt-5">
+                        <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                            <p>Didn't recieve code?</p>
+                            <Button
+                                variant={"link"}
+                                type="button"
+                                className="flex flex-row items-center text-blue-600 p-0"
+                            >
+                                Resend
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                )}
             </form>
         </Form>
     );

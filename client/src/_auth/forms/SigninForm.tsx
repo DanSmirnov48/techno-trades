@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/AuthContext";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useSignInAccount } from "@/lib/react-query/queries/user-queries";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AuthResponse {
@@ -134,15 +134,6 @@ const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSig
               <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> :
               <>Sign in</>}
           </Button>
-
-          <div className="flex flex-row  items-center gap-2 text-center">
-            <span className="text-black/50">Don't have an account? </span>
-            <Link
-              to={"/sign-up"}
-              className="text-foreground font-semibold dark:text-gray-400 hover:underline">
-              Sign Up
-            </Link>
-          </div>
         </form>
       </Form>
     </Fragment>
