@@ -15,7 +15,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <HelmetProvider>
-              <Navbar />
               <Helmet>
                 <App />
               </Helmet>

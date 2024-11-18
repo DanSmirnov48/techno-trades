@@ -7,6 +7,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Nav } from "@/components/dashboard/side-nav-with-tooltip";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+import { Navbar } from "@/components/root";
 
 export const DashboardLayout = () => {
   const { user } = useUserContext();
@@ -17,6 +18,7 @@ export const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen flex-col w-full">
+      <Navbar />
       <div className="container xl:px-0 flex-1">
         <TooltipProvider delayDuration={0}>
           <ResizablePanelGroup

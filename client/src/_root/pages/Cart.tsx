@@ -9,10 +9,12 @@ import { CartTableItem } from "@/components/root";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useUserContext } from "@/context/AuthContext";
 
 const Cart = () => {
   const delivery = Number(49.99);
   const { items } = useCart();
+  const { isAuthenticated } = useUserContext();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
   const [open, setOpen] = useState(false);
@@ -104,7 +106,7 @@ const Cart = () => {
           </div>
 
           <div className="mt-6">
-            {true ? (
+            {isAuthenticated ? (
               <Link
                 className={cn(
                   buttonVariants({
@@ -126,14 +128,11 @@ const Cart = () => {
                 </DialogTrigger>
                 <DialogContent className="max-w-xl w-full px-6 py-12 md:px-12 lg:w-1/2 rounded-xl shadow-lg">
                   <DialogHeader>
-                    <DialogTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">Welcome back!</DialogTitle>
+                    <DialogTitle className="mt-3 text-2xl text-center text-gray-600 dark:text-gray-200">
+                      Welcome back!
+                    </DialogTitle>
                   </DialogHeader>
                   <SigninForm returnAs={"form"} withMagicSignIn={false} setOpen={setOpen} />
-                  <DialogFooter className="flex items-center sm:justify-center my-3">
-                    <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
-                    <Link to={"/sign-up"} className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">or sign up</Link>
-                    <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             )}
