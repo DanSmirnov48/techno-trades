@@ -4,8 +4,8 @@ import {
     OtpForm,
     AccountVerified,
     ForgotPasswordForm,
-    SignInWithMagic
 } from "@/_auth/forms";
+import Signin from '@/_auth/pages/SignIn'
 import { JSX } from "react";
 
 export interface AuthRoute {
@@ -19,8 +19,8 @@ const authRoutes: AuthRoute[] = [
         outlet: <SigninForm returnAs={"card"} withMagicSignIn />,
     },
     {
-        path: "/login/:token",
-        outlet: <SignInWithMagic />,
+        path: "auth/sign-in",
+        outlet: <Signin />,
     },
     {
         path: "/sign-up",

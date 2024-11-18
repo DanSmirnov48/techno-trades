@@ -47,7 +47,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <Link
-                    to="/sign-in"
+                    to="/auth/sign-in"
                     className={buttonVariants({
                       size: "sm",
                     })}
