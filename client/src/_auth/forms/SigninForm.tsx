@@ -1,38 +1,28 @@
 import * as z from "zod";
-import { toast } from "sonner";
-import { IUser } from "@/types";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLoginUser } from "@/lib/axios3";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SigninValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUserContext } from "@/context/AuthContext";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { useSignInAccount } from "@/lib/react-query/queries/user-queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-interface AuthResponse {
-  data?: any;
-  error?: any;
-  status?: any;
-}
-
 interface SigninFormProps {
   returnAs: "card" | "form";
-  withMagicSignIn?: boolean;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSignIn, setOpen }) => {
-
+export default function SignInForm({ returnAs, setOpen }: SigninFormProps) {
+  
   const navigate = useNavigate();
-  const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
-
-  const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | undefined>();
+  const { mutateAsync: signInAccount, isPending } = useLoginUser();
+  const [type, setType] = useState<'password' | 'text'>('password');
+  const form = useForm<z.infer<typeof SigninValidation>>({ resolver: zodResolver(SigninValidation) });
 
   const handleToggle = () => {
     if (type === 'password') {
@@ -42,41 +32,18 @@ const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSig
     }
   };
 
-  const { mutateAsync: signInAccount, isPending: loadingUser } = useSignInAccount();
-
-  const form = useForm<z.infer<typeof SigninValidation>>({
-    resolver: zodResolver(SigninValidation),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
   const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
-    try {
-      const session: AuthResponse = await signInAccount(user);
-
-      if (session.error && session.error.error === "Incorrect email or password") {
-        setError(session.error.error)
-      }
-      if (session.data && session.data.status === "success") {
-        const user = session.data.data.user as IUser
-        setUser(user)
-        setIsAuthenticated(true)
-        user.role === 'admin' && setIsAdmin(true);
-        toast.success(`Nice to see you back ${user.firstName}`)
-        if (returnAs === "form" && setOpen) {
-          setOpen(false)
-        } else {
-          navigate("/");
-        }
-      }
-    } catch (error) {
-      toast.error('Unknown Error', {
-        description: `Unknown Error at Sign In: ${error}`,
-      })
+    const session = await signInAccount(user);
+    if (session.status === "failure") {
+      setError(session.message)
+    } else if (session.status === "success") {
+      if (returnAs === "form" && setOpen) {
+        setOpen(false)
+      } else {
+        navigate("/");
+      };
     }
-  };
+  }
 
   const formContent = (
     <Fragment>
@@ -129,8 +96,8 @@ const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSig
               )}
             />
           </div>
-          <Button type="submit" size={"lg"} disabled={loadingUser} className="w-full text-lg font-medium tracking-wide mt-3">
-            {loadingUser ?
+          <Button type="submit" size={"lg"} disabled={isPending} className="w-full text-lg font-medium tracking-wide mt-3">
+            {isPending ?
               <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> :
               <>Sign in</>}
           </Button>
@@ -160,5 +127,4 @@ const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSig
   } else {
     return formContent;
   }
-};
-export default SigninForm;
+}

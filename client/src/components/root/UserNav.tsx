@@ -27,6 +27,7 @@ import { Icons } from "../shared";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
 import { useSignOutAccount } from "@/lib/react-query/queries/user-queries";
+import { first } from "lodash";
 
 export function UserNav() {
   const { mutate: signOut } = useSignOutAccount();
@@ -52,7 +53,7 @@ export function UserNav() {
               alt={user.email}
               className="object-cover"
             />
-            <AvatarFallback>{user.firstName.slice(0, 1)}{user.lastName.slice(0, 1)}</AvatarFallback>
+            <AvatarFallback>{first(user.firstName)}{first(user.lastName)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
