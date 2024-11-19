@@ -122,7 +122,7 @@ const SigninForm: React.FC<SigninFormProps> = ({ returnAs = "card", withMagicSig
                     </span>
                   </div>
                   <div className="flex justify-end">
-                    <Link to="/forgot-password" className="text-sm text-black/60 dark:text-gray-300 hover:underline">Reset password</Link>
+                    <Link to="/auth/forgot-password" className="text-sm text-black/60 dark:text-gray-300 hover:underline">Reset password</Link>
                   </div>
                   <FormMessage />
                 </FormItem>

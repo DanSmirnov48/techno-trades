@@ -1,9 +1,9 @@
 import {
     OtpForm,
     AccountVerified,
-    ForgotPasswordForm,
 } from "@/_auth/forms";
 import Signin from '@/_auth/pages/SignIn'
+import PasswordReset from '@/_auth/pages/PasswordReset'
 import Register from '@/_auth/pages/Register'
 import { JSX } from "react";
 
@@ -30,8 +30,8 @@ const authRoutes: AuthRoute[] = [
         outlet: <AccountVerified />,
     },
     {
-        path: "/forgot-password",
-        outlet: <ForgotPasswordForm />,
+        path: "/auth/forgot-password",
+        outlet: <PasswordReset />
     },
 ];
 

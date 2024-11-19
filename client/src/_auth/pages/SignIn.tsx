@@ -82,7 +82,8 @@ export default function SignIn() {
                                         showOTPField={showOTPField}
                                         setShowOTPField={setShowOTPField}
                                         userData={userData}
-                                    />}
+                                    />
+                                }
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
@@ -91,7 +92,7 @@ export default function SignIn() {
                     <div className="flex flex-row  items-center gap-2 text-center">
                         <span className="text-black/50">Don't have an account? </span>
                         <Link
-                            to={"/sign-up"}
+                            to={"/auth/sign-up"}
                             className="text-foreground font-semibold dark:text-gray-400 hover:underline">
                             Sign Up
                         </Link>
