@@ -1,7 +1,3 @@
-import {
-    OtpForm,
-    AccountVerified,
-} from "@/_auth/forms";
 import Signin from '@/_auth/pages/SignIn'
 import PasswordReset from '@/_auth/pages/PasswordReset'
 import Register from '@/_auth/pages/Register'
@@ -20,14 +16,6 @@ const authRoutes: AuthRoute[] = [
     {
         path: "/auth/sign-up",
         outlet: <Register />,
-    },
-    {
-        path: "/verify-account",
-        outlet: <OtpForm />,
-    },
-    {
-        path: "/account-verified",
-        outlet: <AccountVerified />,
     },
     {
         path: "/auth/forgot-password",

@@ -1,7 +1,6 @@
 export {default as RegisterForm } from './RegisterForm'
 export {default as SigninForm } from './SigninForm'
-export {default as OtpForm } from './OtpForm'
-export {default as AccountVerified } from './AccountVerified'
+export {default as VerifyAccountForm } from './VerifyAccountForm'
 export {default as SendPasswordResetOtpForm } from './SendPasswordResetOtpForm'
 export {default as SetNewPasswordForm } from './SetNewPasswordForm'
 export {default as SendLogInOtp } from './SendLogInOtp'
