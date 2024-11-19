@@ -133,7 +133,7 @@ export async function requestEmailChangeVerificationCode({ email }: { email: str
     }
 }
 
-export async function requestForgotPasswordVerificationCode(email: { email: string }) {
+export async function sendPasswordResetOtp(email: { email: string }) {
     try {
         const response = await axios.post(`/api/users/forgot-password`, email);
         return response;
@@ -163,9 +163,9 @@ export async function verifyPasswordResetVerificationDoe(code: { code: string })
     }
 }
 
-export async function resetForgottenPassword(user: { password: string; confirmPassword: string, email: string, code: string }) {
+export async function setNewPassword(user: { email: string; otp: string; password: string }) {
     try {
-        const response = await axios.patch(`/api/users/reset-forgotten-password`, user);
+        const response = await axios.patch(`/api/users/set-new-password`, user);
         return response;
     } catch (error: any) {
         if (error.response) {

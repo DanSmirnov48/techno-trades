@@ -11,9 +11,9 @@ import {
     signOutAccount,
     updateMyAccount,
     requestEmailChangeVerificationCode,
-    requestForgotPasswordVerificationCode,
+    sendPasswordResetOtp,
     verifyPasswordResetVerificationDoe,
-    resetForgottenPassword,
+    setNewPassword,
     updateMyEmail,
     updateMyPassword,
     deactivateMyAccount,
@@ -103,10 +103,9 @@ export const useRequestEmailChangeVerificationCode = () => {
     });
 };
 
-export const useRequestForgotPasswordVerificationCode = () => {
+export const useSendPasswordResetOtp = () => {
     return useMutation({
-        mutationFn: (email: { email: string }) =>
-            requestForgotPasswordVerificationCode(email),
+        mutationFn: (email: { email: string }) => sendPasswordResetOtp(email),
     });
 };
 
@@ -117,14 +116,9 @@ export const useVerifyPasswordResetVerificationDoe = () => {
     });
 };
 
-export const useResetForgottenPassword = () => {
+export const useSetNewPassword = () => {
     return useMutation({
-        mutationFn: (user: {
-            password: string;
-            confirmPassword: string;
-            email: string;
-            code: string;
-        }) => resetForgottenPassword(user),
+        mutationFn: (user: { email: string; otp: string; password: string }) => setNewPassword(user),
     });
 };
 
