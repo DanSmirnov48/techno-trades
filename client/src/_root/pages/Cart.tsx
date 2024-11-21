@@ -1,15 +1,15 @@
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
-import { SigninForm } from "@/_auth/forms";
+import { SigninForm } from "@/_auth/components";
 import { useEffect, useState } from "react";
 import { Icons } from "@/components/shared";
 import { cn, formatPrice } from "@/lib/utils";
 import { CartTableItem } from "@/components/root";
+import { useUserContext } from "@/context/AuthContext";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useUserContext } from "@/context/AuthContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const Cart = () => {
   const delivery = Number(49.99);
@@ -132,7 +132,7 @@ const Cart = () => {
                       Welcome back!
                     </DialogTitle>
                   </DialogHeader>
-                  <SigninForm returnAs={"form"} withMagicSignIn={false} setOpen={setOpen} />
+                  <SigninForm returnAs={"form"} setOpen={setOpen} />
                 </DialogContent>
               </Dialog>
             )}

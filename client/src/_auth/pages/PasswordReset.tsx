@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Shell } from "@/components/dashboard/shell";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
-import { SendPasswordResetOtpForm, SetNewPasswordForm } from '../forms';
-import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { UserEmailSchemaType } from '../schemas';
+import { Shell } from "@/components/dashboard/shell";
+import { buttonVariants } from '@/components/ui/button';
+import { SendPasswordResetOtpForm, SetNewPasswordForm } from '../components';
+import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function PasswordReset() {
     const [activeTabs, setActiveTabs] = useState<string[]>(['otp']);

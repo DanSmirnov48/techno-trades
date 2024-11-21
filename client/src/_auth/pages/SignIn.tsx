@@ -5,7 +5,7 @@ import { Icons } from '@/components/shared';
 import { UserEmailSchemaType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from '@/components/ui/button';
-import { SendLogInOtp, SigninForm, SignInWithOtp } from '../forms'
+import { SendLogInOtp, SigninForm, SignInWithOtp } from '../components'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 

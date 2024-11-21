@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterValidationType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
-import { VerifyAccountForm, RegisterForm } from '../forms';
+import { VerifyAccountForm, RegisterForm } from '../components';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
