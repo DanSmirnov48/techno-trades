@@ -12,7 +12,6 @@ import {
     InputOTPDash,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { z } from "zod";
 import { toast } from "sonner";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -21,24 +20,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useVerifyAccount } from "@/lib/react-query/queries/user-queries";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Fragment } from "react";
-import { RegisterValidation } from "./RegisterForm";
-
-const otpSchema = z.object({
-    otp: z.string()
-})
+import { RegisterValidationType, OtpSchemaType, otpSchema } from "../schemas";
 
 interface VerifyAccountFormProps {
-    userData: RegisterValidation | undefined
+    userData: RegisterValidationType | undefined
     activeTabs: string[]
     setActiveTabs: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 export default function VerifyAccountForm({ userData, activeTabs, setActiveTabs }: VerifyAccountFormProps) {
-    type OtpSchema = z.infer<typeof otpSchema>
     const { mutateAsync: verifyAccount, isPending } = useVerifyAccount();
-    const form = useForm<OtpSchema>({ resolver: zodResolver(otpSchema) })
+    const form = useForm<OtpSchemaType>({ resolver: zodResolver(otpSchema) })
 
-    async function onSubmit(data: OtpSchema) {
+    async function onSubmit(data: OtpSchemaType) {
         const res = await verifyAccount({ code: data.otp });
         //@ts-ignore
         if (res.status === 400 && res.error.error === "Invalid verification code") {

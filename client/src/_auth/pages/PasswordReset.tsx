@@ -3,14 +3,14 @@ import { Shell } from "@/components/dashboard/shell";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
 import { SendPasswordResetOtpForm, SetNewPasswordForm } from '../forms';
-import { UserEmailSchema } from '../forms/SendLogInOtp';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { UserEmailSchemaType } from '../schemas';
 
 export default function PasswordReset() {
     const [activeTabs, setActiveTabs] = useState<string[]>(['otp']);
-    const [userData, setUserData] = useState<UserEmailSchema | undefined>();
+    const [userData, setUserData] = useState<UserEmailSchemaType | undefined>();
 
     return (
         <Shell variant={'default'} className='max-w-xl p-0'>

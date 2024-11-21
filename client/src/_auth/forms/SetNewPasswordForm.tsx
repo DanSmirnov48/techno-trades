@@ -1,7 +1,6 @@
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -13,7 +12,6 @@ import {
     InputOTPDash,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { z } from "zod"
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,10 +19,10 @@ import { Fragment, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UserEmailSchema } from "./SendLogInOtp";
 import { useSetNewPassword } from "@/lib/react-query/queries/user-queries";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { passwordReset, PasswordResetType, UserEmailSchemaType } from "../schemas";
 
 interface ForgotPasswordResponse {
     data?: any;
@@ -33,30 +31,17 @@ interface ForgotPasswordResponse {
     statusTest?: string;
 }
 
-const forgotPasswordValidation = z.object({
-    otp: z.string().min(6, { message: "Otp is required." }),
-    newPassword: z.string().min(8, { message: "Password must be at least 8 characters." }),
-    newPasswordConfirm: z.string().min(8, { message: "Password must be at least 8 characters." })
-}).refine((data) => {
-    return data.newPassword === data.newPasswordConfirm;
-}, {
-    message: "Password do not match",
-    path: ["newPasswordConfirm"]
-});
-
-type ForgotPasswordValidation = z.infer<typeof forgotPasswordValidation>
-
 interface SendPasswordResetOtpProps {
     activeTabs: string[]
-    userData: UserEmailSchema | undefined
+    userData: UserEmailSchemaType | undefined
 }
 
 export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswordResetOtpProps) {
     const navigate = useNavigate();
     const disableField = activeTabs.includes('password')
     const [type, setType] = useState<'password' | 'text'>('password');
-    const form = useForm<ForgotPasswordValidation>({ resolver: zodResolver(forgotPasswordValidation) })
     const { mutateAsync: setNewPassword, isPending } = useSetNewPassword()
+    const form = useForm<PasswordResetType>({ resolver: zodResolver(passwordReset) })
 
     const handleToggle = () => {
         if (type === 'password') {
@@ -66,7 +51,7 @@ export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswor
         }
     };
 
-    async function onSubmit(data: ForgotPasswordValidation) {
+    async function onSubmit(data: PasswordResetType) {
         const res: ForgotPasswordResponse = await setNewPassword({
             password: data.newPassword,
             email: userData!.email,

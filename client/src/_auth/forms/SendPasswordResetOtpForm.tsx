@@ -1,30 +1,24 @@
-import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { Fragment, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod"
+import { userEmailSchema, UserEmailSchemaType } from "../schemas";
 import { useSendPasswordResetOtp } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-
-const userEmailSchema = z.object({
-    email: z.string().email(),
-});
-
-type UserEmailSchema = z.infer<typeof userEmailSchema>
 
 interface SendPasswordResetOtpFormProps {
     activeTabs: string[]
     setActiveTabs: React.Dispatch<React.SetStateAction<string[]>>
-    setUserData: React.Dispatch<React.SetStateAction<UserEmailSchema | undefined>>
+    setUserData: React.Dispatch<React.SetStateAction<UserEmailSchemaType | undefined>>
 }
 
 export default function SendPasswordResetOtpForm({ activeTabs, setActiveTabs, setUserData }: SendPasswordResetOtpFormProps) {
     const disableField = activeTabs.includes('password')
     const [error, setError] = useState<string | undefined>();
     const { mutateAsync: sendPasswordResetOtp } = useSendPasswordResetOtp()
-    const form = useForm<UserEmailSchema>({ resolver: zodResolver(userEmailSchema) });
+    const form = useForm<UserEmailSchemaType>({ resolver: zodResolver(userEmailSchema) });
 
     const handleNewEmailChange = (newEmail: string) => {
         form.clearErrors("email")
@@ -32,7 +26,7 @@ export default function SendPasswordResetOtpForm({ activeTabs, setActiveTabs, se
         setError(undefined)
     };
 
-    async function onSubmit(data: UserEmailSchema) {
+    async function onSubmit(data: UserEmailSchemaType) {
         const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
         const email = form.getValues('email');
         if (email.trim() !== '' && email.match(isValidEmail)) {

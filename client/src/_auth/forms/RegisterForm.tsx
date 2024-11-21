@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { toast } from "sonner";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { registerSchema, RegisterValidationType } from "../schemas";
 import { useCreateUserAccount } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
@@ -16,31 +16,16 @@ interface AuthResponse {
   statusTest?: string;
 }
 
-const registerValidation = z.object({
-  firstName: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 100 characters." }),
-  lastName: z.string().min(1, { message: "This field is required" }).max(1000, { message: "Maximum 100 characters." }),
-  email: z.string().email(),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  passwordConfirm: z.string().min(8, { message: "Password must be at least 8 characters." })
-}).refine((data) => {
-  return data.password === data.passwordConfirm;
-}, {
-  message: "Password do not match",
-  path: ["passwordConfirm"]
-});
-
 interface RegisterProps {
   setActiveTabs: React.Dispatch<React.SetStateAction<string[]>>
-  setUserData: React.Dispatch<React.SetStateAction<RegisterValidation | undefined>>
+  setUserData: React.Dispatch<React.SetStateAction<RegisterValidationType | undefined>>
 }
-
-export type RegisterValidation = z.infer<typeof registerValidation>
 
 export default function RegisterForm({ setActiveTabs, setUserData }: RegisterProps) {
   const [error, setError] = useState<string | undefined>();
   const [type, setType] = useState<'password' | 'text'>('password');
   const { mutateAsync: createAccount, isPending: loadingUser } = useCreateUserAccount();
-  const form = useForm<RegisterValidation>({ resolver: zodResolver(registerValidation) })
+  const form = useForm<RegisterValidationType>({ resolver: zodResolver(registerSchema) })
 
   const handleToggle = () => {
     if (type === 'password') {
@@ -50,7 +35,7 @@ export default function RegisterForm({ setActiveTabs, setUserData }: RegisterPro
     }
   };
 
-  async function onSubmit(data: RegisterValidation) {
+  async function onSubmit(data: RegisterValidationType) {
     try {
       const account: AuthResponse = await createAccount(data);
 

@@ -1,13 +1,3 @@
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import * as z from "zod";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { userEmailSchema, UserEmailSchemaType } from "../schemas";
 import { useSendLoginOtp } from "@/lib/react-query/queries/user-queries";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface MagicLinkResponse {
     data?: any;
@@ -24,28 +16,16 @@ interface MagicLinkResponse {
     statusTest?: string;
 }
 
-const userEmailSchema = z.object({
-    email: z.string().email(),
-});
-
-export type UserEmailSchema = z.infer<typeof userEmailSchema>
-
 interface SendOtpProps {
     showOTPField: boolean
     setShowOTPField: React.Dispatch<React.SetStateAction<boolean>>
-    setUserData: React.Dispatch<React.SetStateAction<UserEmailSchema | undefined>>
+    setUserData: React.Dispatch<React.SetStateAction<UserEmailSchemaType | undefined>>
 }
 
 export default function SendLogInOtp({ showOTPField, setShowOTPField, setUserData }: SendOtpProps) {
     const [error, setError] = useState<string | undefined>();
     const { mutateAsync: sendLoginOtp } = useSendLoginOtp()
-
-    const form = useForm<UserEmailSchema>({
-        resolver: zodResolver(userEmailSchema),
-        defaultValues: {
-            email: "",
-        },
-    });
+    const form = useForm<UserEmailSchemaType>({ resolver: zodResolver(userEmailSchema) });
 
     const handleNewEmailChange = (newEmail: string) => {
         form.clearErrors("email")
@@ -53,7 +33,7 @@ export default function SendLogInOtp({ showOTPField, setShowOTPField, setUserDat
         setError(undefined)
     };
 
-    async function onSubmit(data: UserEmailSchema) {
+    async function onSubmit(data: UserEmailSchemaType) {
         const res: MagicLinkResponse = await sendLoginOtp({ email: data.email })
         if (res.status === 200 && res.data.status === "success") {
             form.reset()

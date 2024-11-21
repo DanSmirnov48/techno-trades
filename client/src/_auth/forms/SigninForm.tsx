@@ -1,12 +1,12 @@
 import * as z from "zod";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLoginUser } from "@/lib/axios3";
+import { useLoginUser } from "../lib/requests";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SigninValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema, SignInSchemaType } from "../schemas";
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,12 +17,11 @@ interface SigninFormProps {
 }
 
 export default function SignInForm({ returnAs, setOpen }: SigninFormProps) {
-  
   const navigate = useNavigate();
   const [error, setError] = useState<string | undefined>();
   const { mutateAsync: signInAccount, isPending } = useLoginUser();
   const [type, setType] = useState<'password' | 'text'>('password');
-  const form = useForm<z.infer<typeof SigninValidation>>({ resolver: zodResolver(SigninValidation) });
+  const form = useForm<SignInSchemaType>({ resolver: zodResolver(signInSchema) });
 
   const handleToggle = () => {
     if (type === 'password') {
@@ -32,7 +31,7 @@ export default function SignInForm({ returnAs, setOpen }: SigninFormProps) {
     }
   };
 
-  const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
+  const handleSignin = async (user: SignInSchemaType) => {
     const session = await signInAccount(user);
     if (session.status === "failure") {
       setError(session.message)

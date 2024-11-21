@@ -15,7 +15,6 @@ import {
     InputOTPDash,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IUser } from "@/types";
@@ -24,7 +23,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Fragment } from "react";
-import { UserEmailSchema } from "./SendLogInOtp";
+import { UserEmailSchemaType, otpSchema, OtpSchemaType } from "../schemas";
 
 interface AuthResponse {
     data?: any;
@@ -32,29 +31,19 @@ interface AuthResponse {
     status?: any;
 }
 
-const OtpSchema = z.object({
-    otp: z.string()
-})
-
 interface SigninWithOtpProps {
     showOTPField: boolean
     setShowOTPField: React.Dispatch<React.SetStateAction<boolean>>
-    userData: UserEmailSchema | undefined
+    userData: UserEmailSchemaType | undefined
 }
 
 export default function SignInWithOtp({ showOTPField, setShowOTPField, userData }: SigninWithOtpProps) {
     const navigate = useNavigate();
     const { mutateAsync, isPending } = useLogingWithOtp()
     const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+    const form = useForm<OtpSchemaType>({ resolver: zodResolver(otpSchema) });
 
-    const form = useForm<z.infer<typeof OtpSchema>>({
-        resolver: zodResolver(OtpSchema),
-        defaultValues: {
-            otp: "",
-        },
-    });
-
-    async function onSubmit(data: z.infer<typeof OtpSchema>) {
+    async function onSubmit(data: OtpSchemaType) {
         const session: AuthResponse = await mutateAsync({ otp: data.otp });
 
         if (session.data && session.data.status === "success") {

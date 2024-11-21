@@ -2,9 +2,9 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { Fragment, useState } from 'react';
 import { Icons } from '@/components/shared';
+import { UserEmailSchemaType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from '@/components/ui/button';
-import { UserEmailSchema } from '../forms/SendLogInOtp';
 import { SendLogInOtp, SigninForm, SignInWithOtp } from '../forms'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -13,7 +13,7 @@ export default function SignIn() {
     const [showTrigger, setShowTrigger] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState<string>('password');
     const [showOTPField, setShowOTPField] = useState(false);
-    const [userData, setUserData] = useState<UserEmailSchema | undefined>();
+    const [userData, setUserData] = useState<UserEmailSchemaType | undefined>();
 
     const handleTabChange = (value: string) => {
         setShowTrigger(!showTrigger)
