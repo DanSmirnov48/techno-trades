@@ -4,8 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { INITIAL_USER, useUserContext } from "@/context/AuthContext";
-import { useDeactivateMyAccount, useSignOutAccount } from "@/lib/react-query/queries/user-queries";
+import { useDeactivateMyAccount } from "@/lib/react-query/queries/user-queries";
 import {
   Form,
   FormControl,
@@ -14,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useLogoutUser } from "@/_auth/lib/queries";
 
 interface AddressDialogProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,10 +22,8 @@ interface AddressDialogProps {
 const DeleteAccountDialog: React.FC<AddressDialogProps> = ({ setOpen }) => {
 
   const navigate = useNavigate();
-  const { setUser, setIsAuthenticated } =useUserContext();
-
+  const { mutate: signOut } = useLogoutUser();
   const {mutateAsync: deactivateMyAccount} = useDeactivateMyAccount()
-  const { mutate: signOut } = useSignOutAccount();
 
   const DeactivateAccountValidation = z.object({
     password: z.string().min(8, { message: "Password must be at least 8 characters." }),
@@ -42,8 +40,6 @@ const DeleteAccountDialog: React.FC<AddressDialogProps> = ({ setOpen }) => {
     let res = await deactivateMyAccount()
     if(res && res.status === 204){
       signOut();
-      setIsAuthenticated(false);
-      setUser(INITIAL_USER);
       navigate("/");
     }
     setOpen(false);

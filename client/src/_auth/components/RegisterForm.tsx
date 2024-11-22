@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRegisterUser } from "../lib/requests";
+import { useRegisterUser } from "../lib/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { registerSchema, RegisterValidationType } from "../schemas";

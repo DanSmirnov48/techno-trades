@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,21 +25,19 @@ import {
 } from "lucide-react";
 import { Icons } from "../shared";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
-import { useSignOutAccount } from "@/lib/react-query/queries/user-queries";
+import { useUserContext } from "@/context/AuthContext";
 import { first } from "lodash";
+import { useLogoutUser } from "@/_auth/lib/queries";
 
 export function UserNav() {
-  const { mutate: signOut } = useSignOutAccount();
-  const { user, setUser, setIsAuthenticated, isAdmin } = useUserContext();
+  const { mutate: signOut } = useLogoutUser();
+  const { user, isAdmin } = useUserContext();
   const { setTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSignOut = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
     signOut();
-    setIsAuthenticated(false);
-    setUser(INITIAL_USER);
     navigate("/");
   };
 

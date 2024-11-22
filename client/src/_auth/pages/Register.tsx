@@ -1,8 +1,10 @@
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterValidationType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
+import { useResendVerificationEmail } from '../lib/queries';
 import { VerifyAccountForm, RegisterForm } from '../components';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
@@ -12,6 +14,15 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 export default function PasswordReset() {
     const [activeTabs, setActiveTabs] = useState<string[]>(['register']);
     const [userData, setUserData] = useState<RegisterValidationType | undefined>();
+
+    const { mutateAsync } = useResendVerificationEmail()
+
+    async function requestNewCode(){
+        const resposne = await mutateAsync({ email: userData!.email })
+        if(resposne.status === 'success'){
+            toast.info(resposne.message)
+        }
+    }
 
     return (
         <Shell variant={'default'} className='max-w-xl p-0'>
@@ -98,7 +109,7 @@ export default function PasswordReset() {
                                 <HoverCardTrigger className="flex flex-row items-center text-blue-600 p-0 cursor-pointer">Resend</HoverCardTrigger>
                                 <HoverCardContent className="flex flex-col gap-5 w-[300px]">
                                     <h1>If you did not recieve your code, please check your <span className="font-bold italic">Spam Folder</span> before requesting a new one!</h1>
-                                    <Button>Request new Code</Button>
+                                    <Button onClick={() => requestNewCode()}>Request new Code</Button>
                                 </HoverCardContent>
                             </HoverCard>
                         </div>

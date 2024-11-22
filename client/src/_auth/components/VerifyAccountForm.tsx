@@ -17,7 +17,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useVerifyAccount } from "@/lib/react-query/queries/user-queries";
+import { useVerifyAccountUser } from "../lib/queries";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Fragment } from "react";
 import { RegisterValidationType, OtpSchemaType, otpSchema } from "../schemas";
@@ -29,18 +29,19 @@ interface VerifyAccountFormProps {
 }
 
 export default function VerifyAccountForm({ userData, activeTabs, setActiveTabs }: VerifyAccountFormProps) {
-    const { mutateAsync: verifyAccount, isPending } = useVerifyAccount();
+    const { mutateAsync: verifyAccount, isPending } = useVerifyAccountUser();
     const form = useForm<OtpSchemaType>({ resolver: zodResolver(otpSchema) })
 
     async function onSubmit(data: OtpSchemaType) {
-        const res = await verifyAccount({ code: data.otp });
-        //@ts-ignore
-        if (res.status === 400 && res.error.error === "Invalid verification code") {
-            toast.error("Invalid verification code");
-        } else {
-            form.reset();
+        const res = await verifyAccount({ otp: data.otp, email: userData!.email });
+        if(res.status === 'failure'){
+            toast.error(res.message);
+        }
+        if(res.status === 'success' && res.message === 'Email already verified'){
+            toast.info(res.message);
+        }
+        if(res.status === 'success' && res.message === 'Verification successful'){
             setActiveTabs(['confirm'])
-            toast.success("Successfully Verified");
         }
     }
 

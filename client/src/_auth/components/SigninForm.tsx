@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLoginUser } from "../lib/requests";
+import { useLoginUser } from "../lib/queries";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
