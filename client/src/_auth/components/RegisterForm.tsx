@@ -1,20 +1,12 @@
-import { toast } from "sonner";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRegisterUser } from "../lib/requests";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { registerSchema, RegisterValidationType } from "../schemas";
-import { useCreateUserAccount } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
-interface AuthResponse {
-  data?: any;
-  error?: any;
-  status?: number;
-  statusTest?: string;
-}
 
 interface RegisterProps {
   setActiveTabs: React.Dispatch<React.SetStateAction<string[]>>
@@ -24,7 +16,7 @@ interface RegisterProps {
 export default function RegisterForm({ setActiveTabs, setUserData }: RegisterProps) {
   const [error, setError] = useState<string | undefined>();
   const [type, setType] = useState<'password' | 'text'>('password');
-  const { mutateAsync: createAccount, isPending: loadingUser } = useCreateUserAccount();
+  const { mutateAsync: createAccount, isPending: loadingUser } = useRegisterUser();
   const form = useForm<RegisterValidationType>({ resolver: zodResolver(registerSchema) })
 
   const handleToggle = () => {
@@ -36,20 +28,12 @@ export default function RegisterForm({ setActiveTabs, setUserData }: RegisterPro
   };
 
   async function onSubmit(data: RegisterValidationType) {
-    try {
-      const account: AuthResponse = await createAccount(data);
-
-      if (account.status === 200 && account.data.status === 'success') {
-        toast.success(`Your Account Created Successfully!`);
-        setActiveTabs(['otp'])
-        setUserData(data)
-      } else {
-        setError(account.error)
-      }
-    } catch (error) {
-      toast.error('Unknown Error', {
-        description: `${error}`,
-      })
+    const account = await createAccount(data);
+    if (account.status === 'success' && account.data) {
+      setActiveTabs(['otp'])
+      setUserData(data)
+    } else {
+      setError(account.message)
     }
   };
 
