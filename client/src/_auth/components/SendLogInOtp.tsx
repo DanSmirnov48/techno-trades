@@ -3,18 +3,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSendLoginOtp } from "../lib/queries";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userEmailSchema, UserEmailSchemaType } from "../schemas";
-import { useSendLoginOtp } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
-interface MagicLinkResponse {
-    data?: any;
-    error?: any;
-    status?: number;
-    statusTest?: string;
-}
 
 interface SendOtpProps {
     showOTPField: boolean
@@ -34,17 +27,16 @@ export default function SendLogInOtp({ showOTPField, setShowOTPField, setUserDat
     };
 
     async function onSubmit(data: UserEmailSchemaType) {
-        const res: MagicLinkResponse = await sendLoginOtp({ email: data.email })
-        if (res.status === 200 && res.data.status === "success") {
+        const response = await sendLoginOtp({ email: data.email })
+        if(response.status === 'failure'){
+            setError(response.message)
+            form.setFocus("email")
+        }
+        if(response.status === 'success'){
             form.reset()
-            toast.info(res.data.message)
+            toast.info(response.message)
             setShowOTPField(true);
             setUserData(data)
-        } else if (res.error.error === 'User not found') {
-            form.setFocus("email")
-            setError(res.error.error)
-        } else {
-            toast.info('Something went wrong.')
         }
     };
 

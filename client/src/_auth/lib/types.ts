@@ -51,3 +51,14 @@ export interface VerifyAccountData {
 export interface EmailData {
     email: string;
 }
+
+export interface SetNewPasswordData {
+    email: string;
+    otp: string;
+    password: string;
+}
+
+export interface SignInWithOtp {
+    email: string;
+    otp: string;
+}

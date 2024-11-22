@@ -1,11 +1,12 @@
+import { toast } from "sonner";
 import { useForm } from "react-hook-form"
 import { Fragment, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Forward } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useSendPasswordResetOtp } from "../lib/queries";
 import { userEmailSchema, UserEmailSchemaType } from "../schemas";
-import { useSendPasswordResetOtp } from "@/lib/react-query/queries/user-queries";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 interface SendPasswordResetOtpFormProps {
@@ -30,9 +31,16 @@ export default function SendPasswordResetOtpForm({ activeTabs, setActiveTabs, se
         const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
         const email = form.getValues('email');
         if (email.trim() !== '' && email.match(isValidEmail)) {
-            setUserData(data)
-            setActiveTabs(['otp', 'password'])
-            await sendPasswordResetOtp({ email: email })
+            const resposne = await sendPasswordResetOtp({ email: email })
+            if (resposne.status === 'success') {
+                toast.info(resposne.message)
+                setUserData(data)
+                setActiveTabs(['otp', 'password'])
+            }
+            if (resposne.status === 'failure') {
+                setError(resposne.message)
+                form.setFocus('email')
+            }
         } else {
             form.setError("email", {
                 type: "manual",

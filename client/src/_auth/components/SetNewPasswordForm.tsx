@@ -19,8 +19,8 @@ import { Fragment, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSetNewPassword } from "@/lib/react-query/queries/user-queries";
 import { toast } from "sonner";
+import { useSetNewPassword } from "../lib/queries";
 import { useNavigate } from "react-router-dom";
 import { passwordReset, PasswordResetType, UserEmailSchemaType } from "../schemas";
 
@@ -52,17 +52,23 @@ export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswor
     };
 
     async function onSubmit(data: PasswordResetType) {
-        const res: ForgotPasswordResponse = await setNewPassword({
+        const response = await setNewPassword({
             password: data.newPassword,
             email: userData!.email,
             otp: data.otp
         })
-        if (res.status === 200 && res.data.success === 'Password Reset Success') {
-            navigate('/auth/sign-in')
-            toast.success('Your Password has been successfully updated! Please login with your new credentials')
+        if (response.status === 'success' && response.message === 'Password reset successful') {
             form.reset()
-        } else {
-            toast.info('Something went wrong. Fuck you!!')
+            toast.success(response.message)
+            navigate('/auth/sign-in')
+        }
+        if (response.status === 'failure' && response.message === 'Otp is invalid or expired') {
+            form.resetField('otp')
+            form.setFocus('otp')
+            toast.error(response.message)
+        }
+        if (response.status === 'failure') {
+            toast.error(response.message)
         }
     }
 

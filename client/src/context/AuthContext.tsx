@@ -8,7 +8,8 @@ import {
   useState,
 } from "react";
 import { IUser } from "@/types";
-import { IPhoto, useGetUserSession } from "@/lib/axios3";
+import { IPhoto } from "@/lib/axios3";
+import { useGetUserSession } from "@/_auth/lib/queries";
 
 // Initial State
 export const INITIAL_PHOTO: IPhoto = {

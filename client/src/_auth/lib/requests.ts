@@ -9,6 +9,8 @@ import {
     RegisterResponse,
     VerifyAccountData,
     EmailData,
+    SetNewPasswordData,
+    SignInWithOtp
 } from './types';
 
 // // API client setup
@@ -34,7 +36,6 @@ export const authApi = {
     register: async (data: RegisterData): Promise<AuthResponse<RegisterResponse>> => {
         try {
             const response = await api.post<AuthResponse<RegisterResponse>>('/register', data);
-            // console.log({ response })
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<RegisterResponse>;
@@ -43,7 +44,6 @@ export const authApi = {
     verifyAccount: async (data: VerifyAccountData): Promise<AuthResponse<IUserResponse>> => {
         try {
             const response = await api.post<AuthResponse<IUserResponse>>('/verify-email', data);
-            // console.log({ response })
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<IUserResponse>;
@@ -52,7 +52,6 @@ export const authApi = {
     login: async (data: LoginData): Promise<AuthResponse<LoginResponse>> => {
         try {
             const response = await api.post<AuthResponse<LoginResponse>>('/login', data);
-            // console.log({ response })
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<LoginResponse>;
@@ -61,19 +60,57 @@ export const authApi = {
     logout: async (): Promise<AuthResponse<null>> => {
         try {
             const response = await api.get<AuthResponse<null>>('/logout');
-            // console.log({ response })
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<null>;
         }
     },
+    validate: async (): Promise<AuthResponse<IUserResponse>> => {
+        try {
+            const response = await api.get<AuthResponse<IUserResponse>>('/validate');
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<IUserResponse>;
+        }
+    },
     resendVerificationEmail: async (data: EmailData): Promise<AuthResponse<{ otp: string }>> => {
         try {
             const response = await api.post<AuthResponse<{ otp: string }>>('/resend-verification-email', data);
-            // console.log({ response })
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<{ otp: string }>;
+        }
+    },
+    sendPasswordResetOtp: async (data: EmailData): Promise<AuthResponse<{ otp: string }>> => {
+        try {
+            const response = await api.post<AuthResponse<{ otp: string }>>('/forgot-password', data);
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<{ otp: string }>;
+        }
+    },
+    setNewPassword: async (data: SetNewPasswordData): Promise<AuthResponse<null>> => {
+        try {
+            const response = await api.post<AuthResponse<null>>('/set-new-password', data);
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<null>;
+        }
+    },
+    sendLoginOtp: async (data: EmailData): Promise<AuthResponse<{ otp: string }>> => {
+        try {
+            const response = await api.post<AuthResponse<{ otp: string }>>('/send-login-otp', data);
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<{ otp: string }>;
+        }
+    },
+    signInWithOtp: async (data: SignInWithOtp): Promise<AuthResponse<LoginResponse>> => {
+        try {
+            const response = await api.post<AuthResponse<LoginResponse>>('/login-with-otp', data);
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<LoginResponse>;
         }
     }
 };

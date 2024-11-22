@@ -10,7 +10,9 @@ import {
     RegisterData,
     RegisterResponse,
     VerifyAccountData,
-    EmailData
+    EmailData,
+    SetNewPasswordData,
+    SignInWithOtp
 } from './types';
 
 // React Query Hooks
@@ -50,12 +52,71 @@ export const useResendVerificationEmail = () => {
     });
 };
 
+export const useSendPasswordResetOtp = () => {
+    return useMutation<AuthResponse<{ otp: string }>, AuthResponse<ErrorResponse>, EmailData>({
+        mutationFn: authApi.sendPasswordResetOtp,
+        onSuccess: (response) => {
+            console.log({ response });
+        },
+        onError: (error) => {
+            console.error('Validation error:', error);
+        }
+    });
+};
+
+export const useSetNewPassword = () => {
+    return useMutation<AuthResponse<null>, AuthResponse<ErrorResponse>, SetNewPasswordData>({
+        mutationFn: authApi.setNewPassword,
+        onSuccess: (response) => {
+            console.log({ response });
+        },
+        onError: (error) => {
+            console.error('Validation error:', error);
+        }
+    });
+};
+
+export const useSendLoginOtp = () => {
+    return useMutation<AuthResponse<{ otp: string }>, AuthResponse<ErrorResponse>, EmailData>({
+        mutationFn: authApi.sendLoginOtp,
+        onSuccess: (response) => {
+            console.log({ response });
+        },
+        onError: (error) => {
+            console.error('Validation error:', error);
+        }
+    });
+};
+
 export const useLoginUser = () => {
     const queryClient = useQueryClient();
     const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
 
     return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, LoginData>({
         mutationFn: authApi.login,
+        onSuccess: (response) => {
+            if (response.status === 'success' && response.data) {
+                const user = response.data.user
+                setUser(user);
+                setIsAuthenticated(true);
+                setIsAdmin(user.role === 'admin');
+
+                // Invalidate and refetch user session
+                queryClient.invalidateQueries({ queryKey: ['user-session'] });
+            }
+        },
+        onError: (error) => {
+            console.error('Login error:', error);
+        }
+    });
+};
+
+export const useSignInWithOtp = () => {
+    const queryClient = useQueryClient();
+    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+
+    return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, SignInWithOtp>({
+        mutationFn: authApi.signInWithOtp,
         onSuccess: (response) => {
             if (response.status === 'success' && response.data) {
                 const user = response.data.user
@@ -90,3 +151,21 @@ export const useLogoutUser = () => {
         }
     });
 };
+
+export const useGetUserSession = () => {
+    const queryClient = useQueryClient();
+    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+
+    return useMutation<AuthResponse<IUserResponse>, AuthResponse<ErrorResponse>>({
+        mutationFn: authApi.validate,
+        onSuccess: (response) => {
+            // console.log({ response });
+        },
+        onError: (error) => {
+            console.error('Validation error:', error);
+            setUser(INITIAL_USER);
+            setIsAuthenticated(false);
+            setIsAdmin(false);
+        }
+    });
+}
