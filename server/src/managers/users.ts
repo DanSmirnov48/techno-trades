@@ -5,6 +5,7 @@ import { Types } from 'mongoose';
 import * as jwt from "jsonwebtoken";
 import { randomStr } from '../config/utils';
 import { Request, Response } from 'express';
+import { OAuth2Client } from 'google-auth-library';
 
 const hashPassword = async (password: string) => {
     const hashedPassword: string = await bcrypt.hash(password, 10)
@@ -96,6 +97,25 @@ const setAuthCookie = (res: Response, req: Request, cookieType: 'access' | 'refr
     });
 };
 
+const client = new OAuth2Client(ENV.GOOGLE_CLIENT_ID);
+
+const validateGoogleToken = async (authToken: string): Promise<Record<string, any>> => {
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: authToken,
+            audience: ENV.GOOGLE_CLIENT_ID
+        });
+
+        const payload = ticket.getPayload();
+        if (!payload || !payload['sub']) {
+            return { payload: null, error: 'Invalid Auth Token' };
+        }
+        return { payload, error: null };
+    } catch (error) {
+        return { payload: null, error: 'Invalid Auth Token' };
+    }
+}
+
 export {
     hashPassword,
     checkPassword,
@@ -105,4 +125,5 @@ export {
     createOtp,
     decodeAuth,
     setAuthCookie,
+    validateGoogleToken
 };

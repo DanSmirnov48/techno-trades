@@ -35,6 +35,9 @@ const envSchema = z.object({
     STRIPE_TEST_KEY: z.string(),
 
     CLIENT_URL: z.string().url(),
+
+    GOOGLE_CLIENT_ID: z.string(),
+    GOOGLE_CLIENT_SECRET: z.string(),
 });
 
 // Validate and parse the environment variables

@@ -10,6 +10,7 @@ import {
   setNewPassword,
   validate,
   logout,
+  google,
 } from "../controllers/auth";
 import { authMiddleware, admin } from "../middlewares/auth";
 import {
@@ -33,8 +34,9 @@ router.route("/resend-verification-email").post(resendVerificationEmail);
 router.route("/validate").get(validate);
 router.route("/forgot-password").post(sendPasswordResetOtp);
 router.route("/set-new-password").post(setNewPassword);
-router.route("/send-login-otp").get(sendLoginOtp);
+router.route("/send-login-otp").post(sendLoginOtp);
 router.route("/login-with-otp").post(logingWithOtp);
+router.route("/google").post(google);
 
 router.route("/send-email-change-otp").get(authMiddleware, sendUserEmailChangeOtp);
 router.route("/update-my-email").patch(authMiddleware, updateUserEmail);

@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomResponse } from "../config/utils";
+import { CustomResponse, randomStr } from "../config/utils";
 import { User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
-import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, setAuthCookie } from "../managers/users";
+import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, hashPassword, setAuthCookie, validateGoogleToken } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
 import { getUser } from "../middlewares/auth";
+import { sendEmail, EmailType } from '../utils/mailSender'
+import { TokenPayload } from "google-auth-library";
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -214,6 +216,57 @@ export const logout = asyncHandler(async (req: Request, res: Response, next: Nex
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
         return res.status(200).json(CustomResponse.success('Logout successful'))
+    } catch (error) {
+        next(error)
+    }
+});
+
+export const google = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData = req.body;
+        const { token } = userData;
+
+        // Validate token
+        const { payload, error } = await validateGoogleToken(token as string) as { payload: TokenPayload, error: string }
+        if (error) {
+            throw new RequestError(error, 401, ErrorCode.INVALID_TOKEN);
+        }
+
+        // Get or Create User
+        let user = await User.findOne({ email: payload.email })
+        if (!user) {
+            const userData = {
+                firstName: payload.given_name || payload.name || '',
+                lastName: payload.family_name || '',
+                email: payload.email || '',
+                password: await hashPassword('password123'),
+                isEmailVerified: payload.email_verified || false,
+                isActive: true,
+                role: 'user' as const,
+                photo: {
+                    key: payload.sub,
+                    name: randomStr(10),
+                    url: payload.picture,
+                }
+            }
+            user = await createUser(userData, true)
+        }
+
+        // Generate tokens
+        const access = createAccessToken(user.id)
+        const refresh = createRefreshToken()
+
+        // Set cookies
+        setAuthCookie(res, req, 'access', access);
+        setAuthCookie(res, req, 'refresh', refresh);
+
+        // Update user with access and refresh tokens
+        let tokens = { user, access, refresh }
+        await User.updateOne(
+            { _id: user._id },
+            { $push: { tokens } }
+        );
+        return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
     } catch (error) {
         next(error)
     }

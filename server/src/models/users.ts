@@ -7,9 +7,9 @@ export interface IUser {
     lastName: string;
     email: string;
     photo: {
-        key: { type: String },
-        name: { type: String },
-        url: { type: String },
+        key: string,
+        name: string,
+        url: string,
     },
     role: 'user' | 'admin';
     password: string;
@@ -23,12 +23,12 @@ export interface IUser {
 
 const UserSchema = new Schema<IUser>({
     firstName: { type: String, required: true, maxlength: 50 },
-    lastName: { type: String, required: true, maxlength: 50 },
+    lastName: { type: String, required: false, maxlength: 50 },
     email: { type: String, required: true, unique: true },
     photo: {
-        key: { type: String, null: true, blank: true},
-        name: { type: String, null: true, blank: true},
-        url: { type: String, null: true, blank: true},
+        key: { type: String, null: true, blank: true },
+        name: { type: String, null: true, blank: true },
+        url: { type: String, null: true, blank: true },
     },
     role: { type: String, enum: ['user', 'admin'], default: 'user', },
     password: { type: String, required: true },
