@@ -12,7 +12,8 @@ import {
     VerifyAccountData,
     EmailData,
     SetNewPasswordData,
-    SignInWithOtp
+    SignInWithOtp,
+    GoogleLoginData
 } from './types';
 
 // React Query Hooks
@@ -94,6 +95,29 @@ export const useLoginUser = () => {
 
     return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, LoginData>({
         mutationFn: authApi.login,
+        onSuccess: (response) => {
+            if (response.status === 'success' && response.data) {
+                const user = response.data.user
+                setUser(user);
+                setIsAuthenticated(true);
+                setIsAdmin(user.role === 'admin');
+
+                // Invalidate and refetch user session
+                queryClient.invalidateQueries({ queryKey: ['user-session'] });
+            }
+        },
+        onError: (error) => {
+            console.error('Login error:', error);
+        }
+    });
+};
+
+export const useGoogleLogin = () => {
+    const queryClient = useQueryClient();
+    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+
+    return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, GoogleLoginData>({
+        mutationFn: authApi.google,
         onSuccess: (response) => {
             if (response.status === 'success' && response.data) {
                 const user = response.data.user

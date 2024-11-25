@@ -43,6 +43,10 @@ export interface LoginData {
     password: string;
 }
 
+export interface GoogleLoginData {
+    token: string;
+}
+
 export interface VerifyAccountData {
     email: string;
     otp: string;

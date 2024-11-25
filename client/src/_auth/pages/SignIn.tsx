@@ -5,7 +5,7 @@ import { Icons } from '@/components/shared';
 import { UserEmailSchemaType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
 import { buttonVariants } from '@/components/ui/button';
-import { SendLogInOtp, SigninForm, SignInWithOtp } from '../components'
+import { GoogleLoginButton, SendLogInOtp, SigninForm, SignInWithOtp } from '../components'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
@@ -36,23 +36,34 @@ export default function SignIn() {
                     <Accordion className='flex flex-col gap-3' type="single" defaultValue={"password"} value={activeTab} onValueChange={handleTabChange}>
                         <AccordionItem value="password" className='border-none'>
                             {showTrigger &&
-                                <AccordionTrigger showIcon={false} className={cn(
-                                    buttonVariants({
-                                        className: "w-full border-2 text-lg font-medium tracking-wide mb-5 hover:no-underline",
-                                        size: "lg",
-                                        variant: "outline"
-                                    }),
-                                )}>
-                                    <Icons.mail className="w-5 h-5 mr-2" />
-                                    Sign in with Email & Password
-                                </AccordionTrigger>
+                                <div className='flex flex-row items-center justify-between gap-4 mx-8 max-w-lg'>
+                                    <div className="flex-1">
+                                        <AccordionTrigger
+                                            showIcon={false}
+                                            className={cn(
+                                                buttonVariants({
+                                                    className: "w-full h-10 border border-gray-900/20 hover:no-underline m-0 p-4 pl-8 relative",
+                                                    size: "lg",
+                                                    variant: "outline"
+                                                }),
+                                            )}
+                                        >
+                                            <Icons.mail className="absolute top-2.5 left-3 w-5 h-5 mr-2" />
+                                            Sign in with Password
+                                        </AccordionTrigger>
+                                    </div>
+
+                                    <div className="flex-1">
+                                        <GoogleLoginButton text='signin_with' context='signin' />
+                                    </div>
+                                </div>
                             }
                             <AccordionContent className='px-1'>
                                 <SigninForm returnAs={"form"} />
                             </AccordionContent>
                         </AccordionItem>
                         <Fragment>
-                            <div className="mx-8 flex items-center justify-between mb-3">
+                            <div className="mx-8 flex items-center justify-between my-3">
                                 <span className="w-[45%] border-b dark:border-gray-600"></span>
                                 <div className="text-sm text-center text-gray-500 dark:text-gray-400">or</div>
                                 <span className="w-[45%] border-b dark:border-gray-400"></span>
@@ -60,16 +71,27 @@ export default function SignIn() {
                         </Fragment>
                         <AccordionItem value="otp" className='border-none'>
                             {!showTrigger &&
-                                <AccordionTrigger showIcon={false} className={cn(
-                                    buttonVariants({
-                                        className: "w-full border-2 text-lg font-medium tracking-wide hover:no-underline",
-                                        size: "lg",
-                                        variant: "outline"
-                                    }),
-                                )}>
-                                    <Icons.mail className="w-5 h-5 mr-2" />
-                                    Sign in with Email
-                                </AccordionTrigger>
+                                <div className='flex flex-row items-center justify-between gap-4 mx-8 max-w-lg'>
+                                    <div className="flex-1">
+                                        <AccordionTrigger
+                                            showIcon={false}
+                                            className={cn(
+                                                buttonVariants({
+                                                    className: "w-full h-10 border border-gray-900/20 hover:no-underline m-0 p-4 pl-8 relative",
+                                                    size: "lg",
+                                                    variant: "outline"
+                                                }),
+                                            )}
+                                        >
+                                            <Icons.mail className="absolute top-2.5 left-3 w-5 h-5 mr-2" />
+                                            Sign in with Email
+                                        </AccordionTrigger>
+                                    </div>
+
+                                    <div className="flex-1">
+                                        <GoogleLoginButton text='signin_with' context='signin' />
+                                    </div>
+                                </div>
                             }
                             <AccordionContent className='px-1'>
                                 <SendLogInOtp

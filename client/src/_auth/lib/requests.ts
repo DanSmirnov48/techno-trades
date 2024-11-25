@@ -10,7 +10,8 @@ import {
     VerifyAccountData,
     EmailData,
     SetNewPasswordData,
-    SignInWithOtp
+    SignInWithOtp,
+    GoogleLoginData
 } from './types';
 
 // // API client setup
@@ -52,6 +53,14 @@ export const authApi = {
     login: async (data: LoginData): Promise<AuthResponse<LoginResponse>> => {
         try {
             const response = await api.post<AuthResponse<LoginResponse>>('/login', data);
+            return response.data;
+        } catch (error) {
+            return handleAuthError(error) as AuthResponse<LoginResponse>;
+        }
+    },
+    google: async (data: GoogleLoginData): Promise<AuthResponse<LoginResponse>> => {
+        try {
+            const response = await api.post<AuthResponse<LoginResponse>>('/google', data);
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<LoginResponse>;

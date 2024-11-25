@@ -1,12 +1,12 @@
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterValidationType } from '../schemas';
 import { Shell } from "@/components/dashboard/shell";
 import { useResendVerificationEmail } from '../lib/queries';
-import { VerifyAccountForm, RegisterForm } from '../components';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { VerifyAccountForm, RegisterForm, GoogleLoginButton } from '../components';
 import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,9 +17,9 @@ export default function PasswordReset() {
 
     const { mutateAsync } = useResendVerificationEmail()
 
-    async function requestNewCode(){
+    async function requestNewCode() {
         const resposne = await mutateAsync({ email: userData!.email })
-        if(resposne.status === 'success'){
+        if (resposne.status === 'success') {
             toast.info(resposne.message)
         }
     }
@@ -42,6 +42,14 @@ export default function PasswordReset() {
                     <Accordion type="multiple" defaultValue={["register", "otp", "confirm"]} value={activeTabs} onValueChange={setActiveTabs}>
                         <AccordionItem value="register" className='border-none'>
                             <AccordionContent className='px-1'>
+                                <GoogleLoginButton text='signup_with' context='signup'/>
+                                <Fragment>
+                                    <div className="flex items-center justify-between my-5">
+                                        <span className="w-[45%] border-b dark:border-gray-600"></span>
+                                        <div className="text-sm text-center text-gray-500 dark:text-gray-400">or</div>
+                                        <span className="w-[45%] border-b dark:border-gray-400"></span>
+                                    </div>
+                                </Fragment>
                                 <RegisterForm
                                     setActiveTabs={setActiveTabs}
                                     setUserData={setUserData}
