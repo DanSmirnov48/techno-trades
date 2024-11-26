@@ -2,18 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../queryKeys";
 import { INewUser, UserImage } from "@/types";
 import {
-    createUserAccount,
-    verifyAccount,
-    signInAccount,
-    sendLoginOtp,
-    logingWithOtp,
-    getUserSession,
-    signOutAccount,
     updateMyAccount,
     requestEmailChangeVerificationCode,
-    sendPasswordResetOtp,
-    verifyPasswordResetVerificationDoe,
-    setNewPassword,
     updateMyEmail,
     updateMyPassword,
     deactivateMyAccount,
@@ -24,59 +14,6 @@ import {
 // ============================================================
 // AUTH QUERIES
 // ============================================================
-export const useCreateUserAccount = () => {
-    return useMutation({
-        mutationFn: (user: INewUser) => createUserAccount(user),
-        onSuccess: (data) => { },
-        onError: (data) => { },
-    });
-};
-
-export const useVerifyAccount = () => {
-    return useMutation({
-        mutationFn: (user: { code: string }) => verifyAccount(user),
-    });
-};
-
-export const useSignInAccount = () => {
-    return useMutation({
-        mutationFn: (user: { email: string; password: string }) =>
-            signInAccount(user),
-        onSuccess: (data) => { },
-        onError: (data) => { },
-    });
-};
-
-export const useSendLoginOtp = () => {
-    return useMutation({
-        mutationFn: (user: { email: string }) => sendLoginOtp(user),
-        onSuccess: (data) => { },
-        onError: (data) => { },
-    });
-};
-
-export const useLogingWithOtp = () => {
-    return useMutation({
-        mutationFn: ({ otp }: { otp: string }) => logingWithOtp({ otp }),
-        onSuccess: (data) => { },
-        onError: (data) => { },
-    });
-};
-
-export const useGetUserSession = () => {
-    return useMutation({
-        mutationFn: () => getUserSession(),
-        onSuccess: (data) => { },
-        onError: (data) => { },
-    });
-};
-
-export const useSignOutAccount = () => {
-    return useMutation({
-        mutationFn: signOutAccount,
-    });
-};
-
 export const useUpdateMyAccount = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -100,25 +37,6 @@ export const useRequestEmailChangeVerificationCode = () => {
     return useMutation({
         mutationFn: ({ email }: { email: string }) =>
             requestEmailChangeVerificationCode({ email }),
-    });
-};
-
-export const useSendPasswordResetOtp = () => {
-    return useMutation({
-        mutationFn: (email: { email: string }) => sendPasswordResetOtp(email),
-    });
-};
-
-export const useVerifyPasswordResetVerificationDoe = () => {
-    return useMutation({
-        mutationFn: (code: { code: string }) =>
-            verifyPasswordResetVerificationDoe(code),
-    });
-};
-
-export const useSetNewPassword = () => {
-    return useMutation({
-        mutationFn: (user: { email: string; otp: string; password: string }) => setNewPassword(user),
     });
 };
 

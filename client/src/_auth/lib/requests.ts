@@ -16,7 +16,7 @@ import {
 
 // // API client setup
 const api = axios.create({
-    baseURL: '/api/users',
+    baseURL: '/api/auth',
     withCredentials: true,
 });
 
