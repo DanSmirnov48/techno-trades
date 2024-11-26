@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import { CustomResponse, randomStr } from "../config/utils";
 import { User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
@@ -8,7 +8,9 @@ import { getUser } from "../middlewares/auth";
 import { sendEmail, EmailType } from '../utils/mailSender'
 import { TokenPayload } from "google-auth-library";
 
-export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+const authRouter = Router();
+
+authRouter.post('/register', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const { email } = userData;
@@ -23,12 +25,13 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const verifyEmail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/verify-email', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
-        const { email, otp } = userData;
+        const { email } = userData;
+        const otp = Number(userData.otp)
 
         const user = await User.findOne({ email })
         if (!user) throw new NotFoundError("Incorrect email!")
@@ -53,9 +56,9 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response, next
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const resendVerificationEmail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/resend-verification-email', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const { email } = userData;
@@ -75,9 +78,9 @@ export const resendVerificationEmail = asyncHandler(async (req: Request, res: Re
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const sendPasswordResetOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/send-password-reset-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const { email } = userData;
@@ -92,12 +95,14 @@ export const sendPasswordResetOtp = asyncHandler(async (req: Request, res: Respo
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const setNewPassword = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/set-new-password', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
-        const { email, otp, password } = userData;
+        const { email, password } = userData;
+        const otp = Number(userData.otp)
+
         const user = await User.findOne({ email })
         if (!user) {
             throw new NotFoundError("Incorrect email!")
@@ -112,15 +117,15 @@ export const setNewPassword = asyncHandler(async (req: Request, res: Response, n
         // Update user
         await User.updateOne(
             { _id: user._id },
-            { $set: { otp: null, otpExpiry: null, password: password } }
+            { $set: { otp: null, otpExpiry: null, password: await hashPassword(password) } }
         );
         return res.status(200).json(CustomResponse.success('Password reset successful'))
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const logIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/login', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const { email, password } = userData;
@@ -146,9 +151,9 @@ export const logIn = asyncHandler(async (req: Request, res: Response, next: Next
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const sendLoginOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/send-login-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const email: string = req.body.email;
 
@@ -165,12 +170,13 @@ export const sendLoginOtp = asyncHandler(async (req: Request, res: Response, nex
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const logingWithOtp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/login-with-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
-        const { email, otp } = userData;
+        const { email } = userData;
+        const otp = Number(userData.otp)
 
         const user = await User.findOne({ email })
         if (!user) {
@@ -196,9 +202,9 @@ export const logingWithOtp = asyncHandler(async (req: Request, res: Response, ne
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const validate = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.get('/validate', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { accessToken } = req.cookies;
         if (accessToken) {
@@ -209,9 +215,9 @@ export const validate = asyncHandler(async (req: Request, res: Response, next: N
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const logout = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.get('/logout', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
@@ -219,9 +225,9 @@ export const logout = asyncHandler(async (req: Request, res: Response, next: Nex
     } catch (error) {
         next(error)
     }
-});
+}));
 
-export const google = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const { token } = userData;
@@ -270,4 +276,6 @@ export const google = asyncHandler(async (req: Request, res: Response, next: Nex
     } catch (error) {
         next(error)
     }
-});
+}));
+
+export default authRouter;

@@ -7,8 +7,6 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from 'cors';
 import productRoutes from "./routes/productRoutes";
-import userRoutes from "./routes/userRoutes";
-import mediaRoutes from "./routes/mediaRoutes";
 import stripe from "./routes/stripe";
 import helmet from "helmet";
 import mongoSanitize from 'express-mongo-sanitize'
@@ -19,6 +17,8 @@ import env from './config/config';
 import { IUser } from "./models/users";
 import { handleError } from './middlewares/error';
 import { AppError } from "./config/handlers";
+import authRouter from "./controllers/auth";
+import userRouter from "./controllers/user";
 
 connectDB()
 
@@ -42,8 +42,8 @@ const server = http.createServer(app)
 
 app.use("/api/stripe", stripe);
 app.use(express.json())
-app.use('/api/users', userRoutes)
-app.use('/api/media', mediaRoutes)
+app.use("/api/auth", authRouter)
+app.use('/api/users', userRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/products', productRoutes)
 app.use("/api/uploadthing", createUploadthingExpressHandler({ router: uploadRouter }));
