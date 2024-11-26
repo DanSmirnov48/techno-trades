@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { CustomResponse, randomStr } from "../config/utils";
-import { User } from "../models/users";
+import { AUTH_TYPE, User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
-import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, hashPassword, setAuthCookie, validateGoogleToken } from "../managers/users";
+import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, hashPassword, setAuthCookie, validateGoogleToken, verifyRefreshToken } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
-import { getUser } from "../middlewares/auth";
+import { authMiddleware, getUser } from "../middlewares/auth";
 import { sendEmail, EmailType } from '../utils/mailSender'
 import { TokenPayload } from "google-auth-library";
 
@@ -87,7 +87,10 @@ authRouter.post('/send-password-reset-otp', asyncHandler(async (req: Request, re
 
         const user = await User.findOne({ email })
         if (!user) {
-            throw new NotFoundError("User not found!")
+            throw new NotFoundError("Incorrect email!")
+        }
+        if (user.authType === AUTH_TYPE.GOOGLE) {
+            throw new RequestError("Cannot request password reset for account created via google sign in", 401, ErrorCode.INCORRECT_EMAIL)
         }
 
         let otp = await createOtp(user);
@@ -117,7 +120,7 @@ authRouter.post('/set-new-password', asyncHandler(async (req: Request, res: Resp
         // Update user
         await User.updateOne(
             { _id: user._id },
-            { $set: { otp: null, otpExpiry: null, password: await hashPassword(password) } }
+            { $set: { otp: null, otpExpiry: null, password: await hashPassword(password as string) } }
         );
         return res.status(200).json(CustomResponse.success('Password reset successful'))
     } catch (error) {
@@ -141,13 +144,18 @@ authRouter.post('/login', asyncHandler(async (req: Request, res: Response, next:
         // Generate tokens
         const access = createAccessToken(user.id)
         const refresh = createRefreshToken()
-        let tokens = { access, refresh }
+        const tokens = { user, access, refresh }
 
         // Set cookies
         setAuthCookie(res, req, 'access', access);
         setAuthCookie(res, req, 'refresh', refresh);
 
-        return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
+        // Update user with access tokens
+        await User.updateOne(
+            { _id: user._id },
+            { $push: { tokens } }
+        );
+        return res.status(201).json(CustomResponse.success('Login successfully', tokens))
     } catch (error) {
         next(error)
     }
@@ -192,13 +200,18 @@ authRouter.post('/login-with-otp', asyncHandler(async (req: Request, res: Respon
         // Generate tokens
         const access = createAccessToken(user.id)
         const refresh = createRefreshToken()
-        let tokens = { access, refresh }
+        const tokens = { user, access, refresh }
 
         // Set cookies
         setAuthCookie(res, req, 'access', access);
         setAuthCookie(res, req, 'refresh', refresh);
 
-        return res.status(201).json(CustomResponse.success('Login successful', { user, tokens }))
+        // Update user with access tokens
+        await User.updateOne(
+            { _id: user._id },
+            { $push: { tokens } }
+        );
+        return res.status(201).json(CustomResponse.success('Login successfully', tokens))
     } catch (error) {
         next(error)
     }
@@ -217,11 +230,42 @@ authRouter.get('/validate', asyncHandler(async (req: Request, res: Response, nex
     }
 }));
 
-authRouter.get('/logout', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/refresh', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
-        return res.status(200).json(CustomResponse.success('Logout successful'))
+        const refreshToken: string = req.body.refresh;
+        const user = await User.findOne({ "tokens.refresh": refreshToken });
+        if (!user || !(await verifyRefreshToken(refreshToken))) {
+            throw new RequestError("Refresh token is invalid or expired!", 401, ErrorCode.INVALID_TOKEN);
+        }
+
+        // Generate new tokens
+        const access = createAccessToken(user.id)
+        const refresh = createRefreshToken()
+
+        // Update user with access tokens
+        let tokens = { user, access, refresh }
+        await User.updateOne(
+            { _id: user._id, "tokens.refresh": refreshToken },
+            { $set: { "tokens.$": tokens } }
+        );
+        return res.status(201).json(CustomResponse.success('Tokens refreshed successfully', tokens))
+    } catch (error) {
+        next(error)
+    }
+}));
+
+
+authRouter.get('/logout', authMiddleware, asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+
+        const authorization = req.headers.authorization as string
+        const token = authorization.replace('Bearer ', '');
+        await User.updateOne(
+            { _id: user._id, "tokens.access": token },
+            { $pull: { tokens: { access: token } } }
+        );
+        return res.status(200).json(CustomResponse.success("Logout Successfully"))
     } catch (error) {
         next(error)
     }
@@ -240,7 +284,10 @@ authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next
 
         // Get or Create User
         let user = await User.findOne({ email: payload.email })
-        if (!user) {
+        if (user && user.authType === AUTH_TYPE.PASSWORD) {
+            throw new RequestError("Requires password to sign in to this account", 401, ErrorCode.INVALID_AUTH);
+        }
+        else if (!user) {
             const userData = {
                 firstName: payload.given_name || payload.name || '',
                 lastName: payload.family_name || '',
@@ -255,7 +302,7 @@ authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next
                     url: payload.picture,
                 }
             }
-            user = await createUser(userData, true)
+            user = await createUser(userData, true, AUTH_TYPE.GOOGLE)
         }
 
         // Generate tokens

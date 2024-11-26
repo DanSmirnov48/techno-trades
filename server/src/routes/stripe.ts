@@ -5,8 +5,8 @@ import asyncHandler from "../middlewares/asyncHandler";
 import { handleStripeEvent } from "../controllers/orderController";
 import { authMiddleware } from "../middlewares/auth";
 import { ErrorCode, RequestError } from "../config/handlers";
-import { CustomResponse } from "config/utils";
-import ENV from '../config/config'
+import { CustomResponse } from "../config/utils";
+import ENV from "../config/config";
 
 const router = express.Router();
 const stripe = new Stripe(ENV.STRIPE_SECRET_KEY);

@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { IUser, User } from '../models/users';
+import { AUTH_TYPE, IUser, User } from '../models/users';
 import ENV from '../config/config';
 import { Types } from 'mongoose';
 import * as jwt from "jsonwebtoken";
@@ -16,17 +16,26 @@ const checkPassword = async (user: IUser, password: string) => {
     return await bcrypt.compare(password, user.password)
 }
 
-const createUser = async (userData: Record<string, any>, isEmailVerified: boolean = false) => {
+const createUser = async (userData: Record<string, any>, isEmailVerified: boolean = false, authType: AUTH_TYPE = AUTH_TYPE.PASSWORD) => {
     const { password, ...otherUserData } = userData;
     const hashedPassword = await hashPassword(password);
-    const newUser = await User.create({ password: hashedPassword, isEmailVerified, ...otherUserData });
+    const newUser = await User.create({ password: hashedPassword, isEmailVerified, authType, ...otherUserData });
     return newUser;
 };
 
 const createOtp = async (user: IUser): Promise<number> => {
     const otp: number = Math.floor(100000 + Math.random() * 900000);
     const otpExpiry = new Date(Date.now() + ENV.EMAIL_OTP_EXPIRE_SECONDS * 1000);
-    await User.updateOne({ _id: user._id }, { $set: { otp, otpExpiry } });
+
+    try {
+        await User.updateOne(
+            { _id: user._id },
+            { $set: { otp, otpExpiry } }
+        );
+    } catch (error) {
+        console.error('Error updating OTP and expiry:', error);
+        throw error;
+    }
     return otp
 };
 
@@ -60,6 +69,15 @@ const verifyAsync = (token: string, secret: string) => {
     });
 }
 
+const verifyRefreshToken = async (token: string) => {
+    try {
+        const decoded = await verifyAsync(token, ENV.JWT_SECRET) as any;
+        return true
+    } catch (error) {
+        return false;
+    }
+}
+
 const decodeAuth = async (token: string): Promise<IUser | null> => {
     try {
         const decoded = await verifyAsync(token, ENV.JWT_SECRET) as { userId?: string };
@@ -69,7 +87,7 @@ const decodeAuth = async (token: string): Promise<IUser | null> => {
             return null;
         }
 
-        const user = await User.findOne({ _id: userId })
+        const user = await User.findOne({ _id: userId, "tokens.access": token });
         return user;
     } catch (error) {
         return null;
@@ -123,6 +141,7 @@ export {
     createRefreshToken,
     createUser,
     createOtp,
+    verifyRefreshToken,
     decodeAuth,
     setAuthCookie,
     validateGoogleToken

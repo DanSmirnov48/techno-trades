@@ -4,11 +4,11 @@ import { User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
 import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, setAuthCookie } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
-import { authMiddleware, admin } from "../middlewares/auth";
+import { authMiddleware, staff } from "../middlewares/auth";
 
 const userRouter = Router();
 
-userRouter.get('/', authMiddleware, admin, asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+userRouter.get('/', authMiddleware, staff, asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await User.find()
         if (!users) {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ErrorCode, RequestError } from "../config/handlers";
-import { IUser } from "../models/users";
+import { ACCOUNT_TYPE, IUser } from "../models/users";
 import { decodeAuth } from "../managers/users"
 
 export const getUser = async (token: string): Promise<IUser> => {
@@ -23,22 +23,9 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-export const restrictTo = (...roles: Array<IUser['role']>) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        if (!req.user || !req.user.role) {
-            throw new RequestError("Unauthorized User", 401, ErrorCode.UNAUTHORIZED_USER);
-        }
-
-        if (!roles.includes(req.user.role)) {
-            throw new RequestError("You do not have permission to perform this action.", 401, ErrorCode.UNAUTHORIZED_USER);
-        }
-        next();
-    };
-};
-
-export const admin = async (req: Request, res: Response, next: NextFunction) => {
+export const staff = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (req.user.role != "admin") {
+        if (req.user.accountType !== ACCOUNT_TYPE.STAFF) {
             throw new RequestError("Unauthorized User", 401, ErrorCode.UNAUTHORIZED_USER);
         }
         next();
