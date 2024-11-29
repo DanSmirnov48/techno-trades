@@ -11,11 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface SigninFormProps {
+  showPasswordReset?: boolean
   returnAs: "card" | "form";
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function SignInForm({ returnAs, setOpen }: SigninFormProps) {
+export default function SignInForm({ showPasswordReset = true, returnAs, setOpen }: SigninFormProps) {
   const navigate = useNavigate();
   const [error, setError] = useState<string | undefined>();
   const { mutateAsync: signInAccount, isPending } = useLoginUser();
@@ -86,9 +87,9 @@ export default function SignInForm({ returnAs, setOpen }: SigninFormProps) {
                       {type === 'password' ? <Eye /> : <EyeOff />}
                     </span>
                   </div>
-                  <div className="flex justify-end">
+                  {showPasswordReset && <div className="flex justify-end">
                     <Link to="/auth/forgot-password" className="text-sm text-black/60 dark:text-gray-300 hover:underline">Reset password</Link>
-                  </div>
+                  </div>}
                   <FormMessage />
                 </FormItem>
               )}
