@@ -1,11 +1,11 @@
 import { JSX } from 'react';
-import { UserRole } from '@/components/root/ProtectedRoute';
 import { Dashboard, Account, Orders, Notifications, Appearance, Favourites, Tables, ProductCreateForm, Categories, Archive } from '@/_dashboard/pages';
+import { ACCOUNT_TYPE } from '@/types';
 
 export interface dashboardRoutesProps {
   path: string;
   outlet: JSX.Element;
-  allowedRoles: UserRole[];
+  allowedAccountTypes: ACCOUNT_TYPE[];
   additionalProps: {
     redirectPath?: string;
     [key: string]: any;
@@ -16,7 +16,7 @@ const dashboardRoutes: dashboardRoutesProps[] = [
   {
     path: '/dashboard',
     outlet: <Dashboard />,
-    allowedRoles: ['admin'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF],
     additionalProps: {
       redirectPath: '/dashboard/account/:id',
     },
@@ -24,56 +24,64 @@ const dashboardRoutes: dashboardRoutesProps[] = [
   {
     path: '/dashboard/account/:id',
     outlet: <Account />,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
     additionalProps: {},
   },
   {
     path: '/dashboard/my-orders/:id',
     outlet: <Orders />,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
     additionalProps: {},
   },
   {
     path: '/dashboard/notifications/:id',
     outlet: <Notifications />,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
     additionalProps: {},
   },
   {
     path: '/dashboard/appearance/:id',
     outlet: <Appearance />,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
     additionalProps: {},
   },
   {
     path: '/dashboard/favourites/:id',
     outlet: <Favourites />,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
     additionalProps: {},
   },
   {
     path: '/dashboard/data-tables',
     outlet: <Tables />,
-    allowedRoles: ['admin'],
-    additionalProps: {},
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF],
+    additionalProps: {
+      redirectPath: '/dashboard'
+    },
   },
   {
     path: '/dashboard/archive',
     outlet: <Archive />,
-    allowedRoles: ['admin'],
-    additionalProps: {},
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF],
+    additionalProps: {
+      redirectPath: '/dashboard'
+    },
   },
   {
     path: '/dashboard/new-product',
     outlet: <ProductCreateForm />,
-    allowedRoles: ['admin'],
-    additionalProps: {},
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF],
+    additionalProps: {
+      redirectPath: '/dashboard'
+    },
   },
   {
     path: '/dashboard/categories',
     outlet: <Categories />,
-    allowedRoles: ['admin'],
-    additionalProps: {},
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF],
+    additionalProps: {
+      redirectPath: '/dashboard'
+    },
   },
 ];
 

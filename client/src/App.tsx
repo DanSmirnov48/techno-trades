@@ -5,16 +5,16 @@ import { Toaster } from "@/components/ui/sonner"
 import { DashboardLayout } from "./_dashboard/DashboardLayout";
 import { useUserContext } from "./context/AuthContext";
 import { authRoutes, dashboardRoutes, publicRoutes } from "./config";
-import ProtectedRoute, { ProtectedRouteProps, UserRole } from "./components/root/ProtectedRoute";
+import ProtectedRoute, { ProtectedRouteProps } from "./components/root/ProtectedRoute";
 
 export default function App() {
   const { isAuthenticated, user, isLoading } = useUserContext();
 
   const defaultProtectedRouteProps: Omit<ProtectedRouteProps, 'outlet'> = {
     isAuthenticated: isAuthenticated,
-    redirectPath: '/sign-in',
+    redirectPath: '/auth/sign-in',
     userId: user._id,
-    currentRole: user.role as UserRole,
+    accountType: user.accountType,
     loading: isLoading
   };
 
@@ -38,7 +38,7 @@ export default function App() {
                     {...defaultProtectedRouteProps}
                     {...route.protectedRouteProps}
                     outlet={route.outlet}
-                    allowedRoles={route.allowedRoles}
+                    allowedAccountTypes={route.allowedAccountTypes}
                   />
                 ) : (
                   route.outlet
@@ -58,7 +58,7 @@ export default function App() {
                   {...defaultProtectedRouteProps}
                   {...route.additionalProps}
                   outlet={route.outlet}
-                  allowedRoles={route.allowedRoles}
+                  allowedAccountTypes={route.allowedAccountTypes}
                 />
               }
             />

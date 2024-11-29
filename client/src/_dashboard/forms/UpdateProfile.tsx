@@ -24,7 +24,7 @@ const UpdateProfile = () => {
   const { user, checkAuthUser } = useUserContext();
 
   const [file, setFile] = useState<FileWithPath[]>([]);
-  const [fileUrl, setFileUrl] = useState<string>(user.photo && user.photo.url);
+  const [fileUrl, setFileUrl] = useState<string>();
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   const { mutateAsync: updateMyAccount, isPending: isLoadingUpdate } = useUpdateMyAccount()
@@ -58,7 +58,7 @@ const UpdateProfile = () => {
       firstName: user.firstName,
       lastname: user.lastName,
       email: user.email,
-      photo: user.photo,
+      photo: user.avatar,
     },
   });
 
@@ -67,12 +67,12 @@ const UpdateProfile = () => {
       let userDetails = ({
         firstName: value.firstName,
         lastName: value.lastname,
-        photo: user.photo ? user.photo : undefined
+        photo: user.avatar ?? undefined
       })
 
       if (file.length > 0) {
         // delete the existent user photo from UploadThing ONLY, then upload new one
-        (user.photo && user.photo.url) && toast.promise(() => deleteMediaFilesByKey([user.photo.key]),
+        (user.avatar && user.avatar) && toast.promise(() => deleteMediaFilesByKey([user.avatar]),
           {
             loading: 'Removing your old file...',
             success: () => { return 'Removed old file' },

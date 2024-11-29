@@ -7,24 +7,17 @@ import {
   useEffect,
   useState,
 } from "react";
-import { IUser } from "@/types";
-import { IPhoto } from "@/lib/axios3";
+import { ACCOUNT_TYPE, AUTH_TYPE, IUser } from "@/types";
 import { useGetUserSession } from "@/_auth/lib/queries";
-
-// Initial State
-export const INITIAL_PHOTO: IPhoto = {
-  key: '',
-  name: '',
-  url: '',
-};
 
 export const INITIAL_USER: IUser = {
   _id: '',
   firstName: '',
   lastName: '',
   email: '',
-  photo: INITIAL_PHOTO,
-  role: '',
+  avatar: null,
+  authType: AUTH_TYPE.PASSWORD,
+  accountType: ACCOUNT_TYPE.BUYER
 };
 
 interface IAuthContext {
@@ -32,9 +25,9 @@ interface IAuthContext {
   setUser: Dispatch<SetStateAction<IUser>>;
   isLoading: boolean;
   isAuthenticated: boolean;
-  isAdmin: boolean;
+  isStaff: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
-  setIsAdmin: Dispatch<SetStateAction<boolean>>;
+  setIsStaff: Dispatch<SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 }
 
@@ -42,10 +35,10 @@ const defaultAuthContext: IAuthContext = {
   user: INITIAL_USER,
   isLoading: false,
   isAuthenticated: false,
-  isAdmin: false,
+  isStaff: false,
   setUser: () => { },
   setIsAuthenticated: () => { },
-  setIsAdmin: () => { },
+  setIsStaff: () => { },
   checkAuthUser: async () => false,
 };
 
@@ -54,7 +47,7 @@ const AuthContext = createContext<IAuthContext>(defaultAuthContext);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Session Validation Mutation
@@ -66,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, status } = await getSession();
       if (data && status === 'success' && !validating) {
         setUser(data);
-        setIsAdmin(data.role === "admin");
+        setIsStaff(data.accountType === ACCOUNT_TYPE.STAFF);
         setIsAuthenticated(true);
         return true;
       }
@@ -89,9 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser,
     isLoading,
     isAuthenticated,
-    isAdmin,
+    isStaff,
     setIsAuthenticated,
-    setIsAdmin,
+    setIsStaff,
     checkAuthUser,
   };
 

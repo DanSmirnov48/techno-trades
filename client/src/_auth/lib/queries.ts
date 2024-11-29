@@ -15,6 +15,7 @@ import {
     SignInWithOtp,
     GoogleLoginData
 } from './types';
+import { ACCOUNT_TYPE } from '@/types';
 
 // React Query Hooks
 export const useRegisterUser = () => {
@@ -91,7 +92,7 @@ export const useSendLoginOtp = () => {
 
 export const useLoginUser = () => {
     const queryClient = useQueryClient();
-    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+    const { setUser, setIsAuthenticated, setIsStaff } = useUserContext();
 
     return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, LoginData>({
         mutationFn: authApi.login,
@@ -100,7 +101,7 @@ export const useLoginUser = () => {
                 const user = response.data.user
                 setUser(user);
                 setIsAuthenticated(true);
-                setIsAdmin(user.role === 'admin');
+                setIsStaff(user.accountType === ACCOUNT_TYPE.STAFF);
 
                 // Invalidate and refetch user session
                 queryClient.invalidateQueries({ queryKey: ['user-session'] });
@@ -114,7 +115,7 @@ export const useLoginUser = () => {
 
 export const useGoogleLogin = () => {
     const queryClient = useQueryClient();
-    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+    const { setUser, setIsAuthenticated, setIsStaff } = useUserContext();
 
     return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, GoogleLoginData>({
         mutationFn: authApi.google,
@@ -123,7 +124,7 @@ export const useGoogleLogin = () => {
                 const user = response.data.user
                 setUser(user);
                 setIsAuthenticated(true);
-                setIsAdmin(user.role === 'admin');
+                setIsStaff(user.accountType === ACCOUNT_TYPE.STAFF);
 
                 // Invalidate and refetch user session
                 queryClient.invalidateQueries({ queryKey: ['user-session'] });
@@ -137,7 +138,7 @@ export const useGoogleLogin = () => {
 
 export const useSignInWithOtp = () => {
     const queryClient = useQueryClient();
-    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+    const { setUser, setIsAuthenticated, setIsStaff } = useUserContext();
 
     return useMutation<AuthResponse<LoginResponse>, AuthResponse<ErrorResponse>, SignInWithOtp>({
         mutationFn: authApi.signInWithOtp,
@@ -146,7 +147,7 @@ export const useSignInWithOtp = () => {
                 const user = response.data.user
                 setUser(user);
                 setIsAuthenticated(true);
-                setIsAdmin(user.role === 'admin');
+                setIsStaff(user.accountType === ACCOUNT_TYPE.STAFF);
 
                 // Invalidate and refetch user session
                 queryClient.invalidateQueries({ queryKey: ['user-session'] });
@@ -178,7 +179,7 @@ export const useLogoutUser = () => {
 
 export const useGetUserSession = () => {
     const queryClient = useQueryClient();
-    const { setUser, setIsAuthenticated, setIsAdmin } = useUserContext();
+    const { setUser, setIsAuthenticated, setIsStaff } = useUserContext();
 
     return useMutation<AuthResponse<IUserResponse>, AuthResponse<ErrorResponse>>({
         mutationFn: authApi.validate,
@@ -189,7 +190,7 @@ export const useGetUserSession = () => {
             console.error('Validation error:', error);
             setUser(INITIAL_USER);
             setIsAuthenticated(false);
-            setIsAdmin(false);
+            setIsStaff(false);
         }
     });
 }

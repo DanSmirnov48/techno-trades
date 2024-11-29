@@ -1,12 +1,13 @@
 import { JSX } from 'react';
 import { Cart, CkeckoutSuccess, Deals, Explore, Home, NotFound, PopularBrands, ProductDetails, Checkout } from '@/_root/pages';
-import { ProtectedRouteProps, UserRole } from '@/components/root/ProtectedRoute';
+import { ProtectedRouteProps } from '@/components/root/ProtectedRoute';
+import { ACCOUNT_TYPE } from '@/types';
 
 export interface PublicRoute {
   path: string;
   outlet: JSX.Element;
   isProtected?: boolean;
-  allowedRoles?: UserRole[];
+  allowedAccountTypes?: ACCOUNT_TYPE[];
   protectedRouteProps?: ProtectedRouteProps;
 }
 
@@ -27,13 +28,13 @@ const publicRoutes: PublicRoute[] = [
     path: '/checkout',
     outlet: <Checkout />,
     isProtected: true,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
   },
   {
     path: '/checkout-success',
     outlet: <CkeckoutSuccess />,
     isProtected: true,
-    allowedRoles: ['admin', 'user'],
+    allowedAccountTypes: [ACCOUNT_TYPE.STAFF, ACCOUNT_TYPE.BUYER],
   },
   {
     path: '/deals',

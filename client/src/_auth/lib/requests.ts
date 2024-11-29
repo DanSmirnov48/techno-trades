@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
 import {
     IUserResponse,
     AuthResponse,
@@ -14,11 +15,24 @@ import {
     GoogleLoginData
 } from './types';
 
-// // API client setup
+// API client setup
 const api = axios.create({
     baseURL: '/api/auth',
     withCredentials: true,
 });
+
+api.interceptors.request.use(
+    (config) => {
+        const accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Custom error handler
 const handleAuthError = (error: unknown) => {
@@ -92,7 +106,7 @@ export const authApi = {
     },
     sendPasswordResetOtp: async (data: EmailData): Promise<AuthResponse<{ otp: string }>> => {
         try {
-            const response = await api.post<AuthResponse<{ otp: string }>>('/forgot-password', data);
+            const response = await api.post<AuthResponse<{ otp: string }>>('/send-password-reset-otp', data);
             return response.data;
         } catch (error) {
             return handleAuthError(error) as AuthResponse<{ otp: string }>;

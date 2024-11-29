@@ -12,7 +12,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
   const location = useLocation();
-  const { user, isAdmin } = useUserContext();
+  const { user, isStaff } = useUserContext();
 
   if (!items?.length) return null;
 
@@ -22,7 +22,7 @@ export function SidebarNav({ items, className, ...props }: SidebarNavProps) {
         const Icon = item.icon ? Icons[item.icon] : ChevronLeftIcon;
         const isActive = item.href && location.pathname.includes(item.href);
 
-        if (item.for === 'admin' && !isAdmin) {
+        if (item.for === 'admin' && !isStaff) {
           return null;
         }
 

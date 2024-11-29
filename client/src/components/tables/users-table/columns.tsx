@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { UserType } from "@/lib/validation"
 import { DataTableColumnHeader } from "../shared/data-table-column-header"
-import { UserImage } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDate } from "@/lib/utils"
 import { first } from 'lodash'
@@ -11,14 +10,14 @@ export const columns: ColumnDef<UserType>[] = [
     accessorKey: "photo",
     header: "Photo",
     cell: ({ row }) => {
-      const photo = row.getValue("photo") as UserImage
+      const photo = row.getValue("photo") as string
       const firstName = row.getValue("firstName") as string
       const lastName = row.getValue("lastName") as string
       return (
         photo !== undefined ?
           <Avatar className="h-10 w-10">
             <AvatarImage
-              src={photo.url}
+              src={photo}
               alt="AR"
               className="object-cover"
             />

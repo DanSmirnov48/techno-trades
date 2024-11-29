@@ -1,11 +1,10 @@
-import { UserImage } from "@/types";
 import axios from "axios";
 
 // ============================================================
 // USER
 // ============================================================
 
-export async function updateMyAccount(user: { firstName: string; lastName: string; photo?: UserImage }) {
+export async function updateMyAccount(user: { firstName: string; lastName: string; photo?: string }) {
     try {
         const response = await axios.patch(`/api/users/update-me`, user);
         return response;

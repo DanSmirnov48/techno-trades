@@ -1,30 +1,27 @@
 import { Icons } from "@/components/shared";
 
 //-------------USER TYPES----------------------------------
-export type UserImage = {
-    key: string;
-    name: string;
-    url: string;
-};
+export enum AUTH_TYPE {
+    PASSWORD = "Password",
+    GOOGLE = "Google",
+}
 
-export type IUser = {
+export enum ACCOUNT_TYPE {
+    BUYER = "Buyer",
+    STAFF = "Staff",
+}
+
+export interface IUser {
     _id: string;
     firstName: string;
     lastName: string;
     email: string;
-    photo: UserImage;
-    role: string;
-    createdAt?: string;
-    updatedAt?: string;
-};
-
-export type INewUser = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-};
+    avatar: string | null;
+    authType: AUTH_TYPE;
+    accountType: ACCOUNT_TYPE;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
 //-------------PRODUCT TYPES----------------------------------
 

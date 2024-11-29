@@ -92,7 +92,7 @@ const ReviewsSection = ({ product }: ReviewFormProps) => {
               <div className="flex items-center my-4">
                 <Avatar className="h-10 w-10 me-2">
                   <AvatarImage
-                    src={review.user.photo && review.user.photo.url}
+                    src={review.user.avatar ?? undefined}
                     alt={review.user.firstName}
                     className="object-cover"
                   />

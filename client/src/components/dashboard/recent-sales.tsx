@@ -12,7 +12,7 @@ export function RecentSales({ orders }: RecentSalesProps) {
       {orders.map((order) => (
         <div key={order._id} className="flex items-center">
           <Avatar className="h-10 w-10 object-scale-down">
-            <AvatarImage src={order.user.photo && order.user.photo.url} alt="Avatar" />
+            <AvatarImage src={order.user.avatar ?? undefined} alt="Avatar" />
             <AvatarFallback>{order.user.firstName.slice(0, 1)}{order.user.lastName.slice(0, 1)}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">

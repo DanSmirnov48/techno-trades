@@ -10,7 +10,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Navbar } from "@/components/root";
 
 export const DashboardLayout = () => {
-  const { user } = useUserContext();
+  const { user, isStaff } = useUserContext();
   const { isCollapsed, defaultSizes, setCollapsed, setDefaultSizes } = useDashboardStore();
 
   const userLinks = dashboardConfig.sidebarNav.filter(link => link.for === 'all');
@@ -37,7 +37,7 @@ export const DashboardLayout = () => {
               className={cn(isCollapsed && "min-w-[50px] transition-all duration-500 ease-in-out")}
             >
               <Nav isCollapsed={isCollapsed} links={userLinks} className="pb-6" />
-              {user.role === "admin" &&
+              {isStaff &&
                 <>
                   <Separator />
                   <Nav isCollapsed={isCollapsed} links={adminLinks} className="py-6" />

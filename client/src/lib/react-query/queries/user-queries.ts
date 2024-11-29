@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../queryKeys";
-import { INewUser, UserImage } from "@/types";
 import {
     updateMyAccount,
     requestEmailChangeVerificationCode,
@@ -20,7 +19,7 @@ export const useUpdateMyAccount = () => {
         mutationFn: (user: {
             firstName: string;
             lastName: string;
-            photo?: UserImage;
+            photo?: string;
         }) => updateMyAccount(user),
         onError: (error) => { },
         onSuccess: (response) => {

@@ -14,7 +14,7 @@ interface NavProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Nav({ isCollapsed, links, className, ...props }: NavProps) {
     const location = useLocation();
-    const { user, isAdmin } = useUserContext();
+    const { user } = useUserContext();
     return (
         <div
             data-collapsed={isCollapsed}

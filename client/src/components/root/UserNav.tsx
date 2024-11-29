@@ -31,7 +31,7 @@ import { useLogoutUser } from "@/_auth/lib/queries";
 
 export function UserNav() {
   const { mutate: signOut } = useLogoutUser();
-  const { user, isAdmin } = useUserContext();
+  const { user, isStaff } = useUserContext();
   const { setTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage
-              src={user.photo && user.photo.url}
+              src={user.avatar ?? undefined}
               alt={user.email}
               className="object-cover"
             />
@@ -84,7 +84,7 @@ export function UserNav() {
               My Orders
             </Link>
           </DropdownMenuItem>
-          {isAdmin && <DropdownMenuItem asChild>
+          {isStaff && <DropdownMenuItem asChild>
             <Link to="/dashboard/data-tables">
               <Settings className="mr-2 h-4 w-4" />
               Manage Products

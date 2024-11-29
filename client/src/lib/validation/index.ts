@@ -1,4 +1,4 @@
-import { ProductImage, UserImage } from "@/types";
+import { ProductImage } from "@/types";
 import * as z from "zod";
 
 // ============================================================
@@ -8,7 +8,7 @@ export const ProfileUpdateValidation = z.object({
     firstName: z.string().min(2, { message: "Must be at least 2 characters." }),
     lastname: z.string().min(2, { message: "Must be at least 2 characters." }),
     email: z.string().email(),
-    photo: z.custom<UserImage>(),
+    photo: z.string(),
 });
 
 export const UpdateUserEmailValidation = z.object({
@@ -77,7 +77,7 @@ export const usersTableSchema = z.object({
     lastName: z.string(),
     email: z.string().email(),
     role: z.string(),
-    photo: z.custom<UserImage>().optional().or(z.literal("")),
+    photo: z.string().optional().or(z.literal("")),
     createdAt: z.string(),
     updatedAt: z.string(),
 })
