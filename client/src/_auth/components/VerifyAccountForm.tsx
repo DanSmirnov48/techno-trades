@@ -13,41 +13,51 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast } from "sonner";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useVerifyAccountUser } from "../lib/queries";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { RegisterValidationType, OtpSchemaType, otpSchema } from "../schemas";
+import { AuthButton } from "./AuthButton";
 
 interface VerifyAccountFormProps {
     userData: RegisterValidationType | undefined
-    activeTabs: string[]
-    setActiveTabs: React.Dispatch<React.SetStateAction<string[]>>
+    activeTab: string
+    setActiveTab: React.Dispatch<React.SetStateAction<string>>
+    triggerErrorAnimation?: () => void
 }
 
-export default function VerifyAccountForm({ userData, activeTabs, setActiveTabs }: VerifyAccountFormProps) {
+export default function VerifyAccountForm({ userData, activeTab, setActiveTab, triggerErrorAnimation }: VerifyAccountFormProps) {
     const { mutateAsync: verifyAccount, isPending } = useVerifyAccountUser();
     const form = useForm<OtpSchemaType>({ resolver: zodResolver(otpSchema) })
+    const { errors, isSubmitting } = form.formState;
+
+    useEffect(() => {
+        form.setFocus('otp')
+        if (Object.keys(errors).length > 0 && !isSubmitting) {
+            triggerErrorAnimation && triggerErrorAnimation();
+        }
+    }, [errors, isSubmitting]);
 
     async function onSubmit(data: OtpSchemaType) {
-        const res = await verifyAccount({ otp: data.otp, email: userData!.email });
-        if(res.status === 'failure'){
-            toast.error(res.message);
+        const { message, status } = await verifyAccount({ otp: data.otp, email: userData!.email });
+        if (status === 'failure') {
+            form.setError("otp", { message })
+            form.setFocus('otp')
         }
-        if(res.status === 'success' && res.message === 'Email already verified'){
-            toast.info(res.message);
+        if (status === 'success' && message === 'Email already verified') {
+            toast.info(message);
         }
-        if(res.status === 'success' && res.message === 'Verification successful'){
-            setActiveTabs(['confirm'])
+        if (status === 'success' && message === 'Verification successful') {
+            setActiveTab('confirm')
         }
     }
 
     return (
         <Fragment>
-            {(activeTabs.includes('otp')) && (
+            {(activeTab === 'otp') && (
                 <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                     <AlertCircle className="w-6 h-6 mr-2" />
                     <span className="sr-only">Info</span>
@@ -96,22 +106,14 @@ export default function VerifyAccountForm({ userData, activeTabs, setActiveTabs 
                             </FormItem>
                         )}
                     />
-
-                    <Button
-                        size={"lg"}
+                    <AuthButton
                         type="submit"
-                        disabled={isPending}
-                        className="w-full px-6 py-3 text-base font-medium tracking-wide"
-                    >
-                        {isPending ? (
-                            <>
-                                <Loader2 className="animate-spin h-5 w-5 mr-3" />
-                                Processing...
-                            </>
-                        ) : (
-                            <>Verify Account</>
-                        )}
-                    </Button>
+                        disabled={isPending || isSubmitting}
+                        isPending={isPending || isSubmitting}
+                        size={"lg"}
+                        className="my-2"
+                        text={"Verify Account"}
+                    />
                 </form>
             </Form>
         </Fragment>
