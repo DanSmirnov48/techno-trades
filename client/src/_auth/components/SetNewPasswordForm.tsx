@@ -12,69 +12,63 @@ import {
     InputOTPDash,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useSetNewPassword } from "../lib/queries";
 import { useNavigate } from "react-router-dom";
 import { passwordReset, PasswordResetType, UserEmailSchemaType } from "../schemas";
-
-interface ForgotPasswordResponse {
-    data?: any;
-    error?: any;
-    status?: number;
-    statusTest?: string;
-}
+import { AuthButton } from "./AuthButton";
 
 interface SendPasswordResetOtpProps {
-    activeTabs: string[]
+    activeTab: string
     userData: UserEmailSchemaType | undefined
+    triggerErrorAnimation?: () => void
 }
 
-export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswordResetOtpProps) {
+export default function SetNewPasswordForm({ activeTab, userData, triggerErrorAnimation }: SendPasswordResetOtpProps) {
     const navigate = useNavigate();
-    const disableField = activeTabs.includes('password')
     const [type, setType] = useState<'password' | 'text'>('password');
     const { mutateAsync: setNewPassword, isPending } = useSetNewPassword()
     const form = useForm<PasswordResetType>({ resolver: zodResolver(passwordReset) })
+    const { errors, isSubmitting } = form.formState;
+    const handleToggle = () => { setType(type === 'password' ? 'text' : 'password') };
 
-    const handleToggle = () => {
-        if (type === 'password') {
-            setType('text');
-        } else {
-            setType('password');
+    useEffect(() => {
+        form.setFocus('otp')
+        if (Object.keys(errors).length > 0 && !isSubmitting) {
+            triggerErrorAnimation && triggerErrorAnimation();
         }
-    };
+    }, [errors, isSubmitting]);
 
     async function onSubmit(data: PasswordResetType) {
-        const response = await setNewPassword({
+        const { message, status } = await setNewPassword({
             password: data.newPassword,
             email: userData!.email,
             otp: data.otp
         })
-        if (response.status === 'success' && response.message === 'Password reset successful') {
+        if (status === 'success' && message === 'Password reset successful') {
             form.reset()
-            toast.success(response.message)
+            toast.success(message)
             navigate('/auth/sign-in')
         }
-        if (response.status === 'failure' && response.message === 'Otp is invalid or expired') {
+        if (status === 'failure' && message === 'Otp is invalid or expired') {
             form.resetField('otp')
             form.setFocus('otp')
-            toast.error(response.message)
+            form.setError("otp", { message })
         }
-        if (response.status === 'failure') {
-            toast.error(response.message)
+        if (status === 'failure') {
+            toast.error(message)
         }
     }
 
     return (
         <Fragment>
-            {(disableField) && (
+            {(activeTab === 'password') && (
                 <div className="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                     <AlertCircle className="w-6 h-6 mr-2" />
                     <span className="sr-only">Info</span>
@@ -128,10 +122,17 @@ export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswor
                         name="newPassword"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Password</FormLabel>
+                                <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">New Password</FormLabel>
                                 <div className="relative">
                                     <FormControl className="flex-grow pr-10">
-                                        <Input type={type} maxLength={50} placeholder="Password" className="block w-full px-4 py-2 h-12" {...field} />
+                                        <Input
+                                            type={type}
+                                            maxLength={50}
+                                            autoComplete="new-password"
+                                            placeholder="Password"
+                                            className="block w-full px-4 py-2 h-12"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
                                         {type === 'password' ? <Eye /> : <EyeOff />}
@@ -141,30 +142,14 @@ export default function SetNewPasswordForm({ activeTabs, userData }: SendPasswor
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="newPasswordConfirm"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200">Confirm Password</FormLabel>
-                                <div className="relative">
-                                    <FormControl className="flex-grow pr-10">
-                                        <Input type={type} maxLength={50} placeholder="Confirm Password" className="block w-full px-4 py-2 h-12" {...field} />
-                                    </FormControl>
-                                    <span className="absolute right-3 top-3 cursor-pointer" onClick={handleToggle}>
-                                        {type === 'password' ? <Eye /> : <EyeOff />}
-                                    </span>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                    <AuthButton
+                        type="submit"
+                        disabled={isPending || isSubmitting}
+                        isPending={isPending || isSubmitting}
+                        size={"lg"}
+                        className="my-2"
+                        text={"Reset Password"}
                     />
-                    <Button type="submit" size={"lg"} disabled={isPending} className="w-full text-lg font-medium tracking-wide mt-3">
-                        {isPending ?
-                            <><Loader2 className="animate-spin h-5 w-5 mr-3" />Processing...</> :
-                            <>Reset Password</>
-                        }
-                    </Button>
                 </form>
             </Form >
         </Fragment>
