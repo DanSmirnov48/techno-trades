@@ -1,7 +1,7 @@
 import { Context, GoogleLogin, GsiButtonConfiguration } from '@react-oauth/google';
 import { CredentialResponse } from '@react-oauth/google';
 import { useGoogleLogin as LoginMutate } from '../lib/queries';
-
+import { toast } from 'sonner';
 
 interface GoogleLoginButtonProps {
     text?: GsiButtonConfiguration['text'];
@@ -9,11 +9,14 @@ interface GoogleLoginButtonProps {
 }
 
 export default function GoogleLoginButton({ text = "signin_with", context = "signin" }: GoogleLoginButtonProps) {
-    const { mutateAsync, error } = LoginMutate()
+    const { mutateAsync } = LoginMutate()
 
     const onSuccess = async (credentialResponse: CredentialResponse) => {
         if (credentialResponse.credential) {
-            mutateAsync({ token: credentialResponse.credential })
+            const response = await mutateAsync({ token: credentialResponse.credential })
+            if (response.status === 'failure'){
+                toast.error(response.message)
+            }
         }
     };
 
@@ -29,14 +32,10 @@ export default function GoogleLoginButton({ text = "signin_with", context = "sig
                 size="large"
                 shape="rectangular"
                 locale="en"
+                ux_mode='popup'
                 context={context}
                 text={text}
             />
-            {error && (
-                <div className="text-red-500 text-sm mt-2">
-                    {error.message}
-                </div>
-            )}
         </div>
     );
 }
