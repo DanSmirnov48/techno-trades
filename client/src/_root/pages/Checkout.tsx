@@ -9,11 +9,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CartItem } from "@/components/root";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ShippingForm, { ShippingOption } from "@/components/shippingForm";
 
 const Cart = () => {
-    const delivery = Number(49.99);
     const { items } = useCart();
     const [isMounted, setIsMounted] = useState<boolean>(false);
+    const [selectedShippingOption, setSelectedShippingOption] = useState<ShippingOption>();
     const cartTotal = items.reduce((total, { product, quantity }) => total + (product.isDiscounted ? product.discountedPrice! : product.price) * quantity, 0);
 
     useEffect(() => {
@@ -29,6 +30,7 @@ const Cart = () => {
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
                     <div className="lg:col-span-3 flex flex-col gap-10">
                         <AddressForm />
+                        <ShippingForm setSelectedShippingOption={setSelectedShippingOption} />
                         <StripePaymentForm />
                     </div>
                     <section className="border lg:col-span-2 mt-16 rounded-lg bg-zinc-50 dark:bg-dark-4 px-4 py-6 sm:p-6 lg:mt-0 lg:p-8 h-fit relative">
@@ -64,16 +66,18 @@ const Cart = () => {
 
                             <div className="flex items-center justify-between border-gray-200">
                                 <div className="flex items-center text-sm text-muted-foreground">
-                                    <span>Shipping</span>
+                                    <span>Shipping Method</span>
+                                </div>
+                                <div className="text-sm capitalize font-medium text-dark-4 dark:text-white/90">
+                                    {isMounted && selectedShippingOption ? selectedShippingOption.type : "Not selected"}
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between border-gray-200">
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                    <span>Shipping Price</span>
                                 </div>
                                 <div className="text-sm font-medium text-dark-4 dark:text-white/90">
-                                    {isMounted ? (
-                                        formatPrice(cartTotal > 150 ? 0 : delivery, {
-                                            currency: "GBP",
-                                        })
-                                    ) : (
-                                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                                    )}
+                                    {isMounted && selectedShippingOption ? formatPrice(selectedShippingOption.price, { currency: "GBP" }) : "Not selected"}
                                 </div>
                             </div>
 
@@ -86,7 +90,7 @@ const Cart = () => {
                                 <div className="text-xl font-medium text-dark-4 dark:text-white/90">
                                     {isMounted ? (
                                         formatPrice(
-                                            cartTotal + (cartTotal > 150 ? 0 : delivery),
+                                            selectedShippingOption ? (cartTotal + selectedShippingOption.price) : cartTotal,
                                             { currency: "GBP" }
                                         )
                                     ) : (
