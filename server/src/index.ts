@@ -19,6 +19,7 @@ import { handleError } from './middlewares/error';
 import { AppError } from "./config/handlers";
 import authRouter from "./controllers/auth";
 import userRouter from "./controllers/user";
+import shopRouter from "./controllers/products";
 
 connectDB()
 
@@ -42,7 +43,8 @@ const server = http.createServer(app)
 
 app.use("/api/stripe", stripe);
 app.use(express.json())
-app.use("/api/auth", authRouter)
+app.use("/api/v1/auth", authRouter)
+app.use("/api/v1/shop", shopRouter)
 app.use('/api/users', userRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/products', productRoutes)
