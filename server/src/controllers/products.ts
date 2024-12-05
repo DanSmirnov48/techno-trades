@@ -3,6 +3,7 @@ import { CustomResponse } from "../config/utils";
 import { getProducts } from "../managers/products";
 import { NotFoundError } from "../config/handlers";
 import { Product } from "../models/products";
+import { paginateRecords } from "../utils/paginators";
 
 const shopRouter = Router();
 
@@ -10,7 +11,9 @@ shopRouter.get('/products', async (req: Request, res: Response, next: NextFuncti
     try {
         const nameFilter = req.query.name as string | null
         const products = await getProducts(nameFilter)
-        return res.status(200).json(CustomResponse.success('Products Fetched Successfully', products))
+        const data = await paginateRecords(req, products)
+        const productsData = { ...data }
+        return res.status(200).json(CustomResponse.success('Products Fetched Successfully', productsData))
     } catch (error) {
         next(error)
     }
