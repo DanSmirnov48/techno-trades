@@ -5,6 +5,8 @@ import { getProducts, updateProductDiscount, updateProductStock } from "../manag
 import { ErrorCode, NotFoundError, RequestError } from "../config/handlers";
 import { Product } from "../models/products";
 import { authMiddleware } from "../middlewares/auth";
+import { validationMiddleware } from "../middlewares/error";
+import { ProductCreateSchema, ProductSchema } from "../schemas/shop";
 
 const shopRouter = Router();
 
@@ -60,7 +62,7 @@ shopRouter.post('/products/:slug', authMiddleware, async (req: Request, res: Res
     }
 });
 
-shopRouter.post('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+shopRouter.post('/', authMiddleware, validationMiddleware(ProductCreateSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user
         const { name, description, price, isDiscounted, discountedPrice, category, brand, countInStock, image } = req.body
@@ -86,7 +88,7 @@ shopRouter.post('/', authMiddleware, async (req: Request, res: Response, next: N
             throw new RequestError("Error creating product", 400, ErrorCode.SERVER_ERROR)
         }
 
-        return res.status(200).json(CustomResponse.success('Products Created Successfully', newProduct))
+        return res.status(200).json(CustomResponse.success('Products Created Successfully', newProduct, ProductSchema))
     } catch (error) {
         next(error)
     }
