@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { CustomResponse, randomStr } from "../config/utils";
-import { AUTH_TYPE, User } from "../models/users";
+import { ACCOUNT_TYPE, AUTH_TYPE, IUser, User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
 import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, hashPassword, setAuthCookie, validateGoogleToken, verifyRefreshToken } from "../managers/users";
 import asyncHandler from "../middlewares/asyncHandler";
 import { authMiddleware, getUser } from "../middlewares/auth";
 import { sendEmail, EmailType } from '../utils/mailSender'
 import { TokenPayload } from "google-auth-library";
+import ENV from "../config/config";
+import { randomBytes } from "crypto";
 
 const authRouter = Router();
 
@@ -135,7 +137,7 @@ authRouter.post('/login', asyncHandler(async (req: Request, res: Response, next:
 
         const user = await User.findOne({ email })
         if (!user || !(await checkPassword(user, password as string))) {
-            throw new RequestError("Invalid credentials!", 401, ErrorCode.INVALID_CREDENTIALS);
+            throw new RequestError("Incorrect email or password.", 401, ErrorCode.INVALID_CREDENTIALS);
         }
         if (!user.isEmailVerified) {
             throw new RequestError("Verify your email first", 401, ErrorCode.UNVERIFIED_USER);
@@ -219,12 +221,13 @@ authRouter.post('/login-with-otp', asyncHandler(async (req: Request, res: Respon
 
 authRouter.get('/validate', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { accessToken } = req.cookies;
-        if (accessToken) {
-            const user = await getUser(accessToken);
-            req.user = user
-            return res.status(200).json(CustomResponse.success('Validate successful', user))
+        if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+            throw new RequestError("Unauthorized User", 401, ErrorCode.UNAUTHORIZED_USER);
         }
+        const user = await getUser(req.headers.authorization.replace('Bearer ', ''));
+        const { tokens } = user
+        req.user = user
+        return res.status(200).json(CustomResponse.success('Validate successful', { user, tokens }))
     } catch (error) {
         next(error)
     }
@@ -244,6 +247,11 @@ authRouter.post('/refresh', asyncHandler(async (req: Request, res: Response, nex
 
         // Update user with access tokens
         let tokens = { user, access, refresh }
+
+        // Set cookies
+        setAuthCookie(res, req, 'access', access);
+        setAuthCookie(res, req, 'refresh', refresh);
+
         await User.updateOne(
             { _id: user._id, "tokens.refresh": refreshToken },
             { $set: { "tokens.$": tokens } }
@@ -258,9 +266,12 @@ authRouter.post('/refresh', asyncHandler(async (req: Request, res: Response, nex
 authRouter.get('/logout', authMiddleware, asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user;
-
         const authorization = req.headers.authorization as string
         const token = authorization.replace('Bearer ', '');
+
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+
         await User.updateOne(
             { _id: user._id, "tokens.access": token },
             { $pull: { tokens: { access: token } } }
@@ -288,20 +299,18 @@ authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next
             throw new RequestError("Requires password to sign in to this account", 401, ErrorCode.INVALID_AUTH);
         }
         else if (!user) {
+            const newUserPassword = ENV.NODE_ENV === 'DEVELOPMENT' ? 'password123' : randomBytes(4).toString('hex');
             const userData = {
                 firstName: payload.given_name || payload.name || '',
                 lastName: payload.family_name || '',
                 email: payload.email || '',
-                password: await hashPassword('password123'),
+                password: newUserPassword,
                 isEmailVerified: payload.email_verified || false,
                 isActive: true,
-                role: 'user' as const,
-                photo: {
-                    key: payload.sub,
-                    name: randomStr(10),
-                    url: payload.picture,
-                }
+                accountType: ACCOUNT_TYPE.BUYER,
+                avatar: payload.picture || null,
             }
+            // TODO: SEND EMAIL WITH THE PASSWORD TO USER
             user = await createUser(userData, true, AUTH_TYPE.GOOGLE)
         }
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import Stripe from "stripe";
-import { IProduct, ProductModel } from "../models/products";
+import { IProduct, Product } from "../models/products";
 import asyncHandler from "../middlewares/asyncHandler";
 import { handleStripeEvent } from "../controllers/orderController";
 import { authMiddleware } from "../middlewares/auth";
@@ -29,7 +29,7 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
 
     try {
         const line_items = await Promise.all(orders.map(async (item: any) => {
-            const product = await ProductModel.findById(item.productId) as IProduct;
+            const product = await Product.findById(item.productId) as IProduct;
             if (!product) {
                 console.error(`Product not found for id: ${item.productId}`);
                 return null;
@@ -49,7 +49,7 @@ router.post("/create-checkout-session", express.json(), asyncHandler(async (req:
                         name: product.name,
                         images: images,
                         metadata: {
-                            id: product._id,
+                            id: product.slug,
                         }
                     },
                     unit_amount: Math.round(price * 100),
@@ -140,7 +140,7 @@ router.post("/create-payment-intent", express.json(), authMiddleware, asyncHandl
     let errors: string[] = [];
 
     await Promise.all(order.map(async (item) => {
-        const product = await ProductModel.findById(item.productId) as IProduct;
+        const product = await Product.findById(item.productId) as IProduct;
         if (!product) {
             errors.push(`Product not found for id: ${item.productId}`);
             return;

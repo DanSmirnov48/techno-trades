@@ -109,7 +109,7 @@ const setAuthCookie = (res: Response, req: Request, cookieType: 'access' | 'refr
     // Set cookie with appropriate options
     res.cookie(cookieName, token, {
         expires: expirationDate,
-        httpOnly: !isAccessToken,   // Access token isn't httpOnly by default
+        httpOnly: false,
         secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
         sameSite: 'strict',
     });

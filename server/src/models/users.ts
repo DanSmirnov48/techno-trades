@@ -1,5 +1,4 @@
 import { Query, Schema, Types, model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 
 enum AUTH_TYPE {
     PASSWORD = "Password",
@@ -54,11 +53,6 @@ const UserSchema = new Schema<IUser>({
     otpExpiry: { type: Date, null: true, blank: true },
 }, { timestamps: true });
 
-UserSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10)
-    next();
-});
 
 UserSchema.pre(/^find/, function (this: Query<IUser[], IUser>, next) {
     this.find({ isActive: { $ne: false } });
