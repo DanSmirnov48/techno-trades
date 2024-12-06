@@ -1,5 +1,6 @@
 import { PipelineStage } from "mongoose";
-import { Product } from "../models/products";
+import { IProduct, Product } from "../models/products";
+import { ErrorCode, RequestError } from "../config/handlers";
 
 const getProducts = async (nameFilter: string | null = null) => {
     try {
@@ -92,4 +93,71 @@ const getProducts = async (nameFilter: string | null = null) => {
     }
 }
 
-export { getProducts }
+const updateProductDiscount = async (
+    productId: string,
+    discountData: {
+        isDiscounted: boolean;
+        discountedPrice?: number;
+    }
+): Promise<IProduct> => {
+    try {
+        // Find the product and verify ownership
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            throw new RequestError("Product not found", 404, ErrorCode.NON_EXISTENT);
+        }
+
+        // If discount is being set to true, validate discounted price
+        if (discountData.isDiscounted) {
+            // Ensure discounted price is provided and lower than original price
+            if (!discountData.discountedPrice) {
+                throw new RequestError("Discounted price is required when isDiscounted is true", 400, ErrorCode.INVALID_VALUE);
+            }
+
+            if (discountData.discountedPrice >= product.price) {
+                throw new RequestError("Discounted price must be lower than original price", 400, ErrorCode.INVALID_VALUE);
+            }
+        }
+
+        // Update the product
+        product.isDiscounted = discountData.isDiscounted;
+
+        // If discount is true, set discounted price
+        // If discount is false, remove discounted price
+        product.discountedPrice = discountData.isDiscounted
+            ? discountData.discountedPrice
+            : undefined;
+
+        // Save the updated product
+        await product.save();
+
+        return product;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+const updateProductStock = async (productId: string, stockChange: number): Promise<IProduct> => {
+    try {
+        const product = await Product.findById(productId);
+        if (!product) {
+            throw new RequestError("Product not found", 404, ErrorCode.NON_EXISTENT);
+        }
+
+        const newStockCount = product.countInStock + stockChange;
+        if (newStockCount < 0) {
+            throw new RequestError("Stock cannot be negative", 400, ErrorCode.INVALID_VALUE);
+        }
+
+        product.countInStock = newStockCount;
+        await product.save();
+        return product;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
+export { getProducts, updateProductDiscount, updateProductStock }

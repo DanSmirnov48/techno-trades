@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { paginateRecords } from "../utils/paginators";
 import { CustomResponse } from "../config/utils";
-import { getProducts } from "../managers/products";
+import { getProducts, updateProductDiscount, updateProductStock } from "../managers/products";
 import { ErrorCode, NotFoundError, RequestError } from "../config/handlers";
 import { Product } from "../models/products";
 import { authMiddleware } from "../middlewares/auth";
@@ -89,6 +89,41 @@ shopRouter.post('/', authMiddleware, async (req: Request, res: Response, next: N
         return res.status(200).json(CustomResponse.success('Products Created Successfully', newProduct))
     } catch (error) {
         next(error)
+    }
+});
+
+shopRouter.patch('/products/:id/discount', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user
+        const { id } = req.params;
+        const { isDiscounted, discountedPrice } = req.body;
+
+        const updatedProduct = await updateProductDiscount(
+            id, { isDiscounted, discountedPrice }
+        );
+
+        return res.status(200).json(CustomResponse.success(
+            isDiscounted
+                ? 'Product discount applied successfully'
+                : 'Product discount removed successfully',
+            updatedProduct
+        ));
+
+    } catch (error) {
+        next(error)
+    }
+});
+
+shopRouter.patch('/products/:id/stock', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        const { id } = req.params;
+        const { stockChange } = req.body;
+
+        const updatedProduct = await updateProductStock(id, stockChange);
+        return res.status(200).json(CustomResponse.success('Product stock updated successfully', updatedProduct));
+    } catch (error) {
+        next(error);
     }
 });
 
