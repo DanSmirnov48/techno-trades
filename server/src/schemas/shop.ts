@@ -1,16 +1,17 @@
 import { Expose, Type } from "class-transformer";
 import { Example } from "./utils";
-import { 
-    IsString, 
-    IsNumber, 
-    IsBoolean, 
-    IsNotEmpty, 
-    Min, 
-    IsArray, 
-    ArrayNotEmpty, 
-    ValidateNested, 
-    IsOptional, 
+import {
+    IsString,
+    IsNumber,
+    IsBoolean,
+    IsNotEmpty,
+    Min,
+    IsArray,
+    ArrayNotEmpty,
+    ValidateNested,
+    IsOptional,
 } from 'class-validator';
+import { UserSchema } from "./base";
 
 class ImageSchema {
     @IsString()
@@ -130,4 +131,65 @@ export class ProductSchema {
     @Expose()
     @Example(1)
     avgRating?: number;
+}
+
+export class ReviewCreateSchema {
+    @Expose()
+    @IsNumber()
+    @IsNotEmpty({ message: 'Rating is required' })
+    @Example(3)
+    rating?: number;
+
+    @Expose()
+    @IsString()
+    @Example("This is a review title")
+    @IsNotEmpty({ message: 'Title is required' })
+    title?: string;
+
+    @Expose()
+    @IsString()
+    @Example("This is a review comment")
+    @IsNotEmpty({ message: 'Comment is required' })
+    comment?: string;
+}
+
+export class ReviewSchema {
+    @Expose()
+    user?: UserSchema;
+
+    @Expose()
+    @IsNumber()
+    @Example(3)
+    rating?: number;
+
+    @Expose()
+    @Example("This is a review title")
+    title?: string;
+
+    @Expose()
+    @Example("This is a review comment")
+    comment?: string;
+}
+
+export class UpdateProductDiscountSchema {
+    @Expose()
+    @IsBoolean()
+    isDiscounted?: boolean;
+
+    @Expose()
+    @IsNumber()
+    @Min(0, { message: 'Discounted price must be a positive number' })
+    discountedPrice?: number;
+
+    validate() {
+        if (this.isDiscounted && (!this.discountedPrice)) {
+            throw new Error('Discounted price must be less than the original price when isDiscounted is true');
+        }
+    }
+}
+
+export class UpdateProductStockSchema {
+    @Expose()
+    @IsNumber()
+    stockChange?: number;
 }

@@ -6,7 +6,7 @@ import { ErrorCode, NotFoundError, RequestError } from "../config/handlers";
 import { Product } from "../models/products";
 import { authMiddleware } from "../middlewares/auth";
 import { validationMiddleware } from "../middlewares/error";
-import { ProductCreateSchema, ProductSchema } from "../schemas/shop";
+import { ProductCreateSchema, ProductSchema, ReviewCreateSchema, ReviewSchema, UpdateProductDiscountSchema, UpdateProductStockSchema } from "../schemas/shop";
 
 const shopRouter = Router();
 
@@ -34,7 +34,7 @@ shopRouter.get('/products/:slug', async (req: Request, res: Response, next: Next
     }
 });
 
-shopRouter.post('/products/:slug', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+shopRouter.post('/products/:slug', authMiddleware, validationMiddleware(ReviewCreateSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user
         const product = await Product.findOne({ slug: req.params.slug })
@@ -56,7 +56,7 @@ shopRouter.post('/products/:slug', authMiddleware, async (req: Request, res: Res
         }
         await product.save()
         review = { user, title, comment, rating }
-        return res.status(200).json(CustomResponse.success(`Review ${action} Successfully`, review))
+        return res.status(200).json(CustomResponse.success(`Review ${action} Successfully`, review, ReviewSchema))
     } catch (error) {
         next(error)
     }
@@ -94,7 +94,7 @@ shopRouter.post('/', authMiddleware, validationMiddleware(ProductCreateSchema), 
     }
 });
 
-shopRouter.patch('/products/:id/discount', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+shopRouter.patch('/products/:id/discount', authMiddleware, validationMiddleware(UpdateProductDiscountSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user
         const { id } = req.params;
@@ -116,7 +116,7 @@ shopRouter.patch('/products/:id/discount', authMiddleware, async (req: Request, 
     }
 });
 
-shopRouter.patch('/products/:id/stock', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+shopRouter.patch('/products/:id/stock', authMiddleware, validationMiddleware(UpdateProductStockSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user;
         const { id } = req.params;
