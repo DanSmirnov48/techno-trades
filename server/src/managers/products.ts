@@ -1,4 +1,4 @@
-import { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage, Types } from "mongoose";
 import { IProduct, Product } from "../models/products";
 import { ErrorCode, RequestError } from "../config/handlers";
 
@@ -160,4 +160,71 @@ const updateProductStock = async (productId: string, stockChange: number): Promi
     }
 };
 
-export { getProducts, updateProductDiscount, updateProductStock }
+interface ProductStockUpdate {
+    productId: string | Types.ObjectId;
+    stockChange: number;
+}
+
+const updateMultipleProductStocks = async (updates: ProductStockUpdate[], userId: string): Promise<IProduct[]> => {
+    const session = await mongoose.startSession();
+
+    try {
+        // Begin transaction
+        session.startTransaction();
+
+        // Validate input
+        if (!updates || updates.length === 0) {
+            throw new RequestError("No stock updates provided", 400, ErrorCode.INVALID_VALUE);
+        }
+
+        // Collect product IDs to fetch in one query
+        const productIds = updates.map(update => new mongoose.Types.ObjectId(update.productId));
+
+        // Fetch all products in one query
+        const products = await Product.find({ _id: { $in: productIds }, user: userId }).session(session);
+
+        // Create a map for quick product lookup
+        const productMap = new Map(products.map(p => [p._id.toString(), p]));
+
+        // Perform updates
+        const updatedProducts: IProduct[] = [];
+
+        for (const update of updates) {
+            const product = productMap.get(update.productId.toString());
+
+            if (!product) {
+                throw new RequestError(`Product with ID ${update.productId} not found or not owned by user`, 404, ErrorCode.NON_EXISTENT);
+            }
+
+            // Calculate new stock count
+            const newStockCount = product.countInStock + update.stockChange;
+
+            // Prevent negative stock
+            if (newStockCount < 0) {
+                throw new RequestError(`Stock for product ${product.name} cannot go negative`, 400, ErrorCode.INVALID_VALUE);
+            }
+
+            // Update stock
+            product.countInStock = newStockCount;
+
+            // Save the product
+            await product.save({ session });
+
+            updatedProducts.push(product);
+        }
+
+        // Commit transaction
+        await session.commitTransaction();
+
+        return updatedProducts;
+    } catch (error: any) {
+        // Abort transaction in case of error
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        // End the session
+        session.endSession();
+    }
+};
+
+export { getProducts, updateProductDiscount, updateProductStock, updateMultipleProductStocks }
