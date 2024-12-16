@@ -3,18 +3,20 @@ import { CustomResponse, randomStr } from "../config/utils";
 import { ACCOUNT_TYPE, AUTH_TYPE, IUser, User } from "../models/users";
 import { ErrorCode, NotFoundError, RequestError, ValidationErr } from "../config/handlers";
 import { checkPassword, createAccessToken, createOtp, createRefreshToken, createUser, hashPassword, setAuthCookie, validateGoogleToken, verifyRefreshToken } from "../managers/users";
-import asyncHandler from "../middlewares/asyncHandler";
 import { authMiddleware, getUser } from "../middlewares/auth";
 import { sendEmail, EmailType } from '../utils/mailSender'
 import { TokenPayload } from "google-auth-library";
 import ENV from "../config/config";
 import { randomBytes } from "crypto";
+import { validationMiddleware } from "../middlewares/error";
+import { LoginSchema, OtpLoginSchema, RefreshTokenSchema, RegisterSchema, SetNewPasswordSchema, TokenSchema, VerifyEmailSchema } from "../schemas/auth";
+import { EmailSchema } from "schemas/base";
 
 const authRouter = Router();
 
-authRouter.post('/register', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/register', validationMiddleware(RegisterSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
+        const userData: RegisterSchema = req.body;
         const { email } = userData;
 
         const existingUser = await User.findOne({ email })
@@ -27,11 +29,11 @@ authRouter.post('/register', asyncHandler(async (req: Request, res: Response, ne
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/verify-email', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/verify-email', validationMiddleware(VerifyEmailSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
+        const userData: VerifyEmailSchema = req.body;
         const { email } = userData;
         const otp = Number(userData.otp)
 
@@ -58,12 +60,11 @@ authRouter.post('/verify-email', asyncHandler(async (req: Request, res: Response
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/resend-verification-email', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/resend-verification-email', validationMiddleware(EmailSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
-        const { email } = userData;
+        const { email }: EmailSchema = req.body;
 
         const user = await User.findOne({ email })
         if (!user) {
@@ -80,12 +81,11 @@ authRouter.post('/resend-verification-email', asyncHandler(async (req: Request, 
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/send-password-reset-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/send-password-reset-otp', validationMiddleware(EmailSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
-        const { email } = userData;
+        const { email }: EmailSchema = req.body;
 
         const user = await User.findOne({ email })
         if (!user) {
@@ -100,11 +100,12 @@ authRouter.post('/send-password-reset-otp', asyncHandler(async (req: Request, re
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/set-new-password', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/set-new-password', validationMiddleware(SetNewPasswordSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
+        const userData: SetNewPasswordSchema = req.body;
+
         const { email, password } = userData;
         const otp = Number(userData.otp)
 
@@ -128,12 +129,11 @@ authRouter.post('/set-new-password', asyncHandler(async (req: Request, res: Resp
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/login', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/login', validationMiddleware(LoginSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
-        const { email, password } = userData;
+        const { email, password }: LoginSchema = req.body;
 
         const user = await User.findOne({ email })
         if (!user || !(await checkPassword(user, password as string))) {
@@ -161,11 +161,11 @@ authRouter.post('/login', asyncHandler(async (req: Request, res: Response, next:
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/send-login-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/send-login-otp', validationMiddleware(EmailSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const email: string = req.body.email;
+        const { email }: EmailSchema = req.body;
 
         const user = await User.findOne({ email })
         if (!user) {
@@ -180,11 +180,11 @@ authRouter.post('/send-login-otp', asyncHandler(async (req: Request, res: Respon
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/login-with-otp', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/login-with-otp', validationMiddleware(OtpLoginSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
+        const userData: OtpLoginSchema = req.body;
         const { email } = userData;
         const otp = Number(userData.otp)
 
@@ -217,9 +217,9 @@ authRouter.post('/login-with-otp', asyncHandler(async (req: Request, res: Respon
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.get('/validate', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.get('/validate', async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
             throw new RequestError("Unauthorized User", 401, ErrorCode.UNAUTHORIZED_USER);
@@ -231,9 +231,9 @@ authRouter.get('/validate', asyncHandler(async (req: Request, res: Response, nex
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/refresh', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/refresh', validationMiddleware(RefreshTokenSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const refreshToken: string = req.body.refresh;
         const user = await User.findOne({ "tokens.refresh": refreshToken });
@@ -260,10 +260,9 @@ authRouter.post('/refresh', asyncHandler(async (req: Request, res: Response, nex
     } catch (error) {
         next(error)
     }
-}));
+});
 
-
-authRouter.get('/logout', authMiddleware, asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.get('/logout', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.user;
         const authorization = req.headers.authorization as string
@@ -280,11 +279,11 @@ authRouter.get('/logout', authMiddleware, asyncHandler(async (req: Request, res:
     } catch (error) {
         next(error)
     }
-}));
+});
 
-authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+authRouter.post('/google', validationMiddleware(TokenSchema), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userData = req.body;
+        const userData: TokenSchema = req.body;
         const { token } = userData;
 
         // Validate token
@@ -332,6 +331,6 @@ authRouter.post('/google', asyncHandler(async (req: Request, res: Response, next
     } catch (error) {
         next(error)
     }
-}));
+});
 
 export default authRouter;
