@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Appearance, loadStripe, StripeElementsOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
+import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import {
     Elements,
     useStripe,
@@ -13,6 +13,8 @@ import { useCart } from '@/hooks/useCart';
 import { createPaymentIntent } from '@/lib/backend-api/orders';
 import { Card, CardContent, CardDescription } from "@/components/ui/card"
 import { Skeleton } from './ui/skeleton';
+import { appearance, stripePaymentElementOptions } from '@/constants/idnex';
+import { ShippingOption } from './shippingForm';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PRIVATE_KEY);
 
@@ -46,23 +48,9 @@ function CheckoutForm() {
         setIsLoading(false);
     }
 
-    const options: StripePaymentElementOptions = {
-        fields: {
-            billingDetails: {
-                address: {
-                    country: 'never',
-                    postalCode: 'never',
-                }
-            }
-        },
-        layout: {
-            type: 'accordion',
-        },
-    };
-
     return (
         <form id="payment-form" onSubmit={handleSubmit} className='w-full max-w-[650px]'>
-            <PaymentElement id="payment-element" options={options} />
+            <PaymentElement id="payment-element" options={stripePaymentElementOptions} />
             <Button
                 disabled={isLoading || !stripe || !elements}
                 className="w-full bg-dark-4 py-7 dark:text-white/90 text-lg mt-10"
@@ -83,7 +71,7 @@ function CheckoutForm() {
 }
 
 const FormLoading = () => (
-    <Card className="w-full max-w-[650px] shadow-md flex flex-col gap-5 content-center justify-center m-auto bg-accent py-16 px-20 cursor-wait">
+    <Card className="w-full max-w-[650px] shadow-md flex flex-col gap-5 content-center justify-center bg-accent py-16 px-20 cursor-wait">
         <CardContent className='flex flex-col gap-4'>
             <div className='space-y-2'>
                 <CardDescription>Card number</CardDescription>
@@ -145,41 +133,6 @@ const StripeCheckout = () => {
     useEffect(() => {
         fetchPaymentIntent();
     }, [fetchPaymentIntent]);
-
-    const appearance: Appearance = {
-        theme: 'stripe',
-        variables: {
-            colorPrimary: '#0047AB',
-            colorBackground: '#ffffff',
-            colorText: '#30313d',
-            colorDanger: '#df1b41',
-            fontFamily: 'system-ui, sans-serif',
-            spacingUnit: '4px',
-            borderRadius: '4px',
-        },
-        rules: {
-            '.Label': {
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#6b7280'
-            },
-            '.Input': {
-                padding: '12px',
-                fontSize: '16px',
-                color: '#1f2937',
-                backgroundColor: '#ffffff',
-                border: '1px solid #e5e7eb',
-                borderRadius: '4px'
-            },
-            '.AccordionItem': {
-                padding: '20px 120px',
-                backgroundColor: '#f9fafb',
-                border: '1px solid #e5e7eb',
-                borderRadius: '10px',
-            }
-        }
-    };
 
     const options: StripeElementsOptions = {
         clientSecret,

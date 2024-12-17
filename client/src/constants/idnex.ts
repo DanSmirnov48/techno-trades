@@ -1,4 +1,5 @@
 import { categories } from "@/components/tables/products-table/filters";
+import { Appearance, StripePaymentElementOptions } from '@stripe/stripe-js';
 
 interface SortCategory {
     value: string;
@@ -75,3 +76,53 @@ export const priceRanges: PriceRanges[] = [
 type Category = typeof categories[number];
 
 export const categoriesValues: Array<Category['value']> = categories.map(category => category.value);
+
+
+export const stripePaymentElementOptions: StripePaymentElementOptions = {
+    fields: {
+        billingDetails: {
+            address: {
+                country: 'never',
+                postalCode: 'never',
+            }
+        }
+    },
+    layout: {
+        type: 'accordion',
+    },
+};
+
+export const appearance: Appearance = {
+    theme: 'stripe',
+    variables: {
+        colorPrimary: '#0047AB',
+        colorBackground: '#ffffff',
+        colorText: '#30313d',
+        colorDanger: '#df1b41',
+        fontFamily: 'system-ui, sans-serif',
+        spacingUnit: '4px',
+        borderRadius: '4px',
+    },
+    rules: {
+        '.Label': {
+            marginBottom: '8px',
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#6b7280'
+        },
+        '.Input': {
+            padding: '12px',
+            fontSize: '16px',
+            color: '#1f2937',
+            backgroundColor: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '4px'
+        },
+        '.AccordionItem': {
+            padding: '20px 120px',
+            backgroundColor: '#f9fafb',
+            border: '1px solid #e5e7eb',
+            borderRadius: '10px',
+        }
+    }
+};
