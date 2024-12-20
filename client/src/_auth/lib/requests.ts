@@ -17,7 +17,7 @@ import {
 
 // API client setup
 const api = axios.create({
-    baseURL: '/api/auth',
+    baseURL: '/api/v1/auth',
     withCredentials: true,
 });
 
@@ -88,12 +88,12 @@ export const authApi = {
             return handleAuthError(error) as AuthResponse<null>;
         }
     },
-    validate: async (): Promise<AuthResponse<IUserResponse>> => {
+    validate: async ():Promise<AuthResponse<LoginResponse>> => {
         try {
-            const response = await api.get<AuthResponse<IUserResponse>>('/validate');
+            const response = await api.get<AuthResponse<LoginResponse>>('/validate');
             return response.data;
         } catch (error) {
-            return handleAuthError(error) as AuthResponse<IUserResponse>;
+            return handleAuthError(error) as AuthResponse<LoginResponse>;
         }
     },
     resendVerificationEmail: async (data: EmailData): Promise<AuthResponse<{ otp: string }>> => {

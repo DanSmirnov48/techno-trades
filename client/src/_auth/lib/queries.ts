@@ -1,5 +1,5 @@
 import { authApi } from './requests';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { INITIAL_USER, useUserContext } from '@/context/AuthContext';
 import {
     IUserResponse,
@@ -178,19 +178,8 @@ export const useLogoutUser = () => {
 };
 
 export const useGetUserSession = () => {
-    const queryClient = useQueryClient();
-    const { setUser, setIsAuthenticated, setIsStaff } = useUserContext();
-
-    return useMutation<AuthResponse<IUserResponse>, AuthResponse<ErrorResponse>>({
-        mutationFn: authApi.validate,
-        onSuccess: (response) => {
-            // console.log({ response });
-        },
-        onError: (error) => {
-            console.error('Validation error:', error);
-            setUser(INITIAL_USER);
-            setIsAuthenticated(false);
-            setIsStaff(false);
-        }
+    return useQuery({
+        queryKey: ['user-session'],
+        queryFn: authApi.validate,
     });
 }

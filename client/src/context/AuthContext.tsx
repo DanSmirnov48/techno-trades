@@ -48,18 +48,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isStaff, setIsStaff] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Session Validation Mutation
-  const { mutateAsync: getSession, isPending: validating } = useGetUserSession();
+  const [_, setIsLoading] = useState(false);
+  const { data, status, isLoading } = useGetUserSession();
 
   const checkAuthUser = async (): Promise<boolean> => {
-    setIsLoading(true);
+    setIsLoading(isLoading);
     try {
-      const { data, status } = await getSession();
-      if (data && status === 'success' && !validating) {
-        setUser(data);
-        setIsStaff(data.accountType === ACCOUNT_TYPE.STAFF);
+      if (!isLoading && data?.data && status === 'success') {
+        let user = data.data.user
+        setUser(user);
+        setIsStaff(user.accountType === ACCOUNT_TYPE.STAFF);
         setIsAuthenticated(true);
         return true;
       }
@@ -69,13 +67,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Authentication check failed", error);
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(isLoading);
     }
   };
 
   useEffect(() => {
     checkAuthUser();
-  }, []);
+  }, [status, isLoading]);
 
   const value: IAuthContext = {
     user,
